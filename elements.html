@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Game UI Elements</title>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#1b1b1b; --navy:#1e2a4a; --navy-dark:#131c33; }
+  body { margin:0; background:#fff; font-family:'Lilita One','Arial Black',sans-serif; padding:32px; }
+  .grid { display:flex; flex-direction:column; gap:36px; max-width:900px; margin:auto; }
+  .row { display:flex; flex-wrap:wrap; align-items:center; gap:18px; }
+  .label { font:600 12px system-ui,sans-serif; color:#999; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px; }
+  .game-text { color:#fff; -webkit-text-stroke:5px var(--ink); paint-order:stroke fill; text-shadow:0 3px 0 var(--ink); }
+  svg { display:block; }
+  .btn.game-text, .slot .count { -webkit-text-stroke:3.5px var(--ink); text-shadow:0 2px 0 var(--ink); }
+
+  /* 1. Buttons */
+  .btn { --c1:#ffe14d; --c2:#ffae00; --lip:#e08a00; position:relative; font-family:inherit; font-size:26px; min-width:150px; padding:12px 28px 16px; border:3px solid var(--ink); border-radius:14px; cursor:pointer;
+         background:linear-gradient(var(--c1),var(--c2)); box-shadow:inset 0 -6px 0 var(--lip), inset 0 3px 0 rgba(255,255,255,.5), 0 4px 0 var(--ink); transition:transform .07s, box-shadow .07s; }
+  .btn::before { content:""; position:absolute; left:8px; right:8px; top:5px; height:28%; border-radius:9px; background:rgba(255,255,255,.3); }
+  .btn:active { transform:translateY(3px) scale(.97); box-shadow:inset 0 -3px 0 var(--lip), inset 0 3px 0 rgba(255,255,255,.5), 0 1px 0 var(--ink); }
+  .green  { --c1:#5dfa4a; --c2:#1fc41f; --lip:#139a14; }
+  .blue   { --c1:#4fd6ff; --c2:#0aa6f0; --lip:#0680c4; }
+  .purple { --c1:#e46bff; --c2:#b12cf0; --lip:#8a18c4; }
+  .dark   { --c1:#4a5468; --c2:#353d4f; --lip:#262c3a; }
+  .gray   { --c1:#d8d8d8; --c2:#b5b5b5; --lip:#909090; }
+
+  /* 2. Close button */
+  .close { min-width:0; width:64px; height:64px; padding:0; display:grid; place-items:center; --c1:#ff5a5a; --c2:#e0262f; --lip:#b0161f; }
+
+  /* 3/4. Badges */
+  .badge { width:54px; height:54px; border-radius:50%; border:3px solid var(--ink); display:grid; place-items:center; box-shadow:inset 0 -5px 0 rgba(0,0,0,.2), inset 0 3px 0 rgba(255,255,255,.45); }
+  .badge.up { background:linear-gradient(#5dfa4a,#1fc41f); }
+  .badge.alert { background:linear-gradient(#ff5a5a,#e0262f); font-size:36px; line-height:1; }
+
+  /* 5. Level shield */
+  .shield-wrap { position:relative; width:110px; height:92px; }
+  .shield-wrap .num { position:absolute; inset:0; display:grid; place-items:center; font-size:34px; padding-bottom:4px; }
+
+  /* 6/7. Bars */
+  .bar { position:relative; display:flex; align-items:center; cursor:pointer; }
+  .bar .track { position:relative; height:30px; border:3px solid var(--ink); border-radius:16px; background:var(--navy-dark); overflow:hidden; margin-left:-28px; }
+  .bar .fill { position:absolute; left:0; top:0; bottom:0; border-radius:12px; transition:width .2s ease-out; box-shadow:inset 0 6px 0 rgba(255,255,255,.35), inset 0 -5px 0 rgba(0,0,0,.18); }
+  .bar .icon { position:relative; z-index:1; }
+  .hp .track { width:340px; } .hp .fill { width:85%; background:#2ee02e; padding-left:30px; }
+  .xp .track { width:300px; } .xp .fill { width:55%; background:#1ed4ff; }
+  .bar .fill { padding-left:0; }
+  .bar .track .fill { left:24px; width:calc(var(--v,85%) - 24px); }
+
+  /* 8. Panels */
+  .panel { width:260px; height:150px; border:3px solid var(--ink); border-radius:16px; padding:12px; box-sizing:border-box; box-shadow:0 4px 0 var(--ink); }
+  .panel .inner { height:100%; border-radius:10px; }
+  .panel.p-blue { background:#1ea6f5; box-shadow:inset 0 3px 0 rgba(255,255,255,.4), 0 4px 0 var(--ink); } .panel.p-blue .inner { background:#35b8ff; box-shadow:inset 0 0 0 3px #1690d8; }
+  .panel.p-navy { background:#26355c; box-shadow:inset 0 3px 0 rgba(255,255,255,.12), 0 4px 0 var(--ink); } .panel.p-navy .inner { background:#1a2442; box-shadow:inset 0 3px 0 rgba(0,0,0,.3); }
+  .panel.p-gray { background:#9a9ca3; box-shadow:inset 0 3px 0 rgba(255,255,255,.35), 0 4px 0 var(--ink); } .panel.p-gray .inner { background:#6b6d74; box-shadow:inset 0 3px 0 rgba(0,0,0,.25); }
+
+  /* 9. Item slots */
+  .slot { --c1:#c9c9c9; --c2:#a9a9a9; --edge:#e6e6e6; width:84px; height:84px; border:3px solid var(--ink); border-radius:14px; position:relative; box-sizing:border-box;
+          background:linear-gradient(var(--c1),var(--c2)); box-shadow:inset 0 0 0 4px var(--edge), inset 0 -8px 0 rgba(0,0,0,.15), 0 3px 0 var(--ink); }
+  .slot.s-green  { --c1:#44e63a; --c2:#1fb81f; --edge:#7cf56f; }
+  .slot.s-purple { --c1:#c75cff; --c2:#9a2ee0; --edge:#df9bff; }
+  .slot.s-gold   { --c1:#ffd633; --c2:#ffab00; --edge:#ffe98a; }
+  .slot.s-locked { --c1:#4a4d55; --c2:#3a3d44; --edge:#4a4d55; display:grid; place-items:center; }
+  .slot.s-locked::after { content:""; position:absolute; inset:9px; border:2px dashed #6c707a; border-radius:8px; }
+  .slot .count { position:absolute; top:2px; right:8px; font-size:20px; }
+
+  /* 10. Tabs */
+  .tab { width:120px; height:78px; border:3px solid var(--ink); border-radius:14px; display:grid; place-items:center; cursor:pointer; }
+  .tab.active { background:linear-gradient(#4f86ff,#2f5fe8); box-shadow:inset 0 0 0 3px #7ea6ff, 0 4px 0 var(--ink); }
+  .tab.idle { background:#1f2a48; box-shadow:inset 0 3px 0 rgba(255,255,255,.08), 0 4px 0 var(--ink); }
+</style>
+</head>
+<body>
+<div class="grid">
+
+  <div><div class="label">1 · Buttons</div>
+    <div class="row">
+      <button class="btn game-text">PLAY</button>
+      <button class="btn green game-text">OPEN</button>
+      <button class="btn blue game-text">FUSE</button>
+      <button class="btn purple game-text">EPIC</button>
+      <button class="btn dark game-text">BACK</button>
+      <button class="btn gray game-text">SKIP</button>
+    </div>
+  </div>
+
+  <div class="row" style="gap:48px">
+    <div><div class="label">2 · Close</div>
+      <button class="btn close"><svg width="32" height="32" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19" stroke="#1b1b1b" stroke-width="8" stroke-linecap="round"/><path d="M5 5 19 19M19 5 5 19" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/></svg></button>
+    </div>
+    <div><div class="label">3 · Upgrade</div>
+      <div class="badge up"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 3 21 12.5H15.5V21H8.5V12.5H3Z" fill="#fff" stroke="#1b1b1b" stroke-width="2.2" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div><div class="label">4 · Alert</div>
+      <div class="badge alert game-text">!</div>
+    </div>
+    <div><div class="label">5 · Level</div>
+      <div class="shield-wrap">
+        <svg width="110" height="92" viewBox="0 0 110 92">
+          <g stroke="#1b1b1b" stroke-width="3" stroke-linejoin="round">
+            <path d="M30 30 Q8 26 4 40 Q16 40 12 50 Q26 50 30 58 Z" fill="#9fc3ff"/>
+            <path d="M80 30 Q102 26 106 40 Q94 40 98 50 Q84 50 80 58 Z" fill="#9fc3ff"/>
+            <path d="M55 6 84 16 V42 Q84 68 55 86 Q26 68 26 42 V16 Z" fill="#dbe8ff"/>
+            <path d="M55 15 76 22 V42 Q76 61 55 76 Q34 61 34 42 V22 Z" fill="#4a8cff" stroke="none"/>
+          </g>
+        </svg>
+        <div class="num game-text">7</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" style="gap:40px">
+    <div><div class="label">6 · Health bar (click)</div>
+      <div class="bar hp" id="hp" style="--v:85%">
+        <svg class="icon" width="62" height="58" viewBox="0 0 24 22"><path d="M12 20.5S2 14.6 2 8.2C2 4.9 4.4 2.5 7.3 2.5c2 0 3.6 1.1 4.7 2.7 1.1-1.6 2.7-2.7 4.7-2.7C19.6 2.5 22 4.9 22 8.2c0 6.4-10 12.3-10 12.3Z" fill="#ff3340" stroke="#1b1b1b" stroke-width="1.6" stroke-linejoin="round"/><ellipse cx="7.5" cy="7" rx="2.2" ry="1.4" fill="#fff" opacity=".6" transform="rotate(-30 7.5 7)"/></svg>
+        <div class="track"><div class="fill" style="background:#2ee02e"></div></div>
+      </div>
+    </div>
+    <div><div class="label">7 · XP bar</div>
+      <div class="bar xp" style="--v:55%">
+        <svg class="icon" width="52" height="56" viewBox="0 0 60 64"><path d="M30 3 55 12V32Q55 52 30 61 5 52 5 32V12Z" fill="#dbe8ff" stroke="#1b1b1b" stroke-width="3.5" stroke-linejoin="round"/><path d="M30 12 47 18V32Q47 46 30 53 13 46 13 32V18Z" fill="#4a8cff"/></svg>
+        <div class="track"><div class="fill" style="background:#1ed4ff"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div><div class="label">8 · Panels</div>
+    <div class="row">
+      <div class="panel p-blue"><div class="inner"></div></div>
+      <div class="panel p-navy"><div class="inner"></div></div>
+      <div class="panel p-gray"><div class="inner"></div></div>
+    </div>
+  </div>
+
+  <div class="row" style="gap:48px">
+    <div><div class="label">9 · Item slots (rarity)</div>
+      <div class="row">
+        <div class="slot"><span class="count game-text">x2</span></div>
+        <div class="slot s-green"></div>
+        <div class="slot s-purple"></div>
+        <div class="slot s-gold"><span class="count game-text">x4</span></div>
+        <div class="slot s-locked"><svg width="34" height="38" viewBox="0 0 24 28" style="position:relative;z-index:1"><path d="M6 12V8a6 6 0 0 1 12 0v4" fill="none" stroke="#7a7e88" stroke-width="3.5"/><rect x="2" y="12" width="20" height="14" rx="4" fill="#7a7e88"/><circle cx="12" cy="18" r="2.2" fill="#3a3d44"/></svg></div>
+      </div>
+    </div>
+    <div><div class="label">10 · Tabs (click)</div>
+      <div class="row" id="tabs">
+        <div class="tab active"></div>
+        <div class="tab idle"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Tabs: house icon, active is white, idle is muted
+  const house = c => `<svg width="44" height="40" viewBox="0 0 24 22"><path d="M2.5 11 12 2.5 21.5 11H19V20H14.5V14.5H9.5V20H5V11Z" fill="${c}" stroke="#1b1b1b" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
+  const tabs = [...document.querySelectorAll('.tab')];
+  const paint = () => tabs.forEach(t => t.innerHTML = house(t.classList.contains('active') ? '#fff' : '#5d6a8a'));
+  tabs.forEach(t => t.onclick = () => { tabs.forEach(x => x.classList.replace('active','idle')); t.classList.replace('idle','active'); paint(); });
+  paint();
+
+  // Health bar: click to take damage, refills when empty
+  let hp = 85; const hpBar = document.getElementById('hp');
+  hpBar.onclick = () => {
+    hp = hp <= 0 ? 100 : Math.max(0, hp - 15);
+    hpBar.style.setProperty('--v', hp + '%');
+    hpBar.querySelector('.fill').style.background = hp > 50 ? '#2ee02e' : hp > 20 ? '#ffc61a' : '#ff3b3b';
+  };
+</script>
+</body>
+</html>
