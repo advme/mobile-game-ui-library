@@ -11,7 +11,7 @@
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html, body { margin:0; height:100%; overflow:hidden; overscroll-behavior:none; touch-action:manipulation; }
   body { background:#1b2242; font-family:'Rajdhani',sans-serif; font-weight:700; -webkit-user-select:none; user-select:none; }
-  button { font-family:inherit; font-weight:inherit; }
+  button { font-family:inherit; font-weight:inherit; color:inherit; outline:none; touch-action:manipulation; }
 
   /*
     The screen is designed at 460px wide and scaled to fit the device.
@@ -37,7 +37,7 @@
   .res img { position:static; width:34px; height:34px; object-fit:contain; }
 
   .icon-btn { position:absolute; padding:0; border:0; background:none; cursor:pointer; transition:transform .07s; }
-  .icon-btn:active, .side-btn:active { transform:scale(.92); }
+  .icon-btn:active, .side-btn:active, .icon-btn.pressed, .side-btn.pressed { transform:scale(.92); }
 
   /* Middle area: the 460x680 content block is centered between top bar and tabs */
   .stage { position:absolute; left:0; right:0; top:120px; bottom:103px; display:flex; align-items:center; justify-content:center; }
@@ -54,7 +54,7 @@
 
   .start { position:absolute; left:128px; top:554px; width:206px; height:80px; border:3px solid var(--ink); border-radius:12px; cursor:pointer;
            background:linear-gradient(#ffd21c,#ffb400); box-shadow:inset 0 -6px 0 #e59400, inset 0 3px 0 rgba(255,255,255,.5), 0 3px 0 var(--ink); transition:transform .07s; }
-  .start:active { transform:translateY(3px) scale(.97); }
+  .start:active, .start.pressed { transform:translateY(3px) scale(.97); }
   .start .big { position:absolute; left:0; right:0; top:4px; font-size:36px; --s:5px; --d:3px; }
   .start .cost { position:absolute; left:84px; top:46px; font-size:20px; --s:3px; --d:2px; }
 
@@ -65,7 +65,10 @@
   .tab.active { background:linear-gradient(#5b6ae8,#4552c9); margin-top:-8px; border-radius:12px 12px 0 0; border:3px solid var(--ink); border-bottom:0; }
   .tab .a { left:50%; top:10px; width:54px; height:54px; transform:translateX(-50%); }
   .tab.active .a { top:14px; width:60px; height:60px; }
-  .tab .badge { left:calc(50% + 8px); top:2px; width:28px; height:28px; transform:none; }
+  .tab .a.badge, .tab.active .a.badge { left:calc(50% + 8px); top:2px; width:28px; height:28px; transform:none; }
+  .tab.active .a.badge, .tab.active .alert { top:6px; }
+  .tab { transition:transform .07s; }
+  .tab.pressed { transform:scale(.94); }
   .tab .alert { left:calc(50% + 8px); top:2px; }
   .tab .label { position:absolute; left:0; right:0; bottom:14px; font-size:19px; --s:3px; --d:2px; text-align:center; }
 </style>
@@ -163,6 +166,13 @@
   }
   addEventListener('resize', fit);
   fit();
+
+  // Press feedback that works on phones (iOS Safari ignores :active without touch listeners)
+  document.querySelectorAll('button').forEach(b => {
+    b.addEventListener('pointerdown', () => b.classList.add('pressed'));
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(e => b.addEventListener(e, () => b.classList.remove('pressed')));
+  });
+  document.addEventListener('touchstart', () => {}, { passive: true });
 
   document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
     if (t.classList.contains('locked')) return;
