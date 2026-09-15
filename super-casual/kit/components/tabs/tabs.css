@@ -1,0 +1,68 @@
+/*
+  Tabs — Super Casual UI Kit
+  Requires: core.css, sc.js
+
+  <div class="sc-tabs" data-value="daily">
+    <button data-value="daily">Daily</button>
+    <button data-value="weekly" data-icon="calendar">Weekly</button>
+  </div>
+
+  On .sc-tabs:
+  data-value    value of the selected tab                                      default: first enabled tab
+  data-color    sky | blue | green | yellow | orange | red | purple | pink | mint   (selected tab)   default: blue
+  data-size     sm | md | lg   (36 / 46 / 56 px tall)                           default: md
+
+  On each tab <button>:
+  data-value    required, unique inside the group
+  data-icon     optional kit icon before the text
+  data-panel    optional id of a content element; only the selected tab's panel is shown
+  data-badge    optional count bubble (needs components/bubble/bubble.css)
+  disabled      can't be selected
+
+  Runtime owns role="tablist"/"tab", aria-selected, tabindex, aria-controls and panel hidden state.
+  Keyboard: Left/Right (and Home/End) move and select.
+  Event: change on .sc-tabs (detail.value) when the user picks another tab.
+  JS:    SC.tabs.get(el) · SC.tabs.set(el, value, {emit:false})
+*/
+:where(.sc-tabs) { --band:#5aa6ff; --base:#3a8bfa; --line:#4a9bff; --lip:#1d56c8; }
+.sc-tabs {
+  --h:46px; --r:13px; --lipH:5px; --tab-fs:19px; --tab-icon:30px;
+  display:flex; gap:8px; width:100%; box-sizing:border-box; font-family:var(--sc-font);
+}
+.sc-tabs[data-size="sm"] { --h:36px; --r:10px; --lipH:4px; --tab-fs:15px; --tab-icon:22px; }
+.sc-tabs[data-size="lg"] { --h:56px; --r:15px; --lipH:6px; --tab-fs:22px; --tab-icon:36px; }
+
+.sc-tab {
+  position:relative; isolation:isolate; flex:1 1 0; min-width:0; height:var(--h); box-sizing:border-box; margin:0;
+  display:flex; align-items:center; justify-content:center; gap:6px; padding:0 10px var(--lipH);
+  border:var(--sc-line) solid var(--sc-outline); border-radius:var(--r);
+  background:#28233d; color:#fff; font:inherit; cursor:pointer; appearance:none;
+  user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; touch-action:manipulation; outline:none;
+  transition:transform .06s;
+}
+/* Unselected face: muted dark purple with a thin light top edge */
+.sc-tab::after {
+  content:""; position:absolute; left:0; right:0; top:0; bottom:var(--lipH); z-index:-1;
+  border-radius:calc(var(--r) - var(--sc-line));
+  background:#3d3657; box-shadow:inset 0 2px 0 rgba(255,255,255,.12);
+}
+/* Selected: glossy band + base on a colored lip */
+.sc-tab[aria-selected="true"] { background:var(--lip); }
+.sc-tab[aria-selected="true"]::after {
+  background:linear-gradient(var(--band) 0 48%, var(--base) 48%);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.35), inset 0 -2px 0 var(--line);
+}
+.sc-tab[aria-selected="true"]::before {                       /* shine dot */
+  content:""; position:absolute; left:7px; top:5px; width:7px; height:5px; border-radius:50%; background:rgba(255,255,255,.75);
+}
+.sc-tab > .sc-text { --fs:var(--tab-fs); font-size:var(--fs); overflow:hidden; text-overflow:ellipsis; }
+.sc-tab:not([aria-selected="true"]) > .sc-text { opacity:.85; }
+.sc-tab > img[data-sc-icon] {
+  flex:none; width:var(--tab-icon); height:var(--tab-icon); object-fit:contain; pointer-events:none;
+  translate:var(--ox, 0%) var(--oy, 0%);
+}
+.sc-tab > img[data-flip] { transform:scaleX(-1); }
+
+.sc-tab:active, .sc-tab.sc-pressed { transform:translateY(1px) scale(.97); }
+.sc-tab:focus-visible { outline:3px solid #fff; outline-offset:2px; }
+.sc-tab:disabled { cursor:not-allowed; filter:grayscale(1) brightness(.8); }

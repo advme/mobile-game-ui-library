@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "items": [
     {
       "name": "core",
@@ -1433,6 +1433,83 @@
         {
           "title": "Listen",
           "js": "box.addEventListener('change', e => save(e.detail.checked));"
+        }
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "Segmented row of 2-4 tabs; exactly one selected (glossy), others muted dark. Optional icons, badges and auto panels.",
+      "whenToUse": "Switching lists inside a popup or screen: Daily/Weekly, Coins/Gems, Friends/Global, Skins/Items.",
+      "files": [
+        "components/tabs/tabs.css"
+      ],
+      "docs": "components/tabs/tabs.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<div class=\"sc-tabs\" data-value=\"daily\">\n  <button data-value=\"daily\">Daily</button>\n  <button data-value=\"weekly\">Weekly</button>\n</div>",
+      "props": {
+        "data-value": {
+          "type": "string",
+          "optional": true,
+          "description": "On .sc-tabs: selected tab value (default first enabled)"
+        },
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "sky",
+            "blue",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "default": "blue"
+        },
+        "data-size": {
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        }
+      },
+      "parts": {
+        "button[data-value]": "Each tab (required unique data-value). Optional data-icon, data-panel (element id to show when selected), data-badge, disabled."
+      },
+      "events": {
+        "change": "User picked another tab (detail.value)"
+      },
+      "js": {
+        "SC.tabs.get(el)": "Selected value",
+        "SC.tabs.set(el, value, {emit?})": "Select; silent unless emit; false if unknown/disabled"
+      },
+      "rules": [
+        "2-4 tabs, 1-word labels; use Bottom Tab Bar for main navigation.",
+        "Tabs are plain <button data-value> directly inside .sc-tabs; no classes/roles/click handlers by hand.",
+        "Prefer data-panel to show content; otherwise listen for change.",
+        "Full width at the top of a popup body or screen middle.",
+        "data-badge (red) for new items on a tab (load bubble.css)."
+      ],
+      "examples": [
+        {
+          "title": "Text tabs",
+          "html": "<div class=\"sc-tabs\" data-value=\"daily\"><button data-value=\"daily\">Daily</button><button data-value=\"weekly\">Weekly</button></div>"
+        },
+        {
+          "title": "Icons and panels",
+          "html": "<div class=\"sc-tabs\" data-value=\"coins\"><button data-value=\"coins\" data-icon=\"coin\" data-panel=\"coinList\">Coins</button><button data-value=\"gems\" data-icon=\"gem\" data-panel=\"gemList\">Gems</button></div>"
+        },
+        {
+          "title": "Listen",
+          "js": "tabs.addEventListener('change', e => showList(e.detail.value));"
         }
       ]
     }

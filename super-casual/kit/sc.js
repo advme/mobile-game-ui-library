@@ -26,11 +26,12 @@
   const TOGGLES = 'button.sc-toggle';
   const SLIDERS = '.sc-slider';
   const CHECKBOXES = 'button.sc-checkbox';
-  const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot';
+  const TABS = '.sc-tabs';
+  const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot, .sc-tab';
   const MESSAGES = '.sc-popup-message, .sc-popup-value';
   const SCREENS = '.sc-screen';
-  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}`;
-  const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, ${TOGGLES}, ${CHECKBOXES}`;
+  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}`;
+  const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, ${TOGGLES}, ${CHECKBOXES}, .sc-tabs > button`;
 
   const script = document.currentScript;
   const ASSETS = script && script.dataset.assets
@@ -160,6 +161,54 @@
     const el = e.target.closest && e.target.closest(CHECKBOXES);
     if (!el || el.matches(':disabled')) return;
     checkbox.toggle(el, { emit: true });
+  });
+
+  /* ---------- Tabs ---------- */
+  const setAttr = (el, k, v) => { if (el.getAttribute(k) !== String(v)) el.setAttribute(k, v); };   // only real changes (no observer loops)
+  const tabList = el => [...el.children].filter(c => c.tagName === 'BUTTON');
+  function upgradeTabs(el) {
+    const list = tabList(el);
+    setAttr(el, 'role', 'tablist');
+    let value = el.dataset.value;
+    const pick = list.find(t => t.dataset.value === value && !t.disabled) || list.find(t => !t.disabled);
+    if (pick && pick.dataset.value !== value) { value = pick.dataset.value; el.dataset.value = value; }
+    list.forEach(t => {
+      if (!t.classList.contains('sc-tab')) t.classList.add('sc-tab');
+      if (t.type !== 'button') t.type = 'button';
+      upgradeText(t); upgradeIcon(t); upgradeBubble(t);
+      const on = t === pick;
+      setAttr(t, 'role', 'tab'); setAttr(t, 'aria-selected', on); setAttr(t, 'tabindex', on ? 0 : -1);
+      const panel = t.dataset.panel && document.getElementById(t.dataset.panel);
+      if (panel) {
+        setAttr(t, 'aria-controls', t.dataset.panel); setAttr(panel, 'role', 'tabpanel');
+        if (panel.hidden === on) panel.hidden = !on;
+      }
+    });
+  }
+  const tabs = {
+    get(el) { const t = tabList(el).find(b => b.getAttribute('aria-selected') === 'true'); return t ? t.dataset.value : null; },
+    set(el, value, { emit = false } = {}) {
+      const t = tabList(el).find(b => b.dataset.value === String(value));
+      if (!t || t.disabled) return false;
+      const changed = tabs.get(el) !== t.dataset.value;
+      el.dataset.value = t.dataset.value; upgradeTabs(el);
+      if (changed && emit) el.dispatchEvent(new CustomEvent('change', { bubbles: true, detail: { value: t.dataset.value } }));
+      return true;
+    },
+  };
+  document.addEventListener('click', e => {
+    const t = e.target.closest && e.target.closest('.sc-tabs > button');
+    if (!t || t.disabled) return;
+    tabs.set(t.parentElement, t.dataset.value, { emit: true });
+  });
+  document.addEventListener('keydown', e => {
+    const t = e.target.closest && e.target.closest('.sc-tabs > button');
+    if (!t || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+    const list = tabList(t.parentElement).filter(b => !b.disabled), i = list.indexOf(t);
+    const next = { ArrowLeft: list[(i - 1 + list.length) % list.length], ArrowRight: list[(i + 1) % list.length], Home: list[0], End: list[list.length - 1] }[e.key];
+    if (!next) return;
+    e.preventDefault();
+    tabs.set(t.parentElement, next.dataset.value, { emit: true }); next.focus();
   });
 
   /* ---------- Slider ---------- */
@@ -640,6 +689,7 @@
     if (el.matches(TOGGLES)) return upgradeToggle(el);
     if (el.matches(SLIDERS)) return upgradeSlider(el);
     if (el.matches(CHECKBOXES)) return upgradeCheckbox(el);
+    if (el.matches(TABS)) return upgradeTabs(el);
     if (el.matches(SCREENS)) return upgradeScreen(el);
     if (el.matches(MESSAGES)) return upgradeText(el);
     upgradeText(el);
@@ -671,6 +721,8 @@
         else if (r.target.matches(TOGGLES)) upgradeToggle(r.target);
         else if (r.target.matches(SLIDERS)) upgradeSlider(r.target);
         else if (r.target.matches(CHECKBOXES)) upgradeCheckbox(r.target);
+        else if (r.target.matches(TABS)) upgradeTabs(r.target);
+        else if (r.target.matches('.sc-tabs > button')) upgradeTabs(r.target.parentElement);
         else if (r.target.matches(ICON_COMPONENTS)) upgradeIcon(r.target);
       } else {
         r.addedNodes.forEach(n => n.nodeType === Node.ELEMENT_NODE && upgrade(n));
@@ -678,11 +730,13 @@
         if (r.target.matches && r.target.matches(BADGE_HOSTS)) upgradeBubble(r.target);
         if (r.target.matches && r.target.matches(TOGGLES)) upgradeToggle(r.target);
         if (r.target.matches && r.target.matches(CHECKBOXES)) upgradeCheckbox(r.target);
+        if (r.target.matches && r.target.matches(TABS)) upgradeTabs(r.target);
+        if (r.target.matches && r.target.matches('.sc-tabs > button')) upgradeTabs(r.target.parentElement);
       }
     }
   }).observe(document.documentElement, {
     childList: true, subtree: true, characterData: true,
-    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-checked', 'data-min', 'data-step', 'disabled', 'data-width', 'data-height', 'data-fit'],
+    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-checked', 'data-min', 'data-step', 'disabled', 'data-panel', 'data-width', 'data-height', 'data-fit'],
   });
 
   // Press feedback (delegated, so it works for dynamically added components)
@@ -699,7 +753,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.15.0',
+    version: '0.16.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */
@@ -745,6 +799,8 @@
     slider,
     /** Checkboxes: SC.checkbox.get(el) · set(el, boolean, {emit?}) · toggle(el, {emit?}) */
     checkbox,
+    /** Segmented tabs: SC.tabs.get(el) · SC.tabs.set(el, value, {emit?}) */
+    tabs,
     /** Floating feedback text: SC.float('+50', event | element | {x, y}, { color, size, icon, style }) */
     float,
     /** URL of an icon in the kit: SC.icon('coin') */

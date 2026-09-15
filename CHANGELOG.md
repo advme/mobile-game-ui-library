@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.16.0-A — Tabs component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `.sc-tabs`, a segmented row of 2–4 tabs matching the reference: glossy blue selected tab and muted dark purple unselected tabs with a thin light top edge. Supports optional kit icons, 9 selected colors, 3 sizes, `data-badge` on tabs (Count Bubble now accepts `.sc-tab` hosts), disabled tabs, and `data-panel` to auto show/hide content. It has full tab semantics (tablist/tab, aria-selected, roving tabindex, aria-controls), Left/Right/Home/End keys, a `change` event and `SC.tabs.get/set`. Added the AI manual, registry item, docs page and `tools/tests/tabs.html`.
+- Tested: `tools/tests/tabs.html` 24/24 passed, covering initial/fallback selection, roles, icons, panels, click/disabled/no form submit, keyboard wrap, silent set/emit, attribute change, badges, appended tabs, repeated upgrades, equal widths and no observer loop. Visual check in the docs against the reference sheet. Checkbox 20/20, Slider 30/30, Toggle 39/39 and Bubble 60/60 still pass.
+- Notes for next agent: `sc.js` has a shared `setAttr(el, k, v)` helper that only writes real changes; use it in new builders to avoid MutationObserver loops. In tests, use `:scope >` when counting `.sc-text`, because a badge bubble contains its own `.sc-text`.
+
 ## v0.15.0-A — Checkbox component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `.sc-checkbox`, a chunky tick box. Unchecked is a dark inset box. Checked is a glossy colored box with the kit `check` icon, which pops in. It has an optional outlined text label, 10 colors, 3 sizes and native disabled. Uses `role=checkbox` + `aria-checked` and one `change` event per tap/Space/Enter. API: `SC.checkbox.get/set/toggle` (silent unless `{emit:true}`, boolean-only like Toggle). Added the AI manual, registry item, docs page and `tools/tests/checkbox.html`.

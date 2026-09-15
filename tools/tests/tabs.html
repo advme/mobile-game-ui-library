@@ -1,0 +1,80 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tabs regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/tabs/tabs.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/bubble/bubble.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>body { margin:20px; font:14px system-ui; background:#243453; color:white; } #fixtures { width:360px; display:grid; gap:12px; } li { margin:6px 0; } .fail { color:#ff9da7; }</style>
+<h1>Tabs checks</h1>
+<p id="summary">Running…</p>
+<div id="fixtures">
+  <div id="t1" class="sc-tabs" data-value="b">
+    <button data-value="a" data-panel="pa">A</button>
+    <button data-value="b" data-panel="pb" data-icon="gem">B</button>
+    <button data-value="c" disabled>C</button>
+  </div>
+  <div id="pa">panel A</div><div id="pb">panel B</div>
+  <div id="t2" class="sc-tabs"><button data-value="x" disabled>X</button><button data-value="y" data-badge="4">Y</button></div>
+  <form id="f"><div id="t3" class="sc-tabs" data-value="nope"><button data-value="m">M</button><button data-value="n">N</button></div></form>
+</div>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const settle = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  const sel = el => [...el.children].filter(b => b.getAttribute('aria-selected') === 'true').map(b => b.dataset.value).join();
+  const key = (el, k) => el.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
+  try {
+    const t1 = $('#t1'), [a, b, c] = t1.children;
+    check('initial data-value selects B only', sel(t1) === 'b' && SC.tabs.get(t1) === 'b');
+    check('roles, classes, type, roving tabindex', t1.getAttribute('role') === 'tablist' && a.classList.contains('sc-tab') && a.getAttribute('role') === 'tab' && a.type === 'button' && b.tabIndex === 0 && a.tabIndex === -1);
+    check('text and icon built', a.querySelector('.sc-text')?.dataset.text === 'A' && b.querySelector('img[data-sc-icon]')?.src.endsWith('/gem.png'));
+    check('panels follow selection', $('#pa').hidden && !$('#pb').hidden && a.getAttribute('aria-controls') === 'pa' && $('#pa').getAttribute('role') === 'tabpanel');
+    check('disabled first tab skipped for default; badge on tab', sel($('#t2')) === 'y' && !!$('#t2').children[1].querySelector('.sc-bubble'));
+    check('invalid data-value falls back to first tab', sel($('#t3')) === 'm' && $('#t3').dataset.value === 'm');
+
+    let log = []; document.addEventListener('change', e => e.target.matches('.sc-tabs') && log.push(e.target.id + ':' + e.detail.value));
+    a.click(); await settle();
+    check('click selects and fires change', sel(t1) === 'a' && log.join() === 't1:a' && !$('#pa').hidden && $('#pb').hidden);
+    a.click(); await settle();
+    check('clicking selected tab fires nothing', log.length === 1);
+    c.click(); await settle();
+    check('disabled tab ignores click', sel(t1) === 'a' && log.length === 1);
+    let submitted = false; $('#f').addEventListener('submit', e => { submitted = true; e.preventDefault(); });
+    $('#t3').children[1].click(); await settle();
+    check('tabs inside a form do not submit', !submitted && sel($('#t3')) === 'n');
+
+    log = []; a.focus(); key(a, 'ArrowRight');
+    check('ArrowRight selects next enabled + focuses', sel(t1) === 'b' && document.activeElement === b && log.join() === 't1:b');
+    key(b, 'ArrowRight');
+    check('ArrowRight wraps past disabled', sel(t1) === 'a');
+    key(a, 'End'); check('End → last enabled', sel(t1) === 'b');
+    key(b, 'Home'); check('Home → first', sel(t1) === 'a');
+
+    log = []; check('SC.tabs.set silent', SC.tabs.set(t1, 'b') === true && sel(t1) === 'b' && log.length === 0);
+    check('SC.tabs.set unknown/disabled returns false', SC.tabs.set(t1, 'zzz') === false && SC.tabs.set(t1, 'c') === false && sel(t1) === 'b');
+    SC.tabs.set(t1, 'a', { emit: true }); check('emit fires change', log.join() === 't1:a');
+    t1.dataset.value = 'b'; await settle();
+    check('attribute change re-selects', sel(t1) === 'b' && !$('#pb').hidden);
+    b.dataset.badge = '3'; await settle();
+    check('data-badge on tab adds bubble', b.querySelector('.sc-bubble')?.textContent === '3');
+    const extra = document.createElement('button'); extra.dataset.value = 'd'; extra.textContent = 'D'; t1.append(extra); await settle();
+    check('appended tab upgrades', extra.classList.contains('sc-tab') && extra.getAttribute('aria-selected') === 'false' && !!extra.querySelector('.sc-text'));
+    SC.upgrade(t1); SC.upgrade(t1);
+    check('repeated upgrades do not duplicate', [...t1.children].every(t => t.querySelectorAll(':scope > .sc-text').length === 1 && t.querySelectorAll(':scope > img[data-sc-icon]').length <= 1));
+    const fresh = document.createElement('div'); fresh.className = 'sc-tabs'; fresh.innerHTML = '<button data-value="1">One</button><button data-value="2">Two</button>';
+    $('#fixtures').append(fresh); await settle();
+    check('inserted group upgrades', sel(fresh) === '1');
+    check('equal widths', Math.abs(fresh.children[0].offsetWidth - fresh.children[1].offsetWidth) <= 1);
+    let records = 0; const mo = new MutationObserver(r => records += r.length); mo.observe($('#fixtures'), { attributes: true, subtree: true, childList: true });
+    await new Promise(r => setTimeout(r, 200)); mo.disconnect();
+    check('no endless updates', records === 0);
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Tabs';
+});
+</script>

@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tabs — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/tabs/tabs.css">
+<link rel="stylesheet" href="../components/bubble/bubble.css">
+<link rel="stylesheet" href="../components/slot/slot.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+.stack { display:flex; flex-direction:column; gap:16px; width:100%; max-width:360px; }
+.panel { display:flex; gap:10px; justify-content:center; padding:14px; border-radius:14px; background:rgba(255,255,255,.06); }
+.log { margin:0; color:#dce6ff; font:14px/1.5 system-ui; text-align:center; }
+</style>
+</head>
+<body>
+<script>
+SCDocs.page({
+  title: 'Tabs',
+  lead: 'A row of 2–4 tabs where exactly one is selected — Daily / Weekly, Skins / Items, Friends / Global. Can show and hide content panels for you.',
+  hero: `<div class="stack">
+  <div class="sc-tabs" data-value="daily">
+    <button data-value="daily">Daily</button>
+    <button data-value="weekly" data-badge="2" data-badge-color="red">Weekly</button>
+  </div>
+  <div class="sc-tabs" data-value="shop">
+    <button data-value="shop" data-icon="gem">Shop</button>
+    <button data-value="rank" data-icon="trophy">Rank</button>
+  </div>
+</div>`,
+  css: ['components/tabs/tabs.css'],
+  usageNote: 'Put plain buttons with data-value inside. The runtime styles them and keeps exactly one selected.',
+  usage: `<div class="sc-tabs" data-value="daily">
+  <button data-value="daily">Daily</button>
+  <button data-value="weekly">Weekly</button>
+</div>`,
+  examples: [
+    { title: 'Three tabs with icons', desc: 'data-icon adds a kit icon before the text.',
+      html: `<div class="stack">
+  <div class="sc-tabs" data-value="coins">
+    <button data-value="coins" data-icon="coin">Coins</button>
+    <button data-value="gems" data-icon="gem">Gems</button>
+    <button data-value="chests" data-icon="chest">Chests</button>
+  </div>
+</div>` },
+    { title: 'Sizes', desc: 'sm, md (default) and lg.',
+      html: `<div class="stack">
+  <div class="sc-tabs" data-size="sm"><button data-value="a">Friends</button><button data-value="b">Global</button></div>
+  <div class="sc-tabs"><button data-value="a">Friends</button><button data-value="b">Global</button></div>
+  <div class="sc-tabs" data-size="lg"><button data-value="a">Friends</button><button data-value="b">Global</button></div>
+</div>` },
+    { title: 'Colors', desc: 'data-color on the group sets the selected tab color.',
+      html: `<div class="stack">
+  <div class="sc-tabs" data-color="green"><button data-value="a">Free</button><button data-value="b">Premium</button></div>
+  <div class="sc-tabs" data-color="purple"><button data-value="a">Skins</button><button data-value="b">Items</button></div>
+  <div class="sc-tabs" data-color="yellow"><button data-value="a">Normal</button><button data-value="b">Hard</button></div>
+</div>` },
+    { title: 'Badges and disabled', desc: 'data-badge puts a count bubble on a tab (load bubble.css). A disabled tab cannot be picked.',
+      html: `<div class="stack">
+  <div class="sc-tabs">
+    <button data-value="inbox" data-icon="mail" data-badge="5" data-badge-color="red">Inbox</button>
+    <button data-value="gifts" data-icon="gift">Gifts</button>
+    <button data-value="vip" data-icon="lock" disabled>VIP</button>
+  </div>
+</div>` },
+    { title: 'Live: switch panels', desc: 'data-panel points at a content element; only the selected tab’s panel is visible. The change event reports the new value.',
+      html: `<div class="stack">
+  <div class="sc-tabs" id="shopTabs" data-value="coins">
+    <button data-value="coins" data-icon="coin" data-panel="pCoins">Coins</button>
+    <button data-value="gems" data-icon="gem" data-panel="pGems">Gems</button>
+  </div>
+  <div class="panel" id="pCoins">
+    <div class="sc-slot" data-icon="coin" data-count="100" data-color="yellow"></div>
+    <div class="sc-slot" data-icon="coin" data-count="500" data-color="yellow"></div>
+  </div>
+  <div class="panel" id="pGems" hidden>
+    <div class="sc-slot" data-icon="gem" data-count="20" data-color="purple"></div>
+    <div class="sc-slot" data-icon="ruby" data-count="5" data-color="red"></div>
+  </div>
+  <p class="log">change: —</p>
+</div>`,
+      setup(preview) {
+        preview.querySelector('#shopTabs').addEventListener('change', e => preview.querySelector('.log').textContent = 'change: ' + e.detail.value);
+      } },
+  ],
+  api: [
+    ['data-value', 'tab value', 'first tab', 'On .sc-tabs: which tab is selected.'],
+    ['data-color', 'sky blue green yellow orange red purple pink mint', 'blue', 'On .sc-tabs: selected tab color.'],
+    ['data-size', 'sm md lg', 'md', 'On .sc-tabs: 36 / 46 / 56 px tall.'],
+    ['button data-value', 'text', '', 'Required on every tab, unique in the group.'],
+    ['button data-icon', 'icon-name', '', 'Kit icon before the text.'],
+    ['button data-panel', 'element id', '', 'Content shown only while this tab is selected.'],
+    ['button data-badge', 'number', '', 'Count bubble (needs bubble.css).'],
+    ['button disabled', 'boolean', '', 'Tab cannot be selected.'],
+  ],
+  js: `tabs.addEventListener('change', e => showList(e.detail.value)); // user picked a tab
+
+SC.tabs.get(tabs);                        // → 'daily'
+SC.tabs.set(tabs, 'weekly');              // silent
+SC.tabs.set(tabs, 'weekly', { emit: true }); // fires change if it changed
+tabs.dataset.value = 'weekly';            // attribute also works (silent)`,
+  rules: [
+    'Use <b>2–4 tabs</b> with <b>1-word labels</b>. For 5 main screens at the bottom of the phone, use Bottom Tab Bar instead.',
+    'Every tab is a plain <code class="inline">&lt;button data-value&gt;</code> directly inside <code class="inline">.sc-tabs</code>. Do not add classes or roles yourself.',
+    'Prefer <code class="inline">data-panel</code> to show/hide content; otherwise listen for <code class="inline">change</code>.',
+    'Put tabs at the top of a popup or screen middle, full width of their container.',
+    'Use <code class="inline">data-badge</code> for new items on a tab (red for attention).',
+  ],
+});
+</script>
+</body>
+</html>

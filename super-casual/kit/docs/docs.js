@@ -7,14 +7,14 @@
     { group: 'Getting started', items: [['Introduction', null], ['Installation', null]] },
     { group: 'Components', items: [
       ['Button', 'button.html'], ['Icon Button', 'icon-button.html'], ['Resource Counter', 'counter.html'],
-      ['Reward Slot', 'slot.html'], ['Popup', 'popup.html'], ['Progress Bar', 'progress.html'], ['Screen Title', 'title.html'], ['Star Rating', 'stars.html'], ['Countdown Timer', 'timer.html'], ['Floating Text', 'float.html'], ['Count Bubble', 'bubble.html'], ['Screen Shell', 'screen.html'], ['Toggle', 'toggle.html'], ['Slider', 'slider.html'], ['Checkbox', 'checkbox.html'] ] },
+      ['Reward Slot', 'slot.html'], ['Popup', 'popup.html'], ['Progress Bar', 'progress.html'], ['Screen Title', 'title.html'], ['Star Rating', 'stars.html'], ['Countdown Timer', 'timer.html'], ['Floating Text', 'float.html'], ['Count Bubble', 'bubble.html'], ['Screen Shell', 'screen.html'], ['Toggle', 'toggle.html'], ['Slider', 'slider.html'], ['Checkbox', 'checkbox.html'], ['Tabs', 'tabs.html'] ] },
     { group: 'Examples', items: [['Button on a game canvas', '../examples/button-on-canvas.html'], ['Screens on a game canvas', '../examples/screen-on-canvas.html']] },
   ];
   const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   const here = location.pathname.split('/').pop();
 
   function nav() {
-    return `<div class="brand">Super Casual UI Kit<small>v0.15 · for mobile web games</small></div>` +
+    return `<div class="brand">Super Casual UI Kit<small>v0.16 · for mobile web games</small></div>` +
       NAV.map(g => `<div class="nav-group"><h4>${g.group}</h4>${g.items.map(([label, href]) =>
         href ? `<a href="${href}" class="${href === here ? 'active' : ''}">${label}</a>` : `<a class="soon">${label}</a>`
       ).join('')}</div>`).join('');
