@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "items": [
     {
       "name": "core",
@@ -1872,6 +1872,76 @@
         {
           "title": "Leaderboard row",
           "html": "<div class=\"sc-row\" data-variant=\"leader\" data-color=\"blue\"><span class=\"sc-row-rank\">4</span><span class=\"sc-row-avatar\" data-icon=\"avatar\"></span><span class=\"sc-row-title\">Player</span><span class=\"sc-row-score\" data-icon=\"trophy\">5154</span></div>"
+        }
+      ]
+    },
+    {
+      "name": "loading",
+      "type": "registry:ui",
+      "title": "Loading Bar",
+      "description": "Loading screen part: big progress bar with percent label, bouncing icon and rotating tips; done() hides its screen.",
+      "whenToUse": "Game start while assets load.",
+      "files": [
+        "components/loading/loading.css"
+      ],
+      "docs": "components/loading/loading.md",
+      "dependencies": [
+        "core",
+        "progress",
+        "screen"
+      ],
+      "html": "<div class=\"sc-screen\" data-backdrop=\"solid\" id=\"loadingScreen\">\n  <div class=\"sc-screen-middle\"><h1 class=\"sc-title\" data-color=\"gold\">MY GAME</h1></div>\n  <div class=\"sc-screen-bottom\"><div class=\"sc-loading\" id=\"loader\" data-icon=\"coin\" data-tips=\"Tap to jump|Collect coins\"></div></div>\n</div>",
+      "props": {
+        "data-value": {
+          "type": "number",
+          "default": 0
+        },
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "blue",
+            "sky",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "default": "orange"
+        },
+        "data-icon": {
+          "type": "icon",
+          "optional": true
+        },
+        "data-tips": {
+          "type": "string",
+          "optional": true,
+          "description": "Tips separated by |"
+        },
+        "data-label": {
+          "type": "string",
+          "default": "Loading"
+        }
+      },
+      "events": {
+        "done": "Reached 100 via SC.loading.set/done"
+      },
+      "js": {
+        "SC.loading.set(el, pct)": "Update",
+        "SC.loading.done(el)": "Fill, fire done, hide parent screen"
+      },
+      "rules": [
+        "Solid Screen Shell: title middle, .sc-loading bottom.",
+        "Real progress, never backwards.",
+        "2-5 short tips.",
+        "Start the game on done."
+      ],
+      "examples": [
+        {
+          "title": "Update",
+          "js": "SC.loading.set('loader', 42); loader.addEventListener('done', startGame);"
         }
       ]
     }

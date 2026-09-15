@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.22.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.23.0-A**
 
 ## Next task
-**Build Loading Bar / Screen.** A loading screen block-in-a-component: `.sc-loading` full screen (inside Screen Shell) with game title area, a glossy progress bar with percent, a rotating tip line and an optional spinning kit icon. JS: `SC.loading.set(el, pct)`, `SC.loading.done(el)` fades it out and fires `done`. Reuse Progress Bar and Screen Shell. Follow AGENTS.md §4.
+**Build Notification Dot.** A small red `alert` icon ("!") or a plain red dot pinned to the top-right corner of any button, icon button, tab, tab bar item or slot, meaning "something new here" (no count; counts use Count Bubble). Target API: `data-alert` (bare = "!" icon, `data-alert="dot"` = small plain dot), gentle pulse, `SC.setAlert(el, true|false|'dot')`. Uses the `alert` kit icon. Follow AGENTS.md §4.
 
 ## In progress
 _Nothing._
@@ -33,14 +33,14 @@ _Nothing._
 | 20 | Hint Bubble | `.sc-hint / data-hint` | v0.20.0-A |
 | 21 | Toast Message | `SC.toast()` | v0.21.0-A |
 | 22 | Item Row | `.sc-row` | v0.22.0-A |
+| 23 | Loading Bar | `.sc-loading` | v0.23.0-A |
 
 ## Left — components (in this order)
-1. Loading Bar / Screen ← next
-2. Top Bar (avatar, level, resources) 🖼 avatar image needed
-3. Level Badge 🖼 badge image needed (placeholder in `super-casual/old-demos/success.html`)
-4. Notification Dot 🖼 red "!" image needed
-5. Shop Card 🖼 pack images needed
-6. Tutorial Hand 🖼 hand image needed
+1. Top Bar (avatar, level, resources) (use `avatar`, `level-badge` icons) ← next
+2. Level Badge (use `level-badge` icon + number)
+3. Notification Dot (use `alert` icon)
+4. Shop Card (use `gem-pile`, `coin-pile` icons)
+5. Tutorial Hand (use `hand` icon)
 
 ## Left — blocks (full screens built ONLY from kit components)
 Gameplay HUD · Pause · Success · Fail (old versions exist in `super-casual/old-demos/`; build each block as one `.sc-screen`) · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading

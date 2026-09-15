@@ -30,11 +30,12 @@
   const TAG_HOSTS = '.sc-button, .sc-icon-button, .sc-tab';
   const TAGS = '.sc-tag:not(.sc-tag-attached)';
   const BANNERS = '.sc-banner';
+  const LOADINGS = '.sc-loading';
   const TAB_ITEMS = '.sc-tabs > button, .sc-tabbar > button';
   const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot, .sc-tab, .sc-tabbar-item';
   const MESSAGES = '.sc-popup-message, .sc-popup-value';
   const SCREENS = '.sc-screen';
-  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}, ${TAGS}, ${BANNERS}, .sc-row-avatar`;
+  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}, ${TAGS}, ${BANNERS}, .sc-row-avatar, ${LOADINGS}`;
   const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, ${TOGGLES}, ${CHECKBOXES}, ${TAB_ITEMS}`;
 
   const script = document.currentScript;
@@ -417,6 +418,57 @@
     }, item.duration);
   }
 
+  /* ---------- Loading Bar ---------- */
+  function upgradeLoading(el) {
+    const pct = Math.max(0, Math.min(100, Math.round(Number(el.dataset.value) || 0)));
+    const part = (cls, tag = 'div') => {
+      let p = el.querySelector(`:scope > .${cls}`);
+      if (!p) { p = document.createElement(tag); p.className = cls; el.append(p); }
+      return p;
+    };
+    if (el.dataset.icon) {
+      let img = el.querySelector(':scope > .sc-loading-icon');
+      if (!img) { img = document.createElement('img'); img.className = 'sc-loading-icon'; img.alt = ''; el.prepend(img); }
+      if (img.src !== ASSETS + el.dataset.icon + '.png') img.src = ASSETS + el.dataset.icon + '.png';
+    } else el.querySelector(':scope > .sc-loading-icon')?.remove();
+    const label = part('sc-loading-label');
+    if (!label.firstElementChild) label.append(textSpan(''));
+    setSpan(label.firstElementChild, `${el.dataset.label || 'Loading'}… ${pct}%`);
+    let bar = el.querySelector(':scope > .sc-progress');
+    if (!bar) { bar = document.createElement('div'); bar.className = 'sc-progress'; bar.dataset.size = 'lg'; el.append(bar); }
+    setAttr(bar, 'data-color', el.dataset.color || 'orange');
+    if (bar.dataset.value !== String(pct)) { bar.dataset.value = String(pct); upgradeProgress(bar); }
+    setAttr(el, 'role', 'progressbar'); setAttr(el, 'aria-valuemin', 0); setAttr(el, 'aria-valuemax', 100); setAttr(el, 'aria-valuenow', pct);
+    const tips = (el.dataset.tips || '').split('|').map(t => t.trim()).filter(Boolean);
+    const tip = el.querySelector(':scope > .sc-loading-tip');
+    if (!tips.length) { tip?.remove(); clearInterval(el._scTips); el._scTips = null; return; }
+    const tipEl = tip || part('sc-loading-tip');
+    if (!tipEl.textContent || !tips.includes(tipEl.textContent)) tipEl.textContent = tips[0];
+    if (!el._scTips && tips.length > 1) el._scTips = setInterval(() => {
+      if (!el.isConnected) return clearInterval(el._scTips);
+      const list = (el.dataset.tips || '').split('|').map(t => t.trim()).filter(Boolean);
+      tipEl.classList.add('sc-fade');
+      setTimeout(() => { tipEl.textContent = list[(list.indexOf(tipEl.textContent) + 1) % list.length] || ''; tipEl.classList.remove('sc-fade'); }, 250);
+    }, 3000);
+  }
+  const loading = {
+    set(el, pct) {
+      if (typeof el === 'string') el = document.getElementById(el);
+      if (!el) return;
+      const v = Math.max(0, Math.min(100, Math.round(Number(pct) || 0)));
+      el.dataset.value = String(v); upgradeLoading(el);
+      if (v === 100 && !el._scDone) { el._scDone = true; el.dispatchEvent(new CustomEvent('done', { bubbles: true })); }
+      if (v < 100) el._scDone = false;
+    },
+    done(el) {
+      if (typeof el === 'string') el = document.getElementById(el);
+      if (!el) return;
+      loading.set(el, 100);
+      const shell = el.closest('.sc-screen');
+      if (shell) setTimeout(() => screen.hide(shell), 400);
+    },
+  };
+
   /* ---------- Counter ---------- */
   function formatNumber(n, format) {
     n = Math.round(Number(n) || 0);
@@ -796,6 +848,7 @@
     if (el.matches(TAG_HOSTS)) upgradeTag(el);
     if (el.matches(TAGS)) return upgradeText(el);
     if (el.matches(BANNERS)) return upgradeBanner(el);
+    if (el.matches(LOADINGS)) return upgradeLoading(el);
     if (el.matches(COUNTERS)) return upgradeCounter(el);
     if (el.matches(SLOTS)) return upgradeSlot(el);
     if (el.matches(POPUPS)) return upgradePopup(el);
@@ -840,6 +893,7 @@
         else if (r.target.matches(SLIDERS)) upgradeSlider(r.target);
         else if (r.target.matches(CHECKBOXES)) upgradeCheckbox(r.target);
         else if (r.target.matches(TABS)) upgradeTabs(r.target);
+        else if (r.target.matches(LOADINGS)) upgradeLoading(r.target);
         else if (r.target.matches(TAB_ITEMS)) upgradeTabs(r.target.parentElement);
         else if (r.target.matches(ICON_COMPONENTS)) upgradeIcon(r.target);
       } else {
@@ -855,7 +909,7 @@
     }
   }).observe(document.documentElement, {
     childList: true, subtree: true, characterData: true,
-    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-tag-color', 'data-tag-pos', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-checked', 'data-min', 'data-step', 'disabled', 'data-panel', 'data-width', 'data-height', 'data-fit'],
+    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-tag-color', 'data-tag-pos', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-checked', 'data-min', 'data-step', 'disabled', 'data-panel', 'data-tips', 'data-width', 'data-height', 'data-fit'],
   });
 
   // Press feedback (delegated, so it works for dynamically added components)
@@ -872,7 +926,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.22.0',
+    version: '0.23.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */
@@ -926,6 +980,8 @@
     hint,
     /** Short message at the top/bottom: SC.toast('Saved!', { kind, icon, duration, pos }) */
     toast,
+    /** Loading bars: SC.loading.set(el, 42) · SC.loading.done(el) */
+    loading,
     /** Floating feedback text: SC.float('+50', event | element | {x, y}, { color, size, icon, style }) */
     float,
     /** URL of an icon in the kit: SC.icon('coin') */

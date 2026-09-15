@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loading Bar — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/screen/screen.css">
+<link rel="stylesheet" href="../components/progress/progress.css">
+<link rel="stylesheet" href="../components/loading/loading.css">
+<link rel="stylesheet" href="../components/title/title.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+.phone { position:relative; overflow:hidden; width:280px; height:580px; border-radius:26px; border:3px solid #050308; flex:none; background:#5dbb4a; }
+.col { display:flex; flex-direction:column; align-items:center; gap:14px; width:100%; }
+</style>
+</head>
+<body>
+<script>
+SCDocs.page({
+  title: 'Loading Bar',
+  lead: 'The loading screen before the game starts — a big bar with percent, a bouncing icon and rotating tips. Hides itself when done.',
+  hero: `<div class="phone">
+  <div class="sc-screen" data-fit="parent" data-backdrop="solid">
+    <div class="sc-screen-middle"><h1 class="sc-title" data-color="gold">SEA RUN</h1></div>
+    <div class="sc-screen-bottom">
+      <div class="sc-loading" data-value="64" data-icon="coin" data-tips="Tap to jump over gaps|Collect coins to unlock skins|Watch out for sharks!"></div>
+    </div>
+  </div>
+</div>`,
+  css: ['components/progress/progress.css', 'components/loading/loading.css'],
+  usageNote: 'Put it in the bottom of a solid Screen Shell. Call SC.loading.set while assets load and SC.loading.done at the end.',
+  usage: `<div class="sc-screen" data-backdrop="solid" id="loadingScreen">
+  <div class="sc-screen-middle"><h1 class="sc-title" data-color="gold">MY GAME</h1></div>
+  <div class="sc-screen-bottom">
+    <div class="sc-loading" id="loader" data-tips="Tap to jump|Collect coins"></div>
+  </div>
+</div>`,
+  examples: [
+    { title: 'Bar only', desc: 'Without icon or tips. data-color and data-label change the look and text.',
+      html: `<div class="col">
+  <div class="sc-loading" data-value="30"></div>
+  <div class="sc-loading" data-value="85" data-color="green" data-label="Downloading"></div>
+</div>` },
+    { title: 'Live: load the game', desc: 'Simulated loading; the screen hides itself at 100% and fires "done".',
+      html: `<div class="col">
+  <div class="phone">
+    <div class="sc-screen" data-fit="parent" id="demoPlay"><div class="sc-screen-middle"><h1 class="sc-title" data-color="green">PLAYING!</h1></div></div>
+    <div class="sc-screen" data-fit="parent" data-backdrop="solid" id="demoLoad">
+      <div class="sc-screen-middle"><h1 class="sc-title" data-color="gold">MY GAME</h1></div>
+      <div class="sc-screen-bottom"><div class="sc-loading" id="demoLoader" data-icon="gem" data-color="purple" data-tips="Loading levels…|Polishing gems…"></div></div>
+    </div>
+  </div>
+  <button class="sc-button" data-color="yellow" data-size="sm" id="demoStart">Load again</button>
+</div>`,
+      setup(p) {
+        const loader = p.querySelector('#demoLoader'), shell = p.querySelector('#demoLoad');
+        let timer;
+        const run = () => {
+          clearInterval(timer); SC.screen.show(shell); let v = 0; SC.loading.set(loader, 0);
+          timer = setInterval(() => { v += 7 + Math.random() * 9; if (v >= 100) { clearInterval(timer); SC.loading.done(loader); } else SC.loading.set(loader, v); }, 250);
+        };
+        p.querySelector('#demoStart').onclick = run; run();
+      } },
+  ],
+  api: [
+    ['data-value', '0–100', '0', 'Progress in percent.'],
+    ['data-color', 'blue sky green yellow orange red purple pink mint', 'orange', 'Bar fill.'],
+    ['data-icon', 'icon-name', '', 'Bouncing icon above the bar.'],
+    ['data-tips', 'text|text', '', 'Tips separated by |, rotate every 3 s.'],
+    ['data-label', 'text', 'Loading', 'Text before the percent.'],
+  ],
+  js: `SC.loading.set(loader, 42);    // update
+loader.addEventListener('done', startGame);
+SC.loading.done(loader);        // 100%, fires done, hides its screen`,
+  rules: [
+    'Use one loading screen at game start: <b>solid</b> Screen Shell, game title in the middle, <code class="inline">.sc-loading</code> in the bottom.',
+    'Report real progress (assets loaded / total). Never jump backwards.',
+    'Tips: 2–5 short gameplay tips, max ~8 words each.',
+    'Call <code class="inline">SC.loading.done</code> when ready; start the game on the <code class="inline">done</code> event.',
+  ],
+});
+</script>
+</body>
+</html>

@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.23.0-A — Loading Bar component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `.sc-loading` for the start/loading screen: a large glossy progress bar with "Loading… 42%", an optional bouncing kit icon and rotating tips (`data-tips="a|b"`, every 3 s). It has `data-color`/`data-label`, progressbar semantics, and `SC.loading.set(el, pct)` (clamped; fires `done` once at 100). `SC.loading.done(el)` fills it and hides its Screen Shell. Added the AI manual, registry item, docs page (hero + live simulated load that switches to a play screen) and `tools/tests/loading.html`. STATUS image notes now point to the new icons.
+- Tested: `tools/tests/loading.html` 12/12 (parts built once, label, bar value/color, aria, tips rotate, clamp both ways, done once, attribute re-render, done() hides shell). Live docs demo loads and reveals PLAYING!. All other test pages still pass.
+- Notes for next agent: `upgradeLoading` owns a tip interval per element (`el._scTips`); it stops when the element leaves the page.
+
 ## v0.22.0-A — Item Row component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `.sc-row`, a colored card row layout matching the reference mission and leaderboard rows. It has 8 colors (plain dark titles on white/yellow, outlined white on the others), a `leader` variant (rank badge + framed avatar + title + trophy score), a `done` state, and row parts `.sc-row-body/-title/-rank/-avatar/-score` that auto-build kit text and icons. Kit parts inside (slot, progress, button) work as usual. Also relabelled the Tab Bar's home item as Home. Added the AI manual, registry item, docs page (missions, leaderboard, friend row, live claim) and `tools/tests/row.html`.

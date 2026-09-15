@@ -1,0 +1,49 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Loading regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/screen/screen.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/progress/progress.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/loading/loading.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>body { margin:20px; font:14px system-ui; background:#243453; color:white; } #box { position:relative; width:300px; height:600px; overflow:hidden; } li { margin:6px 0; } .fail { color:#ff9da7; }</style>
+<h1>Loading checks</h1>
+<p id="summary">Running…</p>
+<div id="box"><div class="sc-screen" data-fit="parent" data-backdrop="solid" id="shell"><div class="sc-screen-bottom">
+  <div class="sc-loading" id="l" data-value="25" data-icon="coin" data-tips="One|Two"></div>
+</div></div></div>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  try {
+    await wait(50);
+    const l = $('#l'), label = () => l.querySelector('.sc-loading-label .sc-text').dataset.text;
+    check('builds icon, label, progress, tip once', l.querySelectorAll(':scope > .sc-loading-icon').length === 1 && l.querySelectorAll(':scope > .sc-progress').length === 1 && l.querySelectorAll(':scope > .sc-loading-tip').length === 1);
+    check('label shows percent', label() === 'Loading… 25%');
+    check('progress bar gets value + default orange', l.querySelector('.sc-progress').dataset.value === '25' && l.querySelector('.sc-progress').dataset.color === 'orange');
+    check('progressbar role + aria', l.getAttribute('role') === 'progressbar' && l.getAttribute('aria-valuenow') === '25');
+    check('first tip shown', l.querySelector('.sc-loading-tip').textContent === 'One');
+    let done = 0; l.addEventListener('done', () => done++);
+    SC.loading.set(l, 142.6);
+    check('set clamps to 100 and fires done once', label() === 'Loading… 100%' && done === 1);
+    SC.loading.set(l, 100);
+    check('done not fired twice', done === 1);
+    SC.loading.set(l, -5);
+    check('clamps below 0', label() === 'Loading… 0%');
+    await wait(3400);
+    check('tip rotates', l.querySelector('.sc-loading-tip').textContent === 'Two');
+    l.dataset.value = '50'; await wait(30);
+    check('attribute change re-renders', label() === 'Loading… 50%');
+    SC.upgrade(l); SC.upgrade(l);
+    check('no duplicate parts', l.children.length === 4);
+    SC.loading.done('l'); await wait(800);
+    check('done() hides its screen', $('#shell').hidden && done === 2);
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Loading';
+});
+</script>
