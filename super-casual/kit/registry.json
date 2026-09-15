@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "items": [
     {
       "name": "core",
@@ -203,7 +203,7 @@
         "label": {
           "type": "text",
           "optional": true,
-          "description": "Plain text inside → label under the icon (use with flat)"
+          "description": "Plain text inside \u2192 label under the icon (use with flat)"
         },
         "data-badge": {
           "type": "number",
@@ -262,7 +262,7 @@
       "type": "registry:ui",
       "title": "Resource Counter",
       "description": "Icon + dark pill + number, with optional \"+\" button. Builds itself from attributes.",
-      "whenToUse": "Showing coins, gems, energy, lives, tickets — usually top-right of the HUD or home screen.",
+      "whenToUse": "Showing coins, gems, energy, lives, tickets \u2014 usually top-right of the HUD or home screen.",
       "files": [
         "components/counter/counter.css"
       ],
@@ -895,7 +895,7 @@
       "type": "registry:ui",
       "title": "Floating Text",
       "description": "JavaScript-only feedback text that floats up and fades at a tap, element or screen position.",
-      "whenToUse": "Points, coins, damage, healing, XP, combos — anywhere the player needs instant feedback.",
+      "whenToUse": "Points, coins, damage, healing, XP, combos \u2014 anywhere the player needs instant feedback.",
       "files": [
         "components/float/float.css"
       ],
@@ -1042,7 +1042,7 @@
       "dependencies": [
         "core"
       ],
-      "html": "<div class=\"sc-screen\" data-backdrop=\"dim\" id=\"win\" hidden>\n  <div class=\"sc-screen-top\">…</div>\n  <div class=\"sc-screen-middle\">…</div>\n  <div class=\"sc-screen-bottom\">…</div>\n</div>",
+      "html": "<div class=\"sc-screen\" data-backdrop=\"dim\" id=\"win\" hidden>\n  <div class=\"sc-screen-top\">\u2026</div>\n  <div class=\"sc-screen-middle\">\u2026</div>\n  <div class=\"sc-screen-bottom\">\u2026</div>\n</div>",
       "props": {
         "data-backdrop": {
           "type": "enum",
@@ -1123,6 +1123,117 @@
         {
           "title": "Switch screens",
           "js": "SC.screen.hide('hud'); SC.screen.show('win');"
+        }
+      ]
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "title": "Toggle",
+      "description": "Glossy ON/OFF settings switch with a sliding thumb, native keyboard activation and accessible state.",
+      "whenToUse": "Binary settings that take effect immediately, such as sound, music and vibration.",
+      "files": [
+        "components/toggle/toggle.css"
+      ],
+      "docs": "components/toggle/toggle.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<button class=\"sc-toggle\" data-checked aria-label=\"Sound\"></button>",
+      "props": {
+        "data-checked": {
+          "type": "enum",
+          "values": [
+            "",
+            "true",
+            "false"
+          ],
+          "optional": true,
+          "description": "Bare or true means ON. Missing, false or invalid means OFF. Direct edits render silently."
+        },
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "sky",
+            "blue",
+            "dark",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "default": "green",
+          "description": "ON color; OFF stays muted dark."
+        },
+        "data-size": {
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md",
+          "description": "96\u00d744, 104\u00d748 or 120\u00d756 px."
+        },
+        "disabled": {
+          "type": "boolean",
+          "optional": true,
+          "description": "Native disabled attribute; blocks user interaction."
+        },
+        "aria-label": {
+          "type": "string",
+          "description": "Required stable setting name unless aria-labelledby references an external label."
+        },
+        "aria-labelledby": {
+          "type": "string",
+          "optional": true,
+          "description": "External label ID; alternative to aria-label."
+        }
+      },
+      "events": [
+        {
+          "name": "change",
+          "detail": {
+            "checked": "boolean"
+          },
+          "description": "Bubbles once per user activation, after state updates. Helpers emit only when requested and changed."
+        }
+      ],
+      "js": {
+        "SC.setChecked(el, boolean, {emit?})": "Set state; alias of SC.toggle.set. Silent by default. emit:true notifies only on a changed value.",
+        "SC.toggle.get(el)": "Read a boolean.",
+        "SC.toggle.set(el, boolean, {emit?})": "Set state immediately. Requires a boolean. Can restore a disabled switch.",
+        "SC.toggle.toggle(el, {emit?})": "Invert; silent unless emit:true."
+      },
+      "rules": [
+        "Use a native button with only sc-toggle, and put the visible setting name outside.",
+        "Always supply a stable accessible name; runtime owns type=button, role=switch and aria-checked.",
+        "Set state through data-checked or SC.setChecked / SC.toggle. Do not set aria-checked or .checked.",
+        "Listen for change to apply and save settings; do not invert again in a click or key handler.",
+        "Use native disabled, not aria-disabled alone, to lock interaction.",
+        "Keep a consistent ON palette and preserve the 44px minimum height and focus outline space.",
+        "No image assets required. Do not use SC.setLabel or SC.setIcon on a toggle.",
+        "No automatic persistence or form submission; game code owns settings and side effects."
+      ],
+      "examples": [
+        {
+          "title": "Sound enabled",
+          "html": "<button class=\"sc-toggle\" data-checked aria-label=\"Sound\"></button>"
+        },
+        {
+          "title": "Music disabled",
+          "html": "<button class=\"sc-toggle\" data-checked=\"false\" aria-label=\"Music\"></button>"
+        },
+        {
+          "title": "Unavailable setting",
+          "html": "<button class=\"sc-toggle\" data-checked disabled aria-label=\"Cloud saves\"></button>"
+        },
+        {
+          "title": "Restore silently",
+          "js": "SC.setChecked(soundToggle, true);"
         }
       ]
     }

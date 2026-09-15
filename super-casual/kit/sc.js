@@ -23,11 +23,12 @@
   const TITLES = '.sc-title';
   const STARS = '.sc-stars';
   const TIMERS = '.sc-timer';
+  const TOGGLES = 'button.sc-toggle';
   const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot';
   const MESSAGES = '.sc-popup-message, .sc-popup-value';
   const SCREENS = '.sc-screen';
-  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}`;
-  const PRESSABLE = '.sc-button, .sc-icon-button, .sc-counter-plus';
+  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}`;
+  const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, ${TOGGLES}`;
 
   const script = document.currentScript;
   const ASSETS = script && script.dataset.assets
@@ -93,6 +94,41 @@
     if (bubble.dataset.color !== color) bubble.dataset.color = color;
     bubble.title = String(count);
   }
+
+  /* ---------- Toggle ---------- */
+  function upgradeToggle(el) {
+    const checked = toggle.get(el);
+    el.type = 'button';
+    el.setAttribute('role', 'switch');
+    el.setAttribute('aria-checked', String(checked));
+    let label = el.querySelector(':scope > .sc-toggle-label');
+    if (!label) {
+      label = document.createElement('span'); label.className = 'sc-toggle-label';
+      label.setAttribute('aria-hidden', 'true'); label.append(textSpan('')); el.append(label);
+    }
+    setSpan(label.firstElementChild, checked ? 'ON' : 'OFF');
+    if (!el.querySelector(':scope > .sc-toggle-thumb')) {
+      const thumb = document.createElement('span'); thumb.className = 'sc-toggle-thumb';
+      thumb.setAttribute('aria-hidden', 'true'); el.append(thumb);
+    }
+  }
+  const toggle = {
+    get(el) { return el.dataset.checked === '' || el.dataset.checked === 'true'; },
+    set(el, checked, { emit = false } = {}) {
+      // Require booleans so the string "false" cannot accidentally turn a setting on.
+      if (typeof checked !== 'boolean') throw new TypeError('SC.toggle.set expects a boolean');
+      const changed = toggle.get(el) !== checked;
+      el.dataset.checked = String(checked); upgradeToggle(el);
+      if (changed && emit) el.dispatchEvent(new CustomEvent('change', { bubbles: true, detail: { checked } }));
+    },
+    toggle(el, options) { toggle.set(el, !toggle.get(el), options); },
+  };
+  // Native buttons already activate once for touch, Enter and Space.
+  document.addEventListener('click', e => {
+    const el = e.target.closest && e.target.closest(TOGGLES);
+    if (!el || el.matches(':disabled')) return;
+    toggle.toggle(el, { emit: true });
+  });
 
   /* ---------- Counter ---------- */
   function formatNumber(n, format) {
@@ -477,6 +513,7 @@
     if (el.matches(TITLES)) return upgradeTitle(el);
     if (el.matches(STARS)) return upgradeStars(el);
     if (el.matches(TIMERS)) return upgradeTimer(el);
+    if (el.matches(TOGGLES)) return upgradeToggle(el);
     if (el.matches(SCREENS)) return upgradeScreen(el);
     if (el.matches(MESSAGES)) return upgradeText(el);
     upgradeText(el);
@@ -505,16 +542,18 @@
         else if (r.target.matches(STARS)) upgradeStars(r.target);
         else if (r.target.matches(SCREENS)) upgradeScreen(r.target);
         else if (r.target.matches(TIMERS)) { if (r.attributeName === 'data-seconds') timer.reset(r.target); else upgradeTimer(r.target); }
+        else if (r.target.matches(TOGGLES)) upgradeToggle(r.target);
         else if (r.target.matches(ICON_COMPONENTS)) upgradeIcon(r.target);
       } else {
         r.addedNodes.forEach(n => n.nodeType === Node.ELEMENT_NODE && upgrade(n));
         if (r.target.matches && r.target.matches(`${TEXT_COMPONENTS}, ${MESSAGES}`)) upgradeText(r.target);
         if (r.target.matches && r.target.matches(BADGE_HOSTS)) upgradeBubble(r.target);
+        if (r.target.matches && r.target.matches(TOGGLES)) upgradeToggle(r.target);
       }
     }
   }).observe(document.documentElement, {
     childList: true, subtree: true, characterData: true,
-    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-width', 'data-height', 'data-fit'],
+    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-checked', 'data-width', 'data-height', 'data-fit'],
   });
 
   // Press feedback (delegated, so it works for dynamically added components)
@@ -522,7 +561,7 @@
   const release = () => { if (pressed) pressed.classList.remove('sc-pressed'); pressed = null; };
   document.addEventListener('pointerdown', e => {
     const el = e.target.closest && e.target.closest(PRESSABLE);
-    if (!el || el.disabled) return;
+    if (!el || el.matches(':disabled')) return;
     pressed = el; el.classList.add('sc-pressed');
   });
   ['pointerup', 'pointercancel'].forEach(t => document.addEventListener(t, release));
@@ -531,7 +570,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.12.0',
+    version: '0.13.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */
@@ -569,6 +608,10 @@
     screen,
     /** Timers: SC.timer.start(el) · pause(el) · reset(el, seconds?) · add(el, seconds) */
     timer,
+    /** Settings switches: SC.toggle.get(el) · set(el, boolean, {emit?}) · toggle(el, {emit?}) */
+    toggle,
+    /** Set a settings switch; alias of SC.toggle.set. */
+    setChecked: toggle.set,
     /** Floating feedback text: SC.float('+50', event | element | {x, y}, { color, size, icon, style }) */
     float,
     /** URL of an icon in the kit: SC.icon('coin') */

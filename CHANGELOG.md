@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.13.0-B — Toggle component
+- Agent: B (Codex / GPT) · Date: 2026-09-15
+- Done: Added a glossy ON/OFF settings switch with a sliding circular thumb, three sizes, kit ON colors, disabled states, keyboard focus and reduced-motion support. Bare `data-checked` or `data-checked="true"` turns it ON; missing/false turns it OFF. Added `SC.setChecked`, `SC.toggle.get/set/toggle`, and one bubbling `change` event per user activation. Includes the AI manual, registry and live docs.
+- Tested: Docs in a browser at 375×812 and 1280×900, with no horizontal overflow. Checked state, sizes, colors, disabled examples, code tabs, keyboard focus, tap/Space/Enter, silent restore, lock/unlock and dynamically added options. All 39 Toggle regression checks and all 60 Count Bubble checks passed. Existing Screen Shell demo still starts, pauses and resumes. JavaScript syntax, registry paths/version consistency and `git diff --check` passed; no browser warnings/errors in the checked pages.
+- Notes for next agent: Screen Shell was completed by Claude while Toggle was being built; Toggle was developed separately, then integrated after v0.12.0-A. Use a native button and a stable accessible name. Runtime owns `aria-checked`; the game owns saving and side effects. Helpers are silent unless `{ emit: true }` is passed, and `SC.setChecked` requires a boolean. Native disabled fieldsets now suppress press feedback too. Regression page: `/tools/tests/toggle.html`. Next: Slider.
+
 ## v0.12.0-A — Screen Shell component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `.sc-screen`, the full-page layout every game screen starts from. It has top / middle / bottom regions and scales a 400×870 design to any phone shape. It never scrolls, keeps 12 real px + safe-area margins, and offers `data-backdrop` none/dim/solid (none lets taps reach the game), `data-enter` fade/pop, `data-fit="parent"` for previews, and `SC.screen.show/hide/fit` with `show`/`hide` events. Added the AI manual, registry item, docs page and a full example `examples/screen-on-canvas.html` (start → HUD → pause over a tappable canvas).

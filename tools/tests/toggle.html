@@ -1,0 +1,112 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toggle regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/toggle/toggle.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>
+body { margin:20px; font:14px system-ui; background:#243453; color:white; }
+#fixtures { display:flex; flex-wrap:wrap; gap:24px; padding:12px; }
+li { margin:8px 0; } .fail { color:#ff9da7; }
+/* Measure resting geometry deterministically; animation is checked in live docs. */
+.sc-toggle, .sc-toggle-thumb { transition:none !important; }
+</style>
+<h1>Toggle checks</h1>
+<p id="summary">Running…</p>
+<div id="fixtures">
+  <button id="initial" class="sc-toggle" data-checked aria-label="Initial setting"></button>
+</div>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const fixtures = document.querySelector('#fixtures'), results = document.querySelector('#results');
+  let passed = 0, failed = 0;
+  const settle = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  const check = (name, condition) => {
+    const li = document.createElement('li'); li.textContent = (condition ? 'PASS: ' : 'FAIL: ') + name;
+    if (condition) passed++; else { failed++; li.className = 'fail'; }
+    results.append(li);
+  };
+  const current = el => ({checked:SC.toggle.get(el), aria:el.getAttribute('aria-checked'), text:el.querySelector('.sc-toggle-label')?.textContent});
+  const synced = (el, checked) => {
+    const state = current(el);
+    return state.checked === checked && state.aria === String(checked) && state.text === (checked ? 'ON' : 'OFF');
+  };
+  try {
+    const initial = document.querySelector('#initial');
+    check('Initial bare data-checked builds ON state', synced(initial,true));
+    check('Switch semantics and non-submit type', initial.type === 'button' && initial.getAttribute('role') === 'switch');
+    check('Name stays stable; visual text is hidden from accessibility', initial.getAttribute('aria-label') === 'Initial setting' && initial.querySelector('.sc-toggle-label').getAttribute('aria-hidden') === 'true');
+    const toggle = document.createElement('button'); toggle.className = 'sc-toggle'; toggle.setAttribute('aria-label','Dynamic setting'); fixtures.append(toggle);
+    await settle();
+    check('Dynamically inserted switch defaults OFF', synced(toggle,false));
+    const changes = [];
+    fixtures.addEventListener('change', e => { if (e.target === toggle) changes.push({checked:e.detail.checked,synced:synced(toggle,e.detail.checked)}); });
+    toggle.click(); await settle();
+    check('Click changes ON and bubbles exactly once after rendering', synced(toggle,true) && changes.length === 1 && changes[0].checked === true && changes[0].synced);
+    toggle.click(); await settle();
+    check('Second click changes OFF once', synced(toggle,false) && changes.length === 2 && changes[1].checked === false);
+    SC.setChecked(toggle,true); await settle();
+    check('SC.setChecked restores silently', synced(toggle,true) && changes.length === 2);
+    SC.toggle.set(toggle,false,{emit:true}); await settle();
+    check('Explicit emit sends one state change', synced(toggle,false) && changes.length === 3);
+    SC.setChecked(toggle,false,{emit:true}); await settle();
+    check('Unchanged value never emits', changes.length === 3);
+    SC.toggle.toggle(toggle); await settle();
+    check('Inversion is silent by default', synced(toggle,true) && changes.length === 3);
+    SC.toggle.toggle(toggle,{emit:true}); await settle();
+    check('Inversion can explicitly emit', synced(toggle,false) && changes.length === 4);
+    for (const [value, expected] of [['',true],['true',true],['false',false],['TRUE',false],['nope',false]]) {
+      toggle.setAttribute('data-checked',value); await settle();
+      check('Attribute value '+JSON.stringify(value)+' stays in sync without events', synced(toggle,expected) && changes.length === 4);
+    }
+    toggle.setAttribute('data-checked',''); await settle(); toggle.removeAttribute('data-checked'); await settle();
+    check('Removing the attribute returns OFF silently', synced(toggle,false) && changes.length === 4);
+    let rejected = false;
+    try { SC.setChecked(toggle,'false'); } catch (e) { rejected = e instanceof TypeError; }
+    check('Rejects string booleans without changing state', rejected && synced(toggle,false));
+    toggle.disabled = true; toggle.click(); toggle.dispatchEvent(new MouseEvent('click',{bubbles:true}));
+    check('Disabled switch blocks native and synthetic clicks', synced(toggle,false) && changes.length === 4);
+    SC.setChecked(toggle,true); await settle();
+    check('Programmatic restoration works while disabled', synced(toggle,true) && changes.length === 4);
+    toggle.disabled = false; toggle.click(); await settle();
+    check('Re-enabled switch works again', synced(toggle,false) && changes.length === 5);
+    const fieldset = document.createElement('fieldset'); fieldset.disabled = true; fixtures.append(fieldset); fieldset.append(toggle);
+    toggle.dispatchEvent(new MouseEvent('click',{bubbles:true})); toggle.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));
+    check('Disabled fieldset blocks clicks and press feedback', synced(toggle,false) && !toggle.classList.contains('sc-pressed') && changes.length === 5);
+    fixtures.append(toggle); fieldset.remove();
+    SC.upgrade(toggle); SC.upgrade(toggle); toggle.click(); await settle();
+    check('Repeated upgrades keep one thumb, one label and one activation', synced(toggle,true) && toggle.querySelectorAll('.sc-toggle-thumb').length === 1 && toggle.querySelectorAll('.sc-toggle-label').length === 1 && changes.length === 6);
+    toggle.replaceChildren(); await settle();
+    check('Rebuilds removed internals with state preserved', synced(toggle,true) && toggle.querySelectorAll('.sc-toggle-thumb').length === 1);
+    for (const [size,width,height] of [['sm',96,44],['md',104,48],['lg',120,56]]) {
+      toggle.dataset.size = size;
+      const positions = [];
+      for (const checked of [false,true]) {
+        SC.setChecked(toggle,checked); await settle();
+        const host = toggle.getBoundingClientRect(), thumb = toggle.querySelector('.sc-toggle-thumb').getBoundingClientRect(), label = toggle.querySelector('.sc-toggle-label .sc-text').getBoundingClientRect();
+        positions.push(thumb.left);
+        check(size+' '+(checked?'ON':'OFF')+': intended size, circular thumb inside track, text clear of thumb', host.width === width && host.height === height && thumb.width === thumb.height && thumb.left >= host.left && thumb.right <= host.right && thumb.top >= host.top && thumb.bottom <= host.bottom && (checked ? label.right < thumb.left : label.left > thumb.right));
+      }
+      check(size+': thumb moves right for ON', positions[1] > positions[0]);
+    }
+    toggle.dataset.color = 'purple'; SC.setChecked(toggle,true); await settle();
+    check('data-color overrides green default', getComputedStyle(toggle).getPropertyValue('--toggle-base').trim() === '#a352f2');
+    SC.setChecked(toggle,false); await settle();
+    check('OFF remains muted dark despite chosen ON color', getComputedStyle(toggle).getPropertyValue('--toggle-base').trim() === '#5b537a');
+    toggle.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));
+    check('Delegated pointer press feedback works', toggle.classList.contains('sc-pressed'));
+    toggle.dispatchEvent(new PointerEvent('pointercancel',{bubbles:true}));
+    check('Cancelled pointer clears feedback', !toggle.classList.contains('sc-pressed'));
+    const form = document.createElement('form'); let submissions = 0;
+    form.addEventListener('submit', e => { e.preventDefault(); submissions++; }); fixtures.append(form); form.append(toggle); toggle.click(); await settle();
+    check('Toggle never submits a containing form', submissions === 0);
+    const name = document.createElement('span'); name.id = 'external-setting-label'; name.textContent = 'External setting'; fixtures.append(name);
+    toggle.removeAttribute('aria-label'); toggle.setAttribute('aria-labelledby',name.id); SC.upgrade(toggle);
+    check('Preserves external accessible label reference', toggle.getAttribute('aria-labelledby') === name.id && !toggle.hasAttribute('aria-label'));
+  } catch (error) { check('Unexpected error: '+error.message,false); }
+  document.querySelector('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = failed ? 'FAIL — Toggle' : 'PASS — Toggle';
+});
+</script>

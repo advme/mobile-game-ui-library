@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toggle — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/toggle/toggle.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+.row { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:24px; }
+.settings { display:flex; flex-direction:column; gap:20px; width:100%; max-width:300px; }
+.setting { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.setting > .sc-text { --fs:22px; }
+.settings-log { margin:0; color:#dce6ff; font:14px/1.5 system-ui; text-align:center; }
+.swatch { display:flex; flex-direction:column; align-items:center; gap:10px; }
+.swatch small { font:13px system-ui; color:#dce6ff; }
+</style>
+</head>
+<body>
+<script>
+SCDocs.page({
+  title:'Toggle',
+  lead:'A glossy ON/OFF switch for sound, music, vibration and other game settings. Tap it or use Space and Enter.',
+  hero:`<div class="settings">
+  <div class="setting">
+    <span class="sc-text" data-text="Sound" aria-hidden="true">Sound</span>
+    <button class="sc-toggle" data-checked="true" aria-label="Sound"></button>
+  </div>
+  <div class="setting">
+    <span class="sc-text" data-text="Music" aria-hidden="true">Music</span>
+    <button class="sc-toggle" aria-label="Music"></button>
+  </div>
+</div>`,
+  css:['components/toggle/toggle.css'],
+  usageNote:'Use a native button and give it a setting name. The runtime builds the switch and keeps its accessible state in sync.',
+  usage:`<button class="sc-toggle" data-checked="true" aria-label="Sound"></button>`,
+  examples:[
+    {title:'ON and OFF', desc:'Green and thumb-right means ON. Muted dark and thumb-left means OFF. Both can be tapped.',
+      html:`<div class="row">
+  <button class="sc-toggle" data-checked aria-label="Sound effects"></button>
+  <button class="sc-toggle" data-checked="false" aria-label="Background music"></button>
+</div>`},
+    {title:'Three sizes', desc:'Small is 96×44px, medium is 104×48px, and large is 120×56px. All preserve a comfortable tap target.',
+      html:`<div class="row">
+  <button class="sc-toggle" data-size="sm" data-checked="true" aria-label="Small toggle"></button>
+  <button class="sc-toggle" data-checked="true" aria-label="Medium toggle"></button>
+  <button class="sc-toggle" data-size="lg" data-checked="true" aria-label="Large toggle"></button>
+</div>`},
+    {title:'ON colors', desc:'Use the kit palette for the enabled state. Every color returns to muted dark when switched OFF.',
+      html:`<div class="row">${['green','sky','blue','dark','yellow','orange','red','purple','pink','mint'].map(color => `
+  <div class="swatch">
+    <button class="sc-toggle" data-checked="true" data-color="${color}" aria-label="${color} toggle"></button>
+    <small>${color}</small>
+  </div>`).join('')}
+</div>`},
+    {title:'Disabled', desc:'An unavailable setting keeps its saved state but cannot be changed by the player.',
+      html:`<div class="row">
+  <button class="sc-toggle" data-checked="true" disabled aria-label="Cloud saves"></button>
+  <button class="sc-toggle" disabled aria-label="Notifications"></button>
+</div>`},
+    {title:'Live: settings', desc:'Each activation sends one change event. Restore sets Sound ON silently; Lock disables it; Add option inserts a new toggle.',
+      html:`<div class="settings">
+  <div class="setting">
+    <span class="sc-text" data-text="Sound" aria-hidden="true">Sound</span>
+    <button class="sc-toggle" data-live-sound data-checked="true" aria-label="Sound"></button>
+  </div>
+  <div data-extra></div>
+  <p class="settings-log" aria-live="polite">Sound ON · 0 change events</p>
+  <div class="row">
+    <button class="sc-button" data-size="sm" data-color="green" data-restore>Restore</button>
+    <button class="sc-button" data-size="sm" data-color="dark" data-lock>Lock</button>
+    <button class="sc-button" data-size="sm" data-color="blue" data-add>Add option</button>
+  </div>
+</div>`,
+      setup(preview) {
+        const sound = preview.querySelector('[data-live-sound]');
+        const log = preview.querySelector('.settings-log'), lock = preview.querySelector('[data-lock]');
+        let changes = 0;
+        const report = note => { log.textContent = `Sound ${SC.toggle.get(sound) ? 'ON' : 'OFF'} · ${changes} change events${note ? ' · ' + note : ''}`; };
+        preview.addEventListener('change', e => {
+          if (!e.target.matches('.sc-toggle')) return;
+          changes++;
+          report(e.target === sound ? '' : `Vibration ${e.detail.checked ? 'ON' : 'OFF'}`);
+        });
+        preview.querySelector('[data-restore]').onclick = () => { SC.toggle.set(sound, true); report('restored silently'); };
+        lock.onclick = () => {
+          sound.disabled = !sound.disabled; SC.setLabel(lock, sound.disabled ? 'Unlock' : 'Lock');
+          report(sound.disabled ? 'locked' : 'unlocked');
+        };
+        preview.querySelector('[data-add]').onclick = () => {
+          const extra = preview.querySelector('[data-extra]');
+          if (extra.children.length) return;
+          extra.innerHTML = `<div class="setting"><span class="sc-text" data-text="Vibration" aria-hidden="true">Vibration</span><button class="sc-toggle" data-color="blue" aria-label="Vibration"></button></div>`;
+          report('option added');
+        };
+      }},
+  ],
+  api:[
+    ['data-checked','empty true false','absent','Bare data-checked or true means ON. Missing or false means OFF; changes render silently.'],
+    ['data-color','sky blue dark green yellow orange red purple pink mint','green','ON color. OFF stays muted dark.'],
+    ['data-size','sm md lg','md','96×44 / 104×48 / 120×56px.'],
+    ['disabled','boolean','','Native disabled attribute; remove it to re-enable.'],
+    ['aria-label / aria-labelledby','setting-name / label-id','','Required stable setting name.'],
+  ],
+  js:`soundToggle.addEventListener('change', event => {
+  game.audio.setEnabled(event.detail.checked); // game-owned behavior
+});
+
+SC.setChecked(soundToggle, true);                 // simple setter
+SC.toggle.get(soundToggle);                       // boolean
+SC.toggle.set(soundToggle, true);                 // silent update
+SC.toggle.set(soundToggle, false, { emit: true }); // notify on a change
+SC.toggle.toggle(soundToggle);                   // invert silently
+soundToggle.dataset.checked = 'true';            // attributes also work
+soundToggle.disabled = true;                     // lock interactions`,
+  rules:[
+    'Use for persistent ON/OFF settings that take effect immediately.',
+    'Always use a native button and a stable accessible setting name; the runtime owns role and aria-checked.',
+    'Put the visible setting name outside the switch. Do not hand-build its inner markup.',
+    'Listen for change to apply or save the setting. Do not add a second click handler that inverts it.',
+    'Set state through data-checked or SC.toggle, not aria-checked or a checkbox checked property.',
+    'Use actual booleans with SC.toggle.set. Attribute values are the strings true and false.',
+    'Keep a consistent ON color and leave space for the keyboard focus outline.',
+    'Use native disabled to lock the control. The game owns persistence and audio behavior.',
+  ],
+});
+</script>
+</body>
+</html>
