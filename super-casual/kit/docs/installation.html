@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Installation — Super Casual UI Kit</title>
+<link rel="stylesheet" href="docs.css">
+<script src="docs.js"></script>
+</head>
+<body>
+<script>
+SCDocs.article({
+  title: 'Installation',
+  lead: 'Copy the kit folder next to your game, add three kinds of lines to the page, and write components as HTML.',
+  body: `
+<h2>1. Copy the folder</h2>
+<pre data-code>
+kit/
+  core.css            required
+  sc.js               required
+  assets/             icons (+ offsets.css, loaded automatically)
+  components/<name>/  one CSS file + AI manual per component
+  blocks/             ready-made screens to copy
+  registry.json       machine-readable list of everything
+</pre>
+
+<h2>2. Add it to the page</h2>
+<p class="desc">core.css once, the CSS of each component you use, and sc.js once. Add viewport-fit=cover so iPhone safe areas work.</p>
+<pre data-code>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<link rel="stylesheet" href="kit/core.css">
+<link rel="stylesheet" href="kit/components/screen/screen.css">
+<link rel="stylesheet" href="kit/components/button/button.css">
+<script src="kit/sc.js"><\/script>
+</pre>
+<p class="desc">Icons load from the assets folder next to sc.js. To use another folder: <code class="inline">&lt;script src="kit/sc.js" data-assets="my/icons/"&gt;</code>.</p>
+
+<h2>3. A minimal game page</h2>
+<pre data-code>
+<canvas id="game"></canvas>
+
+<div class="sc-screen" id="menu" data-backdrop="dim">
+  <div class="sc-screen-middle">
+    <h1 class="sc-title" data-color="gold">MY GAME</h1>
+    <button class="sc-button" data-color="yellow" data-size="lg" id="play">PLAY</button>
+  </div>
+</div>
+
+<script>
+  document.getElementById('play').onclick = () => {
+    SC.screen.hide('menu');
+    startGame();            // your engine
+  };
+<\/script>
+</pre>
+
+<h2>4. How components work</h2>
+<ul>
+  <li>Write the tag with <code class="inline">class="sc-…"</code> and <code class="inline">data-*</code> attributes. <code class="inline">sc.js</code> builds the inner parts, also for elements your game adds later.</li>
+  <li>Change attributes any time (<code class="inline">el.dataset.value = 5</code>) or use helpers like <code class="inline">SC.setValue</code>, <code class="inline">SC.popup.open</code>, <code class="inline">SC.toast</code>.</li>
+  <li>Listen for events on the element: <code class="inline">change</code>, <code class="inline">buy</code>, <code class="inline">done</code>, <code class="inline">profile</code>…</li>
+  <li>Show and hide with the <code class="inline">hidden</code> attribute; screens and popups with <code class="inline">SC.screen</code> / <code class="inline">SC.popup</code>.</li>
+</ul>
+
+<h2>5. Screens</h2>
+<p>Every full-page UI is one <a href="screen.html">Screen Shell</a>: a top bar, a centered middle and a bottom bar. It is designed at 400×870 and scales to any phone. Use <code class="inline">data-backdrop="none"</code> for the HUD (taps reach the game), <code class="inline">dim</code> for menus over the game and <code class="inline">solid</code> for full screens.</p>
+
+<h2>6. Preview locally</h2>
+<pre data-code>
+python3 tools/serve.py 8765
+# docs:  http://localhost:8765/super-casual/kit/docs/introduction.html
+# tests: http://localhost:8765/tools/tests/index.html
+</pre>
+`,
+});
+</script>
+</body>
+</html>

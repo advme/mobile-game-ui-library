@@ -11,4 +11,4 @@ A shadcn-style UI kit for mobile hyper-casual and casual games, built for the Pi
 python3 tools/serve.py 8765
 ```
 
-Then open http://localhost:8765/super-casual/kit/docs/button.html
+Then open http://localhost:8765/super-casual/kit/docs/introduction.html (tests: http://localhost:8765/tools/tests/index.html)

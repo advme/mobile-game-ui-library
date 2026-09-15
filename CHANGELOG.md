@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.38.1-A — Docs: Introduction and Installation
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `docs/introduction.html` (what the kit is, the look, a step-by-step guide for AI agents, tables of all components and blocks generated from the registry) and `docs/installation.html` (folder layout, page setup, minimal game page, how components work, Screen Shell basics, local preview). New `SCDocs.article()` renders prose pages. Both are enabled in the NAV, and the root `index.html` + README point to Introduction and the test runner.
+- Tested: Both pages render in the browser with the NAV active and code blocks with Copy.
+- Notes for next agent: In docs pages, a literal `</script>` inside code samples must be written `<\/script>` or it ends the page script.
+
 ## v0.38.0-A — Loading block
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `kit/blocks/loading.html`, the start-up flow. A solid Screen Shell with the gold game title and `.sc-loading` (bouncing coin, rotating tips) runs simulated asset loading via `SC.loading.set(loaded/total)`. On `done` the bar hides and PLAY + a blinking "Tap to start" appear; PLAY hides the loading screen and shows the game HUD. This completes all 10 planned blocks. `blocks/README.md` now notes that custom wrappers hidden with `hidden` need a `[hidden]` glue rule.

@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.38.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.38.1-A**
 
 ## Next task
-**Write the docs Introduction and Installation pages.** Create `super-casual/kit/docs/introduction.html` (what the kit is, the look, how AI agents should use it: registry.json → component .md → blocks, the design rules in plain words, list of components and blocks) and `docs/installation.html` (folder layout, the 3 lines: core.css + component css + sc.js, a minimal page over a canvas, the icon list, Screen Shell basics). Enable both in the docs NAV (they are currently `null`), make the docs start page point to Introduction, and link it from the root `index.html`. Then do the final check in STATUS "Left — other".
+**Final check: build a new screen with a fresh AI agent using only the kit.** Open a new AI session (Codex or Claude) with no history. Ask it to read `super-casual/kit/docs/introduction.html` + `registry.json` and build a small new screen (for example a "Level Select" map with locked levels and stars) in `kit/blocks/levels.html`. Write down everything that confused it, then fix the docs, manuals or registry. Also good next: a Level Select block and a Profile block.
 
 ## In progress
 _Nothing._
@@ -61,9 +61,9 @@ _All components done._
 _All blocks done._
 
 ## Left — other
-- Docs pages: Introduction, Installation
 - Image prompts: icons4 delivered (home, shop, helmet, play, sound, sound-off, music, music-off, menu, restart, alert, level-badge, hand, avatar, gem-pile, coin-pile). Nothing owed right now.
-- Final: let a fresh AI agent build a screen using only the kit, then fix what confuses it
+- Final: let a fresh AI agent build a screen using only the kit, then fix what confuses it ← next
+- Ideas after that: Level Select block (map of levels with stars/locks), Profile block, Leaderboard block, Settings inside Pause
 
 ## Links
 - Repo is **private** (since v0.10.2-A), so GitHub Pages is off. Preview locally: `python3 tools/serve.py 8765` → http://localhost:8765/super-casual/kit/docs/button.html

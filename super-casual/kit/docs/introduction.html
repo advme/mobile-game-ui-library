@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Introduction — Super Casual UI Kit</title>
+<link rel="stylesheet" href="docs.css">
+<script src="docs.js"></script>
+</head>
+<body>
+<script>
+SCDocs.article({
+  title: 'Introduction',
+  lead: 'A chunky, glossy mobile game UI kit for hyper-casual and casual 2D/3D web games — made so AI agents can build complete game screens from it.',
+  body: `
+<h2>What it is</h2>
+<p>Super Casual is plain <b>HTML + CSS</b> plus one small script (<code class="inline">sc.js</code>). The UI floats above the game canvas, so it works with any engine — Three.js, Babylon, Phaser, PixiJS or plain canvas.</p>
+<p>Like shadcn/ui, it has two levels:</p>
+<ul>
+  <li><b>Components</b> — single pieces (Button, Popup, Progress Bar, Tabs…). You write one tag with a few <code class="inline">data-*</code> attributes and the runtime builds the rest.</li>
+  <li><b>Blocks</b> — complete copy-paste screens (HUD, Success, Fail, Shop…) built only from components.</li>
+</ul>
+
+<h2>The look</h2>
+<ul>
+  <li>Candy colors, thick dark outlines, a light top band and a darker 3D bottom edge.</li>
+  <li>White text with a thin outline and a slightly thicker bottom edge.</li>
+  <li>No sharp corners. Icons and pictures are generated images (never drawn with code).</li>
+  <li>Everything fits a phone without scrolling and keeps 12px from the screen edges.</li>
+</ul>
+
+<h2>For AI agents: how to build a screen</h2>
+<ol>
+  <li>Read <code class="inline">kit/registry.json</code> — every component (props, events, rules) and every block, plus the list of icon names.</li>
+  <li>Start from the closest <b>block</b> in <code class="inline">kit/blocks/</code> and copy it.</li>
+  <li>For each component you change, read its manual <code class="inline">kit/components/&lt;name&gt;/&lt;name&gt;.md</code> — especially “Rules for AI agents”.</li>
+  <li>Use only icon names from <code class="inline">registry.json → icons</code>. Never draw pictures in code.</li>
+  <li>Talk to the game with events (<code class="inline">change</code>, <code class="inline">buy</code>, <code class="inline">done</code>…) and <code class="inline">SC.*</code> calls.</li>
+</ol>
+
+<h2>Components</h2>
+<div class="table-wrap"><table><thead><tr><th>Component</th><th>Use for</th></tr></thead><tbody>
+<tr><td><a href="button.html">Button</a></td><td>Any action the player taps: play, retry, claim, buy, confirm, cancel.</td></tr>
+<tr><td><a href="icon-button.html">Icon Button</a></td><td>Pause, close, settings, back/next arrows, menu shortcuts (Daily, Mail, Shop).</td></tr>
+<tr><td><a href="counter.html">Resource Counter</a></td><td>Showing coins, gems, energy, lives, tickets — usually top-right of the HUD or home screen.</td></tr>
+<tr><td><a href="slot.html">Reward Slot</a></td><td>Rewards, prizes, loot, shop contents, level requirements.</td></tr>
+<tr><td><a href="popup.html">Popup</a></td><td>Confirmations, level start info, pause menu, downloads, purchase confirm, any modal over the game.</td></tr>
+<tr><td><a href="progress.html">Progress Bar</a></td><td>XP, level score, health, energy, loading, timers.</td></tr>
+<tr><td><a href="title.html">Screen Title</a></td><td>Result and event screens: CLEAR!, FAILED, LEVEL UP, NEW RECORD, PAUSED.</td></tr>
+<tr><td><a href="stars.html">Star Rating</a></td><td>Level results, level select buttons, item quality, ratings.</td></tr>
+<tr><td><a href="timer.html">Countdown Timer</a></td><td>Continue offers, level time limits, energy refills, limited-time events.</td></tr>
+<tr><td><a href="float.html">Floating Text</a></td><td>Points, coins, damage, healing, XP, combos — anywhere the player needs instant feedback.</td></tr>
+<tr><td><a href="bubble.html">Count Bubble</a></td><td>Booster stock, unread messages or available rewards on an existing component.</td></tr>
+<tr><td><a href="screen.html">Screen Shell</a></td><td>The root of every full-page UI: gameplay HUD, start, pause, success, fail, shop, settings, loading.</td></tr>
+<tr><td><a href="toggle.html">Toggle</a></td><td>Binary settings that take effect immediately, such as sound, music and vibration.</td></tr>
+<tr><td><a href="slider.html">Slider</a></td><td>Sound/music volume, sensitivity, brightness, difficulty levels.</td></tr>
+<tr><td><a href="checkbox.html">Checkbox</a></td><td>Choices listed together or confirmed later: don't show again, terms, mission checklists.</td></tr>
+<tr><td><a href="tabs.html">Tabs</a></td><td>Switching lists inside a popup or screen: Daily/Weekly, Coins/Gems, Friends/Global, Skins/Items.</td></tr>
+<tr><td><a href="tabbar.html">Bottom Tab Bar</a></td><td>Main navigation between home-level screens (Shop, Chests, Play, Rank, Settings). Never during gameplay.</td></tr>
+<tr><td><a href="tag.html">Tag Ribbon</a></td><td>Highlight a new, hot, discounted or boosted item.</td></tr>
+<tr><td><a href="banner.html">Title Banner Ribbon</a></td><td>NEW SKIN!, SEASON RESULT, LEVEL UP, BIG WIN above a reveal or result.</td></tr>
+<tr><td><a href="hint.html">Hint Bubble</a></td><td>Info explanations, item effects, tutorial steps.</td></tr>
+<tr><td><a href="toast.html">Toast Message</a></td><td>Feedback for an action: not enough coins, saved, purchase complete, +1 life.</td></tr>
+<tr><td><a href="row.html">Item Row</a></td><td>Lists: daily missions, achievements, leaderboards, friends, inbox.</td></tr>
+<tr><td><a href="loading.html">Loading Bar</a></td><td>Game start while assets load.</td></tr>
+<tr><td><a href="alert.html">Notification Dot</a></td><td>New mail, free reward available, unlocked item, unseen tab.</td></tr>
+<tr><td><a href="level.html">Level Badge</a></td><td>Player level, hero/item level, XP bars.</td></tr>
+<tr><td><a href="topbar.html">Top Bar</a></td><td>Top of home/menu screens.</td></tr>
+<tr><td><a href="shopcard.html">Shop Card</a></td><td>Shop screens and offer popups: currency packs, lives, chests, boosters.</td></tr>
+<tr><td><a href="tutorial.html">Tutorial Hand</a></td><td>First-time tutorials and gameplay gesture hints.</td></tr>
+</tbody></table></div>
+
+<h2>Blocks</h2>
+<div class="table-wrap"><table><thead><tr><th>Block</th><th>Use for</th></tr></thead><tbody>
+<tr><td><a href="../blocks/hud.html">Gameplay HUD</a></td><td>Any level-based or score-based game while playing.</td></tr>
+<tr><td><a href="../blocks/success.html">Success</a></td><td>After the player wins a level.</td></tr>
+<tr><td><a href="../blocks/fail.html">Fail</a></td><td>When the player loses a level.</td></tr>
+<tr><td><a href="../blocks/pause.html">Pause</a></td><td>When the player pauses during a level.</td></tr>
+<tr><td><a href="../blocks/start.html">Start</a></td><td>Main menu of casual games with meta features.</td></tr>
+<tr><td><a href="../blocks/reward.html">Reward Reveal</a></td><td>Opening chests, unlocking skins/characters, big rewards.</td></tr>
+<tr><td><a href="../blocks/daily.html">Daily Reward</a></td><td>Retention: daily login rewards.</td></tr>
+<tr><td><a href="../blocks/settings.html">Settings</a></td><td>Game settings from the menu or pause screen.</td></tr>
+<tr><td><a href="../blocks/shop.html">Shop</a></td><td>In-game store for currency packs and items.</td></tr>
+<tr><td><a href="../blocks/loading.html">Loading</a></td><td>Game start while assets load.</td></tr>
+</tbody></table></div>
+
+<p style="margin-top:28px">Next: <a href="installation.html"><b>Installation →</b></a></p>
+`,
+});
+</script>
+</body>
+</html>

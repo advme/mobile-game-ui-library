@@ -4,7 +4,7 @@
 */
 (function () {
   const NAV = [
-    { group: 'Getting started', items: [['Introduction', null], ['Installation', null]] },
+    { group: 'Getting started', items: [['Introduction', 'introduction.html'], ['Installation', 'installation.html']] },
     { group: 'Components', items: [
       ['Button', 'button.html'], ['Icon Button', 'icon-button.html'], ['Resource Counter', 'counter.html'],
       ['Reward Slot', 'slot.html'], ['Popup', 'popup.html'], ['Progress Bar', 'progress.html'], ['Screen Title', 'title.html'], ['Star Rating', 'stars.html'], ['Countdown Timer', 'timer.html'], ['Floating Text', 'float.html'], ['Count Bubble', 'bubble.html'], ['Screen Shell', 'screen.html'], ['Toggle', 'toggle.html'], ['Slider', 'slider.html'], ['Checkbox', 'checkbox.html'], ['Tabs', 'tabs.html'], ['Bottom Tab Bar', 'tabbar.html'], ['Tag Ribbon', 'tag.html'], ['Title Banner', 'banner.html'], ['Hint Bubble', 'hint.html'], ['Toast Message', 'toast.html'], ['Item Row', 'row.html'], ['Loading Bar', 'loading.html'], ['Notification Dot', 'alert.html'], ['Level Badge', 'level.html'], ['Top Bar', 'topbar.html'], ['Shop Card', 'shopcard.html'], ['Tutorial Hand', 'tutorial.html'] ] },
@@ -33,6 +33,17 @@
   const codeBlock = text => `<div class="block-code"><div class="code"><button class="copy">Copy</button><pre>${esc(text)}</pre></div></div>`;
 
   window.SCDocs = {
+    /** Prose page (Introduction, Installation): SCDocs.article({ title, lead, body }) — body is HTML; use codeBlock via <pre data-code> */
+    article(c) {
+      const body = c.body.replace(/<pre data-code>([\s\S]*?)<\/pre>/g, (_, code) => codeBlock(code.replace(/^\n/, '')));
+      document.body.innerHTML = `<div class="layout"><aside>${nav()}</aside><main>
+        <div class="crumbs">Getting started › ${c.title}</div>
+        <h1>${c.title}</h1>
+        <p class="lead">${c.lead}</p>
+        ${body}
+      </main></div>`;
+      document.title = `${c.title} — Super Casual UI Kit`;
+    },
     page(c) {
       document.body.innerHTML = `<div class="layout"><aside>${nav()}</aside><main>
         <div class="crumbs">Components › ${c.title}</div>
