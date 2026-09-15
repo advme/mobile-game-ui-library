@@ -350,11 +350,14 @@
     let x = pos === 'left' ? r.left - w - gap : pos === 'right' ? r.right + gap : cx - w / 2;
     let y = pos === 'top' ? r.top - h - gap : pos === 'bottom' ? r.bottom + gap : cy - h / 2;
     x = Math.max(m, Math.min(innerWidth - m - w, x)); y = Math.max(m, Math.min(innerHeight - m - h, y));
-    const ax = Math.max(16, Math.min(w - 16, cx - x)), ay = Math.max(14, Math.min(h - 14, cy - y));
+    // Pointer offsets are measured inside the border (CSS positions from the padding box) and kept off the rounded corners
+    const cs = getComputedStyle(bubble), bw = bubble.clientLeft, arrow = (pos === 'left' || pos === 'right' ? 13 : 17) * (Number(bubble.style.getPropertyValue('--hint-s')) || 1);
+    const keep = parseFloat(cs.borderTopLeftRadius) - bw + arrow * .75;
+    const ax = Math.max(keep, Math.min(w - 2 * bw - keep, cx - x - bw)), ay = Math.max(keep, Math.min(h - 2 * bw - keep, cy - y - bw));
     bubble.style.translate = `${Math.round(x)}px ${Math.round(y)}px`;
     bubble.style.setProperty('--ax', ax + 'px'); bubble.style.setProperty('--ay', ay + 'px');
-    bubble.style.setProperty('--ox', (pos === 'left' ? w : pos === 'right' ? 0 : ax) + 'px');
-    bubble.style.setProperty('--oy', (pos === 'top' ? h : pos === 'bottom' ? 0 : ay) + 'px');
+    bubble.style.setProperty('--ox', (pos === 'left' ? w : pos === 'right' ? 0 : ax + bw) + 'px');
+    bubble.style.setProperty('--oy', (pos === 'top' ? h : pos === 'bottom' ? 0 : ay + bw) + 'px');
   }
   const hint = {
     show(target, text, { pos = 'top', duration = 2500 } = {}) {
@@ -366,7 +369,7 @@
       bubble.dataset.pos = HINT_POS.includes(pos) ? pos : 'top';
       bubble.textContent = text;
       const shell = target.closest('.sc-screen'), sc = shell ? Number(getComputedStyle(shell).getPropertyValue('--sc-s')) || 1 : 1;
-      if (sc !== 1) { bubble.style.setProperty('--h-fs', 15 * sc + 'px'); bubble.style.setProperty('--arrow', 17 * sc + 'px'); }
+      if (sc !== 1) { bubble.style.setProperty('--h-fs', 15 * sc + 'px'); bubble.style.setProperty('--hint-s', sc); }
       document.body.append(bubble);
       placeHint(target, bubble);
       openHints.set(target, bubble);
@@ -1138,7 +1141,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.38.4',
+    version: '0.38.5',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */

@@ -30,7 +30,8 @@ addEventListener('load', async () => {
     let bs = bubbles();
     check('tap shows one bubble with text + role', bs.length === 1 && bs[0].textContent === 'Hello there' && bs[0].getAttribute('role') === 'tooltip');
     check('bubble sits above target', rect(bs[0]).bottom <= rect($('#a')).top + 1);
-    check('pointer x aims at target center', Math.abs(rect(bs[0]).left + parseFloat(bs[0].style.getPropertyValue('--ax')) - (rect($('#a')).left + rect($('#a')).width / 2)) < 2);
+    check('pointer x aims at target center', Math.abs(rect(bs[0]).left + bs[0].clientLeft + parseFloat(bs[0].style.getPropertyValue('--ax')) - (rect($('#a')).left + rect($('#a')).width / 2)) < 2);
+    check('pointer drawn behind the text (z-index -1 in an isolated bubble)', getComputedStyle(bs[0], '::after').zIndex === '-1' && getComputedStyle(bs[0]).isolation === 'isolate');
     check('bubble does not block taps', getComputedStyle(bs[0]).pointerEvents === 'none');
     $('#a').click(); await wait(200);
     check('second tap hides it', bubbles().length === 0 && !document.querySelector('.sc-hint-float'));
@@ -40,7 +41,7 @@ addEventListener('load', async () => {
     check('tap elsewhere hides tap hints', bubbles().length === 0);
     const e = SC.hint.show($('#edge'), 'A long hint near the left edge of the screen', { pos: 'top', duration: 0 }); await wait(300);
     check('clamped 12px from the edge', rect(e).left >= 11.5);
-    check('pointer still aims at target near edge', Math.abs(rect(e).left + parseFloat(e.style.getPropertyValue('--ax')) - (rect($('#edge')).left + rect($('#edge')).width / 2)) < 18);
+    check('pointer still aims at target near edge', Math.abs(rect(e).left + e.clientLeft + parseFloat(e.style.getPropertyValue('--ax')) - (rect($('#edge')).left + rect($('#edge')).width / 2)) < 18);
     document.body.click(); await wait(200);
     check('code hints survive outside taps', bubbles().length === 1);
     SC.hint.show($('#edge'), 'Replaced', { duration: 0 }); await wait(20);

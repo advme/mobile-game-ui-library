@@ -2,6 +2,16 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.38.5-A — Hint Bubble: pointer never covers text, side pointers fit the shape
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: The owner reported that (1) a top/bottom pointer covered letters and (2) left/right pointers looked like separate pieces. Fixes:
+  - The bubble is now `isolation:isolate` and both pointer squares are `z-index:-1`, so they draw over the outline but under the text.
+  - Side pointers are narrower (13px, sm 10px), and side bubbles get `min-height: 3×font` so the pointer base always sits on the straight edge instead of the rounded corners.
+  - Floating bubbles measure `--ax/--ay` inside the border (they were one outline width off) and keep the pointer away from the corners.
+  - Scaling inside a Screen Shell now uses `--hint-s` instead of overwriting `--arrow`.
+- Tested: 3× zoom of top, bottom, left, right and small (continuous outline, text uncovered); docs tap-to-show at normal scale. `tools/tests/hint.html` 16/16 (new check: pointer behind text); `tutorial.html` 14/14.
+- Notes for next agent: Pointer size variables: `--arrow` (square side, uses `--hint-s`), `--ah`, `--ad`. Side pointers need the bubble's straight edge ≥ pointer base, which is why side bubbles have the min-height.
+
 ## v0.38.4-A — Hint Bubble: flat (no 3D shade)
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: At the owner's request, removed the grey bottom shade band (`inset 0 -3px #d9dff0`) from the Hint Bubble and its matching gradient in the bottom pointer. Bubbles are now flat white with the dark outline. Pointer geometry (continuous outline) is unchanged.

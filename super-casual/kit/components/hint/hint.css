@@ -18,7 +18,7 @@
 */
 .sc-hint {
   --h-fs:15px; --ax:50%; --ay:50%;
-  position:relative; display:inline-block; box-sizing:border-box; max-width:230px; width:max-content;
+  position:relative; isolation:isolate; display:inline-block; box-sizing:border-box; max-width:230px; width:max-content;
   padding:calc(var(--h-fs) * .45) calc(var(--h-fs) * .85) calc(var(--h-fs) * .55);
   border:var(--sc-line) solid var(--sc-outline); border-radius:calc(var(--h-fs) * .8);
   background:#fff;   /* flat: no 3D shade */
@@ -29,12 +29,16 @@
 
 /* Pointer: two rotated rounded squares (no polygons).
    ::before = dark square centered half an outline below the bubble's inner border edge → its edges continue the outline.
-   ::after  = same-size white square one outline width further in → hides the border inside the pointer
+   ::after  = same-size white square one outline width further in
+   Both sit at z-index -1 inside the isolated bubble: over its outline, under its text. → hides the border inside the pointer
    and leaves an outline exactly as thick as the bubble's. */
-.sc-hint { --arrow:17px; --ah:calc(var(--arrow) * .7071); --ad:calc(var(--sc-line) * 1.4142); }
-.sc-hint[data-size="sm"] { --arrow:13px; }
+.sc-hint { --arrow:calc(17px * var(--hint-s, 1)); --ah:calc(var(--arrow) * .7071); --ad:calc(var(--sc-line) * 1.4142); }
+.sc-hint[data-size="sm"] { --arrow:calc(13px * var(--hint-s, 1)); }
+/* Side pointers: narrower, and the bubble is tall enough that the pointer sits on the straight edge, not on the rounded corners */
+.sc-hint:is([data-pos="left"], [data-pos="right"]) { --arrow:calc(13px * var(--hint-s, 1)); min-height:calc(var(--h-fs) * 3); display:inline-flex; align-items:center; }
+.sc-hint:is([data-pos="left"], [data-pos="right"])[data-size="sm"] { --arrow:calc(10px * var(--hint-s, 1)); }
 .sc-hint::before, .sc-hint::after {
-  content:""; position:absolute; width:var(--arrow); height:var(--arrow); rotate:45deg; border-radius:2px; pointer-events:none;
+  content:""; position:absolute; z-index:-1; width:var(--arrow); height:var(--arrow); rotate:45deg; border-radius:2px; pointer-events:none;   /* behind the text, above the outline */
 }
 .sc-hint::before { background:var(--sc-outline); }
 .sc-hint::after  { background:#fff; }
