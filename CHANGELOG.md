@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.26.0-A — Top Bar component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `.sc-topbar` for home screens. The player block is a button with a framed avatar kit icon, a Level Badge on its corner and the name, and fires `profile`. Resource Counters placed inside (even added later) move to the right group. The name shrinks and fades first so counters always fit. Long titles in Top Bar and Item Row now fade out (`.sc-long` via `markLong`) instead of an ellipsis, which broke the outlined text copy. Added the AI manual, registry item, docs page (home screen with tab bar, variants, live profile/earn) and `tools/tests/topbar.html`.
+- Tested: `tools/tests/index.html`: all 15 pages pass (adds topbar 11/11, covering structure, avatar/level/name, button semantics, fit at 376px, long-name fade, profile event, attribute updates/removal, late counters, no duplicates/churn).
+- Notes for next agent: Don't use `text-overflow: ellipsis` on `.sc-text`: its `::before` outline copy isn't truncated and leaves a black smudge. Use the `.sc-long` fade pattern. The Resource Counter's "+" button overhangs its box by ~2px.
+
 ## v0.25.0-A — Level Badge component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `.sc-level`: the `level-badge` shield with an outlined number, 3 sizes, and `aria-label` "Level N". `SC.setValue(level, n)` pops on change. Progress Bar now accepts `data-level` to put the badge on its left end (XP bar, min 30px on thin bars). Added the AI manual, registry item, docs page (sizes, XP bars, live gain-XP level-up) and `tools/tests/level.html`.

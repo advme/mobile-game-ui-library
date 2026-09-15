@@ -1,0 +1,35 @@
+/*
+  Top Bar — Super Casual UI Kit
+  Requires: core.css, sc.js, level/level.css, counter/counter.css
+
+  <div class="sc-topbar" data-name="Player" data-level="12" data-avatar="avatar">
+    <div class="sc-counter" data-icon="coin" data-value="349810" data-format="short" data-size="sm"></div>
+    <div class="sc-counter" data-icon="gem" data-value="120" data-plus="purple" data-size="sm"></div>
+  </div>
+
+  data-name     player name (optional; long names fade out)
+  data-level    level number on the avatar (optional)
+  data-avatar   kit icon for the picture                     default: avatar
+  children      Resource Counters (1–3), placed on the right
+
+  Tapping the player block fires "profile" on .sc-topbar.
+  Put it in .sc-screen-top of a home/menu screen. The runtime builds the player block; don't write it yourself.
+*/
+.sc-topbar { display:flex; align-items:center; gap:10px; width:100%; min-width:0; font-family:var(--sc-font); }
+.sc-topbar-player {
+  flex:0 1 auto; display:flex; align-items:center; gap:8px; min-width:52px; padding:0 0 0 6px; margin:0;   /* shrinks first: the name fades, counters keep their size */
+  border:0; background:none; cursor:pointer; appearance:none; -webkit-tap-highlight-color:transparent; touch-action:manipulation; color:#fff; font:inherit;
+}
+.sc-topbar-avatar {
+  position:relative; flex:none; width:52px; height:52px; box-sizing:border-box;
+  border:var(--sc-line) solid var(--sc-outline); border-radius:12px;
+  background:linear-gradient(#7fd8ff 0 50%, #4cbcf5 50%); box-shadow:inset 0 2px 0 rgba(255,255,255,.45), inset 0 -3px 0 #2d8ed0;
+}
+.sc-topbar-avatar > img { position:absolute; inset:3px; width:calc(100% - 6px); height:calc(100% - 6px); object-fit:contain; border-radius:8px; translate:var(--ox, 0%) var(--oy, 0%); }
+.sc-topbar-avatar > .sc-level { position:absolute; left:-10px; bottom:-10px; --lv:32px; }
+.sc-topbar-name { min-width:0; overflow:hidden; white-space:nowrap; text-align:left; padding:2px 0 3px; }
+/* Long names are clipped with a soft fade (ellipsis breaks the outlined-text copy) */
+.sc-topbar-name > .sc-text { --fs:17px; font-size:var(--fs); }
+.sc-topbar-name.sc-long { -webkit-mask-image:linear-gradient(90deg, #000 80%, transparent); mask-image:linear-gradient(90deg, #000 80%, transparent); }
+.sc-topbar-res { flex:1 0 auto; display:flex; align-items:center; justify-content:flex-end; gap:6px; }
+.sc-topbar-player.sc-pressed .sc-topbar-avatar { transform:scale(.94); }

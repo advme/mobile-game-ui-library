@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.25.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.26.0-A**
 
 ## Next task
-**Build Top Bar.** The home-screen top bar: player avatar (framed `avatar` icon) with a Level Badge, player name, and resource counters (coins, gems, energy) on the right, fitting 400px width with 12px margins. Target API: `<div class="sc-topbar" data-name="Player" data-level="12" data-avatar="avatar">` + Resource Counters as children (the runtime builds the avatar block). Sits in `.sc-screen-top`. Follow AGENTS.md §4.
+**Build Shop Card.** A shop offer card: glossy colored card, pack image (`gem-pile`, `coin-pile` or any kit icon), amount ("x500"), optional tag (BEST/-50%) and bonus line, and a price button (real price text, or a currency counter-style price with `coin`/`gem` icon). Target API: `<div class="sc-shopcard" data-icon="gem-pile" data-amount="500" data-price="$4.99" data-tag="BEST" data-color="purple">`, `buy` event on the price button. 2–3 per row grid. Follow AGENTS.md §4.
 
 ## In progress
 _Nothing._
@@ -36,11 +36,11 @@ _Nothing._
 | 23 | Loading Bar | `.sc-loading` | v0.23.0-A |
 | 24 | Notification Dot | `data-alert / .sc-alert` | v0.24.0-A |
 | 25 | Level Badge | `.sc-level / data-level` | v0.25.0-A |
+| 26 | Top Bar | `.sc-topbar` | v0.26.0-A |
 
 ## Left — components (in this order)
-1. Top Bar (avatar, level, resources) (use `avatar`, `level-badge` icons) ← next
-2. Shop Card (use `gem-pile`, `coin-pile` icons)
-3. Tutorial Hand (use `hand` icon)
+1. Shop Card (use `gem-pile`, `coin-pile` icons) ← next
+2. Tutorial Hand (use `hand` icon)
 
 ## Left — blocks (full screens built ONLY from kit components)
 Gameplay HUD · Pause · Success · Fail (old versions exist in `super-casual/old-demos/`; build each block as one `.sc-screen`) · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading

@@ -50,8 +50,9 @@
 .sc-row[data-color="dark"]   { --row:#4a4468; --row2:#3d3858; --row-edge:#6a6390; --title:#fff; }
 
 .sc-row-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
-.sc-row-title { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.1; }
-.sc-row-title > .sc-text { --fs:18px; font-size:var(--fs); display:inline; }   /* inline so long names end with … */
+.sc-row-title { min-width:0; overflow:hidden; white-space:nowrap; line-height:1.1; padding:2px 0 3px; }
+.sc-row-title.sc-long { -webkit-mask-image:linear-gradient(90deg, #000 82%, transparent); mask-image:linear-gradient(90deg, #000 82%, transparent); }
+.sc-row-title > .sc-text { --fs:18px; font-size:var(--fs); }   /* long titles get .sc-long (fade) from sc.js */
 /* Light rows: plain dark title text (like the reference) */
 .sc-row:is(:not([data-color]), [data-color="white"], [data-color="yellow"]) .sc-row-title > .sc-text {
   color:var(--title); -webkit-text-stroke:0; }

@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "items": [
     {
       "name": "core",
@@ -2040,6 +2040,59 @@
         {
           "title": "XP bar",
           "html": "<div class=\"sc-progress\" data-value=\"723\" data-max=\"1000\" data-label=\"value\" data-level=\"5\"></div>"
+        }
+      ]
+    },
+    {
+      "name": "topbar",
+      "type": "registry:ui",
+      "title": "Top Bar",
+      "description": "Home screen top bar: avatar + level + name (profile button) on the left, resource counters on the right.",
+      "whenToUse": "Top of home/menu screens.",
+      "files": [
+        "components/topbar/topbar.css"
+      ],
+      "docs": "components/topbar/topbar.md",
+      "dependencies": [
+        "core",
+        "level",
+        "counter"
+      ],
+      "html": "<div class=\"sc-topbar\" data-name=\"Player\" data-level=\"12\">\n  <div class=\"sc-counter\" data-icon=\"coin\" data-value=\"349810\" data-format=\"short\" data-size=\"sm\"></div>\n  <div class=\"sc-counter\" data-icon=\"gem\" data-value=\"120\" data-plus=\"purple\" data-size=\"sm\"></div>\n</div>",
+      "props": {
+        "data-name": {
+          "type": "string",
+          "optional": true
+        },
+        "data-level": {
+          "type": "number",
+          "optional": true
+        },
+        "data-avatar": {
+          "type": "icon",
+          "default": "avatar"
+        }
+      },
+      "parts": {
+        "children": "1-3 .sc-counter (data-size=sm)"
+      },
+      "events": {
+        "profile": "Player block tapped"
+      },
+      "js": {
+        "topbar.dataset.level = '13'": "Update level",
+        "topbar.dataset.name = 'X'": "Update name"
+      },
+      "rules": [
+        "Home/menu screens only, in .sc-screen-top.",
+        "sm counters, short format for big numbers.",
+        "Max 3 resources (2 with a name).",
+        "Open profile on the profile event."
+      ],
+      "examples": [
+        {
+          "title": "Home top bar",
+          "html": "<div class=\"sc-topbar\" data-name=\"Farid\" data-level=\"12\"><div class=\"sc-counter\" data-icon=\"coin\" data-value=\"349810\" data-format=\"short\" data-size=\"sm\"></div></div>"
         }
       ]
     }

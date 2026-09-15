@@ -1,0 +1,54 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Top Bar regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/topbar/topbar.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/level/level.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/counter/counter.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>body { margin:30px; font:14px system-ui; background:#243453; color:white; } #fixtures { width:376px; display:grid; gap:20px; } li { margin:6px 0; } .fail { color:#ff9da7; }</style>
+<h1>Top Bar checks</h1>
+<p id="summary">Running…</p>
+<div id="fixtures">
+  <div class="sc-topbar" id="t" data-name="Farid" data-level="12">
+    <div class="sc-counter" data-icon="coin" data-value="349810" data-format="short" data-size="sm"></div>
+    <div class="sc-counter" data-icon="gem" data-value="120" data-plus="purple" data-size="sm"></div>
+  </div>
+  <div class="sc-topbar" id="long" data-name="SirLancelotTheBraveOfCamelot" data-avatar="helmet">
+    <div class="sc-counter" data-icon="coin" data-value="98000" data-format="short" data-size="sm"></div>
+  </div>
+</div>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  try {
+    await wait(300);
+    const t = $('#t'), player = t.querySelector(':scope > .sc-topbar-player');
+    check('structure: player first, resources last with both counters', t.firstElementChild === player && t.lastElementChild.className === 'sc-topbar-res' && t.lastElementChild.querySelectorAll('.sc-counter').length === 2);
+    check('avatar default icon + level badge + name', player.querySelector('.sc-topbar-avatar img').src.endsWith('/avatar.png') && player.querySelector('.sc-level .sc-text')?.dataset.text === '12' && player.querySelector('.sc-topbar-name .sc-text')?.dataset.text === 'Farid');
+    check('player is a button with profile aria-label', player.tagName === 'BUTTON' && player.type === 'button' && player.getAttribute('aria-label') === 'Profile, Farid, level 12');
+    check('fits without overflow (counter + button may overhang 2px)', t.scrollWidth <= t.clientWidth + 3);
+    check('long name fades and bar still fits', $('#long .sc-topbar-name').classList.contains('sc-long') && $('#long').scrollWidth <= $('#long').clientWidth + 1 && $('#long .sc-topbar-avatar img').src.endsWith('/helmet.png'));
+    let prof = 0; t.addEventListener('profile', () => prof++); player.click();
+    check('tap fires profile', prof === 1);
+    t.dataset.level = '13'; t.dataset.name = 'Neo'; await wait(50);
+    check('attribute changes update level + name', player.querySelector('.sc-level .sc-text').dataset.text === '13' && player.querySelector('.sc-topbar-name .sc-text').dataset.text === 'Neo');
+    t.removeAttribute('data-level'); t.removeAttribute('data-name'); await wait(50);
+    check('removing level/name clears them', !player.querySelector('.sc-level') && !player.querySelector('.sc-topbar-name .sc-text') && player.getAttribute('aria-label') === 'Profile');
+    const c = document.createElement('div'); c.className = 'sc-counter'; c.dataset.icon = 'energy'; c.dataset.value = '5'; c.dataset.size = 'sm';
+    t.append(c); await wait(50);
+    check('counter appended later moves to the right group', c.parentElement === t.lastElementChild);
+    SC.upgrade(t); SC.upgrade(t);
+    check('no duplicate player blocks', t.querySelectorAll('.sc-topbar-player').length === 1 && t.querySelectorAll('.sc-topbar-res').length === 1);
+    let records = 0; const mo = new MutationObserver(x => records += x.length); mo.observe($('#fixtures'), { attributes: true, subtree: true, childList: true, attributeFilter: ['data-value', 'data-level', 'data-name', 'aria-label', 'src'] });
+    await wait(300); mo.disconnect();
+    check('no endless updates', records === 0);
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Top Bar';
+});
+</script>

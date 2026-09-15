@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Top Bar — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/screen/screen.css">
+<link rel="stylesheet" href="../components/topbar/topbar.css">
+<link rel="stylesheet" href="../components/level/level.css">
+<link rel="stylesheet" href="../components/counter/counter.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/tabbar/tabbar.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+.phone { position:relative; overflow:hidden; width:300px; height:600px; border-radius:26px; border:3px solid #050308; flex:none; background:linear-gradient(#3b8fe0, #2a5fb8); }
+.strip { width:100%; max-width:400px; padding:14px 12px; box-sizing:border-box; border-radius:14px; background:rgba(255,255,255,.06); }
+.col { display:flex; flex-direction:column; gap:16px; width:100%; align-items:center; }
+.log { margin:0; color:#dce6ff; font:14px/1.5 system-ui; text-align:center; }
+</style>
+</head>
+<body>
+<script>
+SCDocs.page({
+  title: 'Top Bar',
+  lead: 'The top of a home screen: player picture with level and name on the left, resources on the right.',
+  hero: `<div class="phone">
+  <div class="sc-screen" data-fit="parent">
+    <div class="sc-screen-top">
+      <div class="sc-topbar" data-name="Farid" data-level="12">
+        <div class="sc-counter" data-icon="coin" data-value="349810" data-format="short" data-size="sm"></div>
+        <div class="sc-counter" data-icon="gem" data-value="120" data-plus="purple" data-size="sm"></div>
+      </div>
+    </div>
+    <div class="sc-screen-middle"><button class="sc-button" data-color="yellow" data-size="lg">PLAY</button></div>
+    <div class="sc-screen-bottom">
+      <nav class="sc-tabbar" data-value="home"><button data-value="shop" data-icon="shop">Shop</button><button data-value="home" data-icon="home">Home</button><button data-value="rank" data-icon="trophy">Rank</button></nav>
+    </div>
+  </div>
+</div>`,
+  css: ['components/topbar/topbar.css', 'components/level/level.css', 'components/counter/counter.css'],
+  usageNote: 'Set the player info as attributes and put Resource Counters inside. The runtime builds the player block.',
+  usage: `<div class="sc-screen-top">
+  <div class="sc-topbar" data-name="Player" data-level="12">
+    <div class="sc-counter" data-icon="coin" data-value="349810" data-format="short" data-size="sm"></div>
+    <div class="sc-counter" data-icon="gem" data-value="120" data-plus="purple" data-size="sm"></div>
+  </div>
+</div>`,
+  examples: [
+    { title: 'Variants', desc: 'Without name, with another picture, or with three resources.',
+      html: `<div class="col">
+  <div class="strip"><div class="sc-topbar" data-level="3">
+    <div class="sc-counter" data-icon="energy" data-value="5" data-max="5" data-size="sm"></div>
+    <div class="sc-counter" data-icon="coin" data-value="1200" data-size="sm"></div>
+    <div class="sc-counter" data-icon="gem" data-value="45" data-size="sm"></div>
+  </div></div>
+  <div class="strip"><div class="sc-topbar" data-name="SirLancelotTheBrave" data-level="88" data-avatar="helmet">
+    <div class="sc-counter" data-icon="coin" data-value="98000" data-format="short" data-size="sm" data-plus="orange"></div>
+  </div></div>
+</div>` },
+    { title: 'Live: profile tap and rewards', desc: 'Tapping the player block fires "profile". Earn updates the counter and levels up.',
+      html: `<div class="col">
+  <div class="strip"><div class="sc-topbar" id="tb" data-name="Player" data-level="4">
+    <div class="sc-counter" id="tbCoins" data-icon="coin" data-value="500" data-size="sm"></div>
+  </div></div>
+  <button class="sc-button" data-color="green" data-size="sm" id="tbEarn">Earn + level up</button>
+  <p class="log">events: —</p>
+</div>`,
+      setup(p) {
+        const tb = p.querySelector('#tb'), log = p.querySelector('.log');
+        tb.addEventListener('profile', () => log.textContent = 'events: profile (open the profile popup)');
+        p.querySelector('#tbEarn').onclick = () => {
+          SC.setValue(p.querySelector('#tbCoins'), Number(p.querySelector('#tbCoins').dataset.value) + 250);
+          tb.dataset.level = Number(tb.dataset.level) + 1;
+          SC.setValue(tb.querySelector('.sc-level'), tb.dataset.level);
+        };
+      } },
+  ],
+  api: [
+    ['data-name', 'text', '', 'Player name (ends with … if long).'],
+    ['data-level', 'number', '', 'Level badge on the picture.'],
+    ['data-avatar', 'icon-name', 'avatar', 'Kit icon used as the picture.'],
+    ['children', 'Resource Counters', '', '1–3 counters, shown on the right.'],
+  ],
+  js: `topbar.addEventListener('profile', openProfile);   // player block tapped
+topbar.dataset.level = '13';                        // update level
+topbar.dataset.name = 'NewName';                    // update name
+SC.setValue(topbar.querySelector('.sc-counter'), 1500);`,
+  rules: [
+    'Only on home/menu screens, inside <code class="inline">.sc-screen-top</code>. During gameplay use a plain HUD top row (counters + pause).',
+    'Use <code class="inline">data-size="sm"</code> counters and <code class="inline">data-format="short"</code> for big numbers so everything fits 400px.',
+    'Max 3 resources; 2 when a name is shown.',
+    'Listen for <code class="inline">profile</code> to open the player’s profile or avatar picker.',
+  ],
+});
+</script>
+</body>
+</html>

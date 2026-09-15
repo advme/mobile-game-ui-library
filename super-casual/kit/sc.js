@@ -34,12 +34,13 @@
   const ALERT_HOSTS = '.sc-button, .sc-icon-button, .sc-slot, .sc-tab, .sc-tabbar-item';
   const ALERTS = '.sc-alert:not(.sc-alert-attached)';
   const LEVELS = '.sc-level';
+  const TOPBARS = '.sc-topbar';
   const TAB_ITEMS = '.sc-tabs > button, .sc-tabbar > button';
   const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot, .sc-tab, .sc-tabbar-item';
   const MESSAGES = '.sc-popup-message, .sc-popup-value';
   const SCREENS = '.sc-screen';
-  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}, ${TAGS}, ${BANNERS}, .sc-row-avatar, ${LOADINGS}, ${ALERTS}, ${LEVELS}`;
-  const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, ${TOGGLES}, ${CHECKBOXES}, ${TAB_ITEMS}`;
+  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}, ${TAGS}, ${BANNERS}, .sc-row-avatar, ${LOADINGS}, ${ALERTS}, ${LEVELS}, ${TOPBARS}`;
+  const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, .sc-topbar-player, ${TOGGLES}, ${CHECKBOXES}, ${TAB_ITEMS}`;
 
   const script = document.currentScript;
   const ASSETS = script && script.dataset.assets
@@ -504,6 +505,45 @@
     if (v) setAttr(el, 'aria-label', 'Level ' + v);
   }
 
+  /* ---------- Top Bar ---------- */
+  function upgradeTopbar(el) {
+    let player = el.querySelector(':scope > .sc-topbar-player'), res = el.querySelector(':scope > .sc-topbar-res');
+    if (!player) {
+      player = document.createElement('button'); player.type = 'button'; player.className = 'sc-topbar-player';
+      player.innerHTML = '<span class="sc-topbar-avatar"><img alt="" draggable="false"></span><span class="sc-topbar-name"></span>';
+      el.prepend(player);
+    }
+    if (!res) { res = document.createElement('div'); res.className = 'sc-topbar-res'; el.append(res); }
+    const loose = [...el.children].filter(c => c !== player && c !== res);
+    if (loose.length) res.append(...loose);   // author's counters go to the right
+    const avatar = player.querySelector('.sc-topbar-avatar'), img = avatar.querySelector('img');
+    const src = ASSETS + (el.dataset.avatar || 'avatar') + '.png';
+    if (img.src !== src) img.src = src;
+    let lvl = avatar.querySelector('.sc-level');
+    if (el.dataset.level) {
+      if (!lvl) { lvl = document.createElement('span'); lvl.className = 'sc-level'; avatar.append(lvl); }
+      setAttr(lvl, 'data-value', el.dataset.level); upgradeLevel(lvl);
+    } else lvl?.remove();
+    const name = player.querySelector('.sc-topbar-name');
+    if (el.dataset.name) { if (!name.firstElementChild) name.append(textSpan('')); setSpan(name.firstElementChild, el.dataset.name); }
+    else name.replaceChildren();
+    queueLong();
+    setAttr(player, 'aria-label', `Profile${el.dataset.name ? ', ' + el.dataset.name : ''}${el.dataset.level ? ', level ' + el.dataset.level : ''}`);
+  }
+  // Mark clipped names/titles so CSS can fade them out (ellipsis can't be used with the outlined text copy)
+  const LONG_TEXT = '.sc-topbar-name, .sc-row-title';
+  function markLong(root = document) {
+    root.querySelectorAll?.(LONG_TEXT).forEach(n => { const long = n.scrollWidth > n.clientWidth + 1; if (n.classList.contains('sc-long') !== long) n.classList.toggle('sc-long', long); });
+  }
+  let longQueued = false;
+  const queueLong = () => { if (!longQueued) { longQueued = true; requestAnimationFrame(() => { longQueued = false; markLong(); }); } };
+  addEventListener('resize', queueLong);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(queueLong);
+  document.addEventListener('click', e => {
+    const p = e.target.closest && e.target.closest('.sc-topbar-player');
+    if (p) p.parentElement.dispatchEvent(new CustomEvent('profile', { bubbles: true }));
+  });
+
   /* ---------- Counter ---------- */
   function formatNumber(n, format) {
     n = Math.round(Number(n) || 0);
@@ -894,6 +934,7 @@
     if (el.matches(TAG_HOSTS)) upgradeTag(el);
     if (el.matches(ALERT_HOSTS)) upgradeAlert(el);
     if (el.matches(LEVELS)) return upgradeLevel(el);
+    if (el.matches(TOPBARS)) return upgradeTopbar(el);
     if (el.matches(ALERTS)) return buildAlert(el, el.dataset.alert === 'dot' ? 'dot' : 'icon');
     if (el.matches(TAGS)) return upgradeText(el);
     if (el.matches(BANNERS)) return upgradeBanner(el);
@@ -912,6 +953,7 @@
     if (el.matches(SCREENS)) return upgradeScreen(el);
     if (el.matches(MESSAGES)) return upgradeText(el);
     upgradeText(el);
+    if (el.matches('.sc-row-title')) queueLong();
     if (el.matches(ICON_COMPONENTS)) upgradeIcon(el);
   }
   function upgrade(root = document) {
@@ -945,6 +987,7 @@
         else if (r.target.matches(TABS)) upgradeTabs(r.target);
         else if (r.target.matches(LOADINGS)) upgradeLoading(r.target);
         else if (r.target.matches(LEVELS)) upgradeLevel(r.target);
+        else if (r.target.matches(TOPBARS)) upgradeTopbar(r.target);
         else if (r.target.matches(TAB_ITEMS)) upgradeTabs(r.target.parentElement);
         else if (r.target.matches(ICON_COMPONENTS)) upgradeIcon(r.target);
       } else {
@@ -953,6 +996,7 @@
         if (r.target.matches && r.target.matches(BADGE_HOSTS)) upgradeBubble(r.target);
         if (r.target.matches && r.target.matches(TOGGLES)) upgradeToggle(r.target);
         if (r.target.matches && r.target.matches(CHECKBOXES)) upgradeCheckbox(r.target);
+        if (r.target.matches && r.target.matches(TOPBARS)) upgradeTopbar(r.target);
         if (r.target.matches && r.target.matches(`${BANNERS}, .sc-banner-band`)) upgradeBanner(r.target.closest(BANNERS));
         if (r.target.matches && r.target.matches(TABS)) upgradeTabs(r.target);
         if (r.target.matches && r.target.matches(TAB_ITEMS)) upgradeTabs(r.target.parentElement);
@@ -960,7 +1004,7 @@
     }
   }).observe(document.documentElement, {
     childList: true, subtree: true, characterData: true,
-    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-tag-color', 'data-tag-pos', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-checked', 'data-min', 'data-step', 'disabled', 'data-panel', 'data-tips', 'data-alert', 'data-level', 'data-width', 'data-height', 'data-fit'],
+    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-tag-color', 'data-tag-pos', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-checked', 'data-min', 'data-step', 'disabled', 'data-panel', 'data-tips', 'data-alert', 'data-level', 'data-name', 'data-avatar', 'data-width', 'data-height', 'data-fit'],
   });
 
   // Press feedback (delegated, so it works for dynamically added components)
@@ -977,7 +1021,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.25.0',
+    version: '0.26.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */
