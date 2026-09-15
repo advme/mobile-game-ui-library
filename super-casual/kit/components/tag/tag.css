@@ -1,0 +1,41 @@
+/*
+  Tag Ribbon — Super Casual UI Kit
+  Requires: core.css, sc.js
+
+  Standalone:   <span class="sc-tag" data-color="red">HOT</span>
+  On a host:    <button class="sc-button" data-tag="NEW">Shop</button>
+                (hosts: .sc-button, .sc-icon-button, .sc-tab — Reward Slot has its own data-tag)
+
+  Standalone .sc-tag:
+  data-color      sky | blue | dark | green | yellow | orange | red | purple | pink | mint   default: red
+  data-size       sm | md | lg   (text 11 / 14 / 18 px)                                   default: md
+  data-tilt       tilt it a little like a sticker (-8°)
+
+  On a host:
+  data-tag        the text (NEW, HOT, BEST, SALE, -50%, x2) — keep it 1 short word
+  data-tag-color  same colors                                                             default: red
+  data-tag-pos    top-left (tilted) | top-right (tilted) | top (centered on the top edge)  default: top-left
+*/
+:where(.sc-tag) { --band:#fd7a82; --base:#f42e48; --line:#f9617d; --lip:#900222; --ink:#780024; }
+.sc-tag {
+  --t:14px;
+  position:relative; display:inline-block; box-sizing:border-box; vertical-align:middle; white-space:nowrap; line-height:1;
+  padding:calc(var(--t) * .14) calc(var(--t) * .5) calc(var(--t) * .22);
+  border:var(--sc-line-sm) solid var(--sc-outline); border-radius:calc(var(--t) * .45);
+  background:linear-gradient(var(--band) 0 50%, var(--base) 50%);
+  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.3), inset 0 calc(var(--t) * -.14) 0 var(--lip);
+  font-family:var(--sc-font); pointer-events:none; user-select:none; -webkit-user-select:none;
+}
+.sc-tag[data-size="sm"] { --t:11px; }
+.sc-tag[data-size="lg"] { --t:18px; }
+.sc-tag[data-tilt] { rotate:-8deg; }
+.sc-tag > .sc-text { --fs:var(--t); font-size:var(--fs); display:block; }
+
+/* Attached to a host (built by sc.js from data-tag) */
+.sc-tag.sc-tag-attached { position:absolute; z-index:5; --t:12px; }
+.sc-tag-attached[data-pos="top-left"]  { left:-8px;  top:-9px; rotate:-10deg; }
+.sc-tag-attached[data-pos="top-right"] { right:-8px; top:-9px; rotate:10deg; }
+.sc-tag-attached[data-pos="top"]       { left:50%; top:0; translate:-50% -55%; }
+.sc-tag-attached { animation:sc-tag-pop .35s cubic-bezier(.3,1.8,.5,1) backwards; }
+@keyframes sc-tag-pop { from { scale:.3; opacity:0; } }
+@media (prefers-reduced-motion:reduce) { .sc-tag-attached { animation:none; } }

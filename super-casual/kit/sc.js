@@ -27,11 +27,13 @@
   const SLIDERS = '.sc-slider';
   const CHECKBOXES = 'button.sc-checkbox';
   const TABS = '.sc-tabs, .sc-tabbar';
+  const TAG_HOSTS = '.sc-button, .sc-icon-button, .sc-tab';
+  const TAGS = '.sc-tag:not(.sc-tag-attached)';
   const TAB_ITEMS = '.sc-tabs > button, .sc-tabbar > button';
   const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot, .sc-tab, .sc-tabbar-item';
   const MESSAGES = '.sc-popup-message, .sc-popup-value';
   const SCREENS = '.sc-screen';
-  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}`;
+  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}, ${TAGS}`;
   const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, ${TOGGLES}, ${CHECKBOXES}, ${TAB_ITEMS}`;
 
   const script = document.currentScript;
@@ -177,7 +179,7 @@
       const cls = el.classList.contains('sc-tabbar') ? 'sc-tabbar-item' : 'sc-tab';
       if (!t.classList.contains(cls)) t.classList.add(cls);
       if (t.type !== 'button') t.type = 'button';
-      upgradeText(t); upgradeIcon(t); upgradeBubble(t);
+      upgradeText(t); upgradeIcon(t); upgradeBubble(t); if (t.matches(TAG_HOSTS)) upgradeTag(t);
       const on = t === pick;
       setAttr(t, 'role', 'tab'); setAttr(t, 'aria-selected', on); setAttr(t, 'tabindex', on ? 0 : -1);
       const panel = t.dataset.panel && document.getElementById(t.dataset.panel);
@@ -304,6 +306,20 @@
     e.preventDefault();
     if (sliderMove(el, sliderClamp(el, next))) el.dispatchEvent(new CustomEvent('change', { bubbles: true, detail: { value: slider.get(el) } }));
   });
+
+  /* ---------- Tag Ribbon (attached to buttons and tabs) ---------- */
+  function upgradeTag(el) {
+    const text = (el.dataset.tag || '').trim();
+    let tag = el.querySelector(':scope > .sc-tag-attached');
+    if (!text) { tag?.remove(); return; }
+    if (!tag) {
+      tag = document.createElement('span'); tag.className = 'sc-tag sc-tag-attached'; tag.setAttribute('aria-hidden', 'true');
+      tag.append(textSpan('')); el.append(tag);
+    }
+    setSpan(tag.firstElementChild, text);
+    setAttr(tag, 'data-color', el.dataset.tagColor || 'red');
+    setAttr(tag, 'data-pos', ['top-left', 'top-right', 'top'].includes(el.dataset.tagPos) ? el.dataset.tagPos : 'top-left');
+  }
 
   /* ---------- Counter ---------- */
   function formatNumber(n, format) {
@@ -681,6 +697,8 @@
   /* ---------- upgrade pipeline ---------- */
   function upgradeOne(el) {
     if (el.matches(BADGE_HOSTS)) upgradeBubble(el);
+    if (el.matches(TAG_HOSTS)) upgradeTag(el);
+    if (el.matches(TAGS)) return upgradeText(el);
     if (el.matches(COUNTERS)) return upgradeCounter(el);
     if (el.matches(SLOTS)) return upgradeSlot(el);
     if (el.matches(POPUPS)) return upgradePopup(el);
@@ -713,6 +731,7 @@
         if (r.attributeName === 'data-badge' || r.attributeName === 'data-badge-color') {
           if (r.target.matches(BADGE_HOSTS)) upgradeBubble(r.target);
         }
+        else if (/^data-tag/.test(r.attributeName) && r.target.matches(TAG_HOSTS)) upgradeTag(r.target);
         else if (r.target.matches(COUNTERS)) upgradeCounter(r.target);
         else if (r.target.matches(SLOTS)) upgradeSlot(r.target);
         else if (r.target.matches(POPUPS)) upgradePopup(r.target);
@@ -738,7 +757,7 @@
     }
   }).observe(document.documentElement, {
     childList: true, subtree: true, characterData: true,
-    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-checked', 'data-min', 'data-step', 'disabled', 'data-panel', 'data-width', 'data-height', 'data-fit'],
+    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-tag-color', 'data-tag-pos', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-checked', 'data-min', 'data-step', 'disabled', 'data-panel', 'data-width', 'data-height', 'data-fit'],
   });
 
   // Press feedback (delegated, so it works for dynamically added components)
@@ -755,7 +774,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.17.0',
+    version: '0.18.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */

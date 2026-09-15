@@ -1,0 +1,60 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tag regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/tag/tag.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/button/button.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/tabs/tabs.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/slot/slot.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>body { margin:30px; font:14px system-ui; background:#243453; color:white; } #fixtures { display:grid; gap:24px; width:320px; } li { margin:6px 0; } .fail { color:#ff9da7; }</style>
+<h1>Tag checks</h1>
+<p id="summary">Running…</p>
+<div id="fixtures">
+  <button id="b" class="sc-button" data-tag="HOT">Shop</button>
+  <span id="s" class="sc-tag" data-color="green">NEW</span>
+  <div class="sc-tabs" id="tabs"><button data-value="a">A</button><button data-value="b" data-tag="NEW" data-tag-pos="top">B</button></div>
+  <div class="sc-slot" id="slot" data-icon="coin" data-tag="BONUS"></div>
+</div>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const settle = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  const tagOf = el => el.querySelector(':scope > .sc-tag-attached');
+  try {
+    const b = $('#b');
+    check('button gets one attached tag', b.querySelectorAll(':scope > .sc-tag-attached').length === 1 && tagOf(b).textContent === 'HOT');
+    check('defaults: red, top-left, aria-hidden', tagOf(b).dataset.color === 'red' && tagOf(b).dataset.pos === 'top-left' && tagOf(b).getAttribute('aria-hidden') === 'true');
+    check('button label untouched', b.querySelector(':scope > .sc-text').dataset.text === 'Shop');
+    check('tag is absolutely positioned outside the corner', getComputedStyle(tagOf(b)).position === 'absolute' && tagOf(b).getBoundingClientRect().top < b.getBoundingClientRect().top);
+    check('standalone tag wraps text', $('#s').querySelector('.sc-text')?.dataset.text === 'NEW' && getComputedStyle($('#s')).position === 'relative');
+    const tb = $('#tabs').children[1];
+    check('tab gets tag with pos top', tagOf(tb)?.dataset.pos === 'top');
+    check('slot keeps its own tag (no attached tag)', !tagOf($('#slot')) && !!$('#slot').querySelector('.sc-slot-tag'));
+    b.dataset.tag = 'SALE'; b.dataset.tagColor = 'purple'; b.dataset.tagPos = 'top-right'; await settle();
+    check('attribute changes update text/color/pos', tagOf(b).textContent === 'SALE' && tagOf(b).dataset.color === 'purple' && tagOf(b).dataset.pos === 'top-right');
+    b.dataset.tagPos = 'bogus'; await settle();
+    check('invalid pos falls back to top-left', tagOf(b).dataset.pos === 'top-left');
+    SC.setLabel(b, 'Store'); await settle();
+    check('setLabel keeps tag', b.querySelector(':scope > .sc-text').dataset.text === 'Store' && tagOf(b).textContent === 'SALE');
+    b.removeAttribute('data-tag'); await settle();
+    check('removing data-tag removes it', !tagOf(b));
+    b.dataset.tag = '   '; await settle();
+    check('blank tag shows nothing', !tagOf(b));
+    const fresh = document.createElement('button'); fresh.className = 'sc-button'; fresh.dataset.tag = 'x2'; fresh.textContent = 'Go';
+    $('#fixtures').append(fresh); await settle();
+    check('inserted host gets tag', tagOf(fresh)?.textContent === 'x2');
+    SC.upgrade(fresh); SC.upgrade(fresh);
+    check('no duplicates', fresh.querySelectorAll('.sc-tag-attached').length === 1);
+    let records = 0; const mo = new MutationObserver(x => records += x.length); mo.observe($('#fixtures'), { attributes: true, subtree: true, childList: true });
+    await new Promise(r => setTimeout(r, 200)); mo.disconnect();
+    check('no endless updates', records === 0);
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Tag';
+});
+</script>

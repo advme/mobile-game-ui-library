@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "items": [
     {
       "name": "core",
@@ -1572,6 +1572,77 @@
         {
           "title": "Home navigation",
           "html": "<nav class=\"sc-tabbar\" data-value=\"play\"><button data-value=\"shop\" data-icon=\"cash\" data-panel=\"shopScreen\">Shop</button><button data-value=\"play\" data-icon=\"star\" data-panel=\"playScreen\">Play</button><button data-value=\"rank\" data-icon=\"trophy\" data-badge=\"2\" data-badge-color=\"green\" data-panel=\"rankScreen\">Rank</button></nav>"
+        }
+      ]
+    },
+    {
+      "name": "tag",
+      "type": "registry:ui",
+      "title": "Tag Ribbon",
+      "description": "Small glossy sticker labels (NEW, HOT, SALE, -50%, x2), standalone or attached to buttons/icon buttons/tabs via data-tag.",
+      "whenToUse": "Highlight a new, hot, discounted or boosted item.",
+      "files": [
+        "components/tag/tag.css"
+      ],
+      "docs": "components/tag/tag.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<button class=\"sc-button\" data-color=\"yellow\" data-tag=\"HOT\">Shop</button>",
+      "props": {
+        "data-tag": {
+          "type": "string",
+          "optional": true,
+          "description": "On .sc-button/.sc-icon-button/tab: tag text"
+        },
+        "data-tag-color": {
+          "type": "enum",
+          "values": [
+            "sky",
+            "blue",
+            "dark",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "default": "red"
+        },
+        "data-tag-pos": {
+          "type": "enum",
+          "values": [
+            "top-left",
+            "top-right",
+            "top"
+          ],
+          "default": "top-left"
+        }
+      },
+      "parts": {
+        ".sc-tag": "Standalone tag: data-color (default red), data-size sm|md|lg, data-tilt"
+      },
+      "events": [],
+      "js": {
+        "el.dataset.tag = 'SALE'": "Add/change; removeAttribute('data-tag') removes"
+      },
+      "rules": [
+        "One short capital word.",
+        "red HOT/SALE, green NEW/FREE, yellow BEST, purple discounts, sky multipliers.",
+        "One tag per item; max 2-3 tagged items per screen.",
+        "Leave ~10px around tagged hosts; no overflow:hidden parent.",
+        "Starburst stickers are images; never draw them."
+      ],
+      "examples": [
+        {
+          "title": "On a button",
+          "html": "<button class=\"sc-button\" data-color=\"green\" data-tag=\"-50%\" data-tag-color=\"purple\" data-tag-pos=\"top-right\">Buy</button>"
+        },
+        {
+          "title": "Standalone",
+          "html": "<span class=\"sc-tag\" data-color=\"green\">NEW</span>"
         }
       ]
     }

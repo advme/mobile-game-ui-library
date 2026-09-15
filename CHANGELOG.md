@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.18.0-A — Tag Ribbon component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `.sc-tag`, small glossy sticker labels (NEW, HOT, BEST, SALE, -50%, x2) in all 10 kit colors, 3 sizes, with optional tilt. Buttons, icon buttons and tabs accept `data-tag` + `data-tag-color` + `data-tag-pos` (top-left/top-right tilted, or top centered). The runtime builds and updates the sticker, and it pops in. Reward Slot keeps its own tag. Added the AI manual, registry item, docs page and `tools/tests/tag.html`.
+- Tested: `tools/tests/index.html`: 7 pages pass (bubble 60, toggle 39, slider 30, checkbox 20, tabs 24, tabbar 13, tag 15). Visual check of all docs examples.
+- Notes for next agent: `data-tag*` attribute changes on slots still go to `upgradeSlot` (the tag branch only handles TAG_HOSTS). Standalone tags are matched as `.sc-tag:not(.sc-tag-attached)`.
+
 ## v0.17.0-A — Bottom Tab Bar component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `.sc-tabbar`, the bottom navigation bar for home screens, matching the reference. It's a dark navy bar. The selected item rises on a glossy indigo block with rounded free top corners and sharp attached bottom corners, a bigger icon and an uppercase label. It has count badges on icons, 9 block colors, disabled items and `data-panel` to switch screens. Inside `.sc-screen-bottom` it bleeds to the phone edges and pads the home-bar safe area. It shares the Tabs runtime (`SC.tabbar === SC.tabs`). Also added `tools/tests/index.html`, which runs every component test page at once (AGENTS.md §4 updated). `setSpan` and the bubble title now only write when the value changes.

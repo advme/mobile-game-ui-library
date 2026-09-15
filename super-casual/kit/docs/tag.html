@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tag Ribbon — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/tag/tag.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../components/tabs/tabs.css">
+<link rel="stylesheet" href="../components/slot/slot.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+.row { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:26px; padding-top:10px; }
+.stack { width:100%; max-width:340px; padding-top:12px; }
+</style>
+</head>
+<body>
+<script>
+SCDocs.page({
+  title: 'Tag Ribbon',
+  lead: 'Small sticker labels — NEW, HOT, BEST, SALE, -50%, x2 — on buttons and tabs, or on their own.',
+  hero: `<div class="row">
+  <button class="sc-button" data-color="yellow" data-tag="HOT">Shop</button>
+  <button class="sc-icon-button" data-icon="gift" data-tag="NEW" data-tag-color="green" aria-label="Gifts"></button>
+  <button class="sc-button" data-color="green" data-tag="-50%" data-tag-pos="top-right" data-tag-color="purple">Buy</button>
+</div>`,
+  css: ['components/tag/tag.css'],
+  usageNote: 'Add data-tag to a Button, Icon Button or Tab. The runtime builds the sticker; you never write its markup.',
+  usage: `<button class="sc-button" data-tag="NEW">Shop</button>`,
+  examples: [
+    { title: 'Standalone tags', desc: 'Use .sc-tag inside cards, rows and titles. data-tilt tilts it like a sticker.',
+      html: `<div class="row">
+  <span class="sc-tag">HOT</span>
+  <span class="sc-tag" data-color="green">NEW</span>
+  <span class="sc-tag" data-color="yellow">BEST</span>
+  <span class="sc-tag" data-color="sky" data-tilt>x2</span>
+  <span class="sc-tag" data-color="purple" data-size="lg">SALE</span>
+  <span class="sc-tag" data-color="dark" data-size="sm">SOON</span>
+</div>` },
+    { title: 'Positions', desc: 'data-tag-pos: top-left (default), top-right, or top (centered on the edge).',
+      html: `<div class="row">
+  <button class="sc-button" data-color="sky" data-tag="NEW">Left</button>
+  <button class="sc-button" data-color="sky" data-tag="NEW" data-tag-pos="top-right">Right</button>
+  <button class="sc-button" data-color="sky" data-tag="NEW" data-tag-pos="top">Top</button>
+</div>` },
+    { title: 'On tabs', desc: 'Mark a tab with new content.',
+      html: `<div class="stack"><div class="sc-tabs" data-value="skins">
+  <button data-value="skins">Skins</button>
+  <button data-value="pets" data-tag="NEW" data-tag-color="green" data-tag-pos="top-right">Pets</button>
+</div></div>` },
+    { title: 'Reward Slot tag', desc: 'Reward Slot has its own built-in data-tag on the top edge (same look).',
+      html: `<div class="row">
+  <div class="sc-slot" data-icon="coin" data-count="1000" data-color="white" data-tag="BONUS"></div>
+  <div class="sc-slot" data-icon="gem" data-count="50" data-color="purple" data-tag="x2"></div>
+</div>` },
+    { title: 'Live: change a tag', desc: 'Set, recolor or remove the tag through attributes.',
+      html: `<div class="row">
+  <button class="sc-button" data-color="yellow" id="offer" data-tag="HOT">Offer</button>
+  <button class="sc-button" data-color="dark" data-size="sm" id="tSale">SALE</button>
+  <button class="sc-button" data-color="dark" data-size="sm" id="tNone">Remove</button>
+</div>`,
+      setup(p) {
+        const offer = p.querySelector('#offer');
+        p.querySelector('#tSale').onclick = () => { offer.dataset.tag = '-30%'; offer.dataset.tagColor = 'purple'; };
+        p.querySelector('#tNone').onclick = () => offer.removeAttribute('data-tag');
+      } },
+  ],
+  api: [
+    ['data-tag', 'text', '', 'On a Button, Icon Button or Tab: the tag text.'],
+    ['data-tag-color', 'sky blue dark green yellow orange red purple pink mint', 'red', 'Tag color on a host.'],
+    ['data-tag-pos', 'top-left top-right top', 'top-left', 'Corner (tilted) or centered on the top edge.'],
+    ['.sc-tag data-color', 'same colors', 'red', 'Standalone tag color.'],
+    ['.sc-tag data-size', 'sm md lg', 'md', 'Text 11 / 14 / 18 px.'],
+    ['.sc-tag data-tilt', 'boolean', '', 'Tilt a standalone tag.'],
+  ],
+  js: `btn.dataset.tag = 'SALE';            // add or change
+btn.dataset.tagColor = 'purple';     // recolor
+btn.removeAttribute('data-tag');     // remove`,
+  rules: [
+    '<b>One short word</b> in capitals: NEW, HOT, BEST, SALE, FREE, -50%, x2.',
+    '<b>Colors</b>: red = HOT/SALE, green = NEW/FREE, yellow = BEST, purple = discounts, sky = multipliers.',
+    '<b>One tag per item</b>, and at most 2–3 tagged items per screen, or nothing stands out.',
+    'Leave ~10px space around a tagged host so the sticker is not clipped (no <code class="inline">overflow:hidden</code> parent).',
+    'Starburst badges (like BEST in a spiky star) are image assets — never draw them in code.',
+  ],
+});
+</script>
+</body>
+</html>
