@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.22.0-A — Item Row component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `.sc-row`, a colored card row layout matching the reference mission and leaderboard rows. It has 8 colors (plain dark titles on white/yellow, outlined white on the others), a `leader` variant (rank badge + framed avatar + title + trophy score), a `done` state, and row parts `.sc-row-body/-title/-rank/-avatar/-score` that auto-build kit text and icons. Kit parts inside (slot, progress, button) work as usual. Also relabelled the Tab Bar's home item as Home. Added the AI manual, registry item, docs page (missions, leaderboard, friend row, live claim) and `tools/tests/row.html`.
+- Tested: `tools/tests/index.html`: 11 pages pass (adds row 11/11, covering text/icons, plain vs outlined titles, long title doesn't widen the row, nested parts, leader size, score alignment, setLabel/icon swap, inserted rows, no churn). Visual comparison with the reference sheet.
+- Notes for next agent: `.sc-row-title/-rank/-score` are in TEXT_COMPONENTS and `.sc-row-avatar/-score[data-icon]` in ICON_COMPONENTS, so they use the generic text/icon upgrade path. The row needs `min-width:0` or long titles stretch it inside grid/flex parents.
+
 ## v0.21.1-A — 16 new icons (icons4 sheet)
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Cropped the owner's `icons/icons4.png` into `kit/assets`: home, shop, helmet, play, sound, sound-off, music, music-off, menu, restart, alert, level-badge, hand, avatar, gem-pile, coin-pile. Regenerated `offsets.css`, added the names to `registry.json → icons`, and switched the Tab Bar docs to the real home/shop icons. The prompt is saved in `icons/PROMPT-icons4.md`.

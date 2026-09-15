@@ -1,0 +1,81 @@
+/*
+  Item Row — Super Casual UI Kit
+  Requires: core.css, sc.js  (+ the CSS of the kit parts you put inside: slot, progress, button…)
+
+  A colored card row you fill with kit parts. Two common layouts:
+
+  Mission:
+  <div class="sc-row" data-color="yellow">
+    <div class="sc-slot" data-icon="coin" data-count="1000" data-size="sm"></div>
+    <div class="sc-row-body">
+      <span class="sc-row-title">Win 3 levels</span>
+      <div class="sc-progress" data-value="3" data-max="3" data-label="value" data-size="sm" data-color="green"></div>
+    </div>
+    <button class="sc-button" data-color="orange" data-size="sm">Claim</button>
+  </div>
+
+  Leaderboard:
+  <div class="sc-row" data-variant="leader" data-color="blue">
+    <span class="sc-row-rank">4</span>
+    <span class="sc-row-avatar" data-icon="avatar"></span>
+    <span class="sc-row-title">Player</span>
+    <span class="sc-row-score" data-icon="trophy">5154</span>
+  </div>
+
+  data-color    white | yellow | blue | sky | green | purple | red | dark   default: white
+  data-variant  leader  → shorter row (52px) for rankings                   optional
+  data-state    done   → faded (already claimed)                             optional
+
+  Parts (text is built into outlined kit text automatically):
+  .sc-row-body    column that fills the middle (title + progress)
+  .sc-row-title   name / mission text   (dark on white & yellow rows, outlined white on others)
+  .sc-row-rank    rank number in a small dark badge
+  .sc-row-avatar  framed square with a kit icon (data-icon)
+  .sc-row-score   number on the right, optional data-icon before it
+*/
+.sc-row {
+  --row:#eef2fb; --row2:#dde3f1; --row-edge:#ffffff; --title:#1d1a2e;
+  position:relative; display:flex; align-items:center; gap:12px; box-sizing:border-box; width:100%; min-width:0; min-height:76px;
+  padding:10px 12px 12px; border:var(--sc-line) solid var(--sc-outline); border-radius:16px;
+  background:linear-gradient(var(--row) 0 60%, var(--row2) 60%);
+  box-shadow:inset 0 2px 0 var(--row-edge), inset 0 -4px 0 rgba(0,0,0,.08);
+  font-family:var(--sc-font); user-select:none; -webkit-user-select:none;
+}
+.sc-row[data-color="yellow"] { --row:#fff45c; --row2:#ffe03a; --row-edge:#fffbb0; }
+.sc-row[data-color="blue"]   { --row:#2e8cf2; --row2:#1f78e0; --row-edge:#6fb3ff; --title:#fff; }
+.sc-row[data-color="sky"]    { --row:#34c8ff; --row2:#12b2f5; --row-edge:#9ae6ff; --title:#fff; }
+.sc-row[data-color="green"]  { --row:#40dd6e; --row2:#22c858; --row-edge:#9ff5b6; --title:#fff; }
+.sc-row[data-color="purple"] { --row:#9a5cf0; --row2:#8547e0; --row-edge:#c7a2ff; --title:#fff; }
+.sc-row[data-color="red"]    { --row:#f45064; --row2:#e3374c; --row-edge:#ff9aa6; --title:#fff; }
+.sc-row[data-color="dark"]   { --row:#4a4468; --row2:#3d3858; --row-edge:#6a6390; --title:#fff; }
+
+.sc-row-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
+.sc-row-title { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.1; }
+.sc-row-title > .sc-text { --fs:18px; font-size:var(--fs); display:inline; }   /* inline so long names end with … */
+/* Light rows: plain dark title text (like the reference) */
+.sc-row:is(:not([data-color]), [data-color="white"], [data-color="yellow"]) .sc-row-title > .sc-text {
+  color:var(--title); -webkit-text-stroke:0; }
+.sc-row:is(:not([data-color]), [data-color="white"], [data-color="yellow"]) .sc-row-title > .sc-text::before { display:none; }
+.sc-row > .sc-row-title { flex:1; }
+
+/* Leaderboard variant */
+.sc-row[data-variant="leader"] { min-height:52px; padding:5px 14px 8px 8px; gap:10px; border-radius:12px; }
+.sc-row-rank {
+  flex:none; display:grid; place-items:center; min-width:30px; height:30px; padding:0 6px; box-sizing:border-box;
+  border-radius:15px; background:rgba(10,20,50,.35); box-shadow:inset 0 2px 0 rgba(0,0,0,.2);
+}
+.sc-row-rank > .sc-text { --fs:16px; font-size:var(--fs); font-variant-numeric:tabular-nums; }
+.sc-row-avatar {
+  flex:none; position:relative; width:40px; height:40px; box-sizing:border-box; overflow:hidden;
+  border:var(--sc-line-sm) solid var(--sc-outline); border-radius:9px;
+  background:linear-gradient(#7fd8ff 0 50%, #4cbcf5 50%);
+}
+.sc-row-avatar > img { position:absolute; inset:2px; width:calc(100% - 4px); height:calc(100% - 4px); object-fit:contain; translate:var(--ox, 0%) var(--oy, 0%); }
+.sc-row-score { flex:none; margin-left:auto; display:flex; align-items:center; gap:10px; }
+.sc-row-score > img { width:30px; height:30px; object-fit:contain; translate:var(--ox, 0%) var(--oy, 0%); }
+.sc-row-score > .sc-text { --fs:20px; font-size:var(--fs); min-width:52px; text-align:right; font-variant-numeric:tabular-nums; }
+.sc-row > .sc-button, .sc-row > .sc-icon-button { flex:none; }
+.sc-row > .sc-button { min-width:96px; }
+
+/* States */
+.sc-row[data-state="done"] { filter:saturate(.35) brightness(.92); }

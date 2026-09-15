@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Item Row — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/row/row.css">
+<link rel="stylesheet" href="../components/slot/slot.css">
+<link rel="stylesheet" href="../components/progress/progress.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+.list { display:flex; flex-direction:column; gap:10px; width:100%; max-width:380px; }
+</style>
+</head>
+<body>
+<script>
+SCDocs.page({
+  title: 'Item Row',
+  lead: 'A colored card row for lists — missions with a reward and a Claim button, leaderboards, friends. You fill it with kit parts.',
+  hero: `<div class="list">
+  <div class="sc-row" data-color="yellow">
+    <div class="sc-slot" data-icon="coin" data-count="1000" data-size="sm" data-color="white"></div>
+    <div class="sc-row-body">
+      <span class="sc-row-title">Mission Text</span>
+      <div class="sc-progress" data-value="1200" data-max="1200" data-label="value" data-size="md" data-color="green"></div>
+    </div>
+    <button class="sc-button" data-color="orange" data-size="sm">Claim</button>
+  </div>
+  <div class="sc-row" data-variant="leader" data-color="blue">
+    <span class="sc-row-rank">4</span>
+    <span class="sc-row-avatar" data-icon="avatar"></span>
+    <span class="sc-row-title">Player</span>
+    <span class="sc-row-score" data-icon="trophy">5154</span>
+  </div>
+</div>`,
+  css: ['components/row/row.css'],
+  usageNote: 'A row is a layout: put a slot, a body (title + progress) and a button inside. Load the CSS of the parts you use.',
+  usage: `<div class="sc-row">
+  <div class="sc-slot" data-icon="gem" data-count="50" data-size="sm"></div>
+  <div class="sc-row-body">
+    <span class="sc-row-title">Open 3 chests</span>
+    <div class="sc-progress" data-value="1" data-max="3" data-label="value" data-color="green"></div>
+  </div>
+  <button class="sc-button" data-color="sky" data-size="sm">Go</button>
+</div>`,
+  examples: [
+    { title: 'Mission list', desc: 'Yellow + Claim when done, white + Go while in progress, data-state="done" once claimed.',
+      html: `<div class="list">
+  <div class="sc-row" data-color="yellow">
+    <div class="sc-slot" data-icon="coin" data-count="500" data-size="sm" data-color="white"></div>
+    <div class="sc-row-body"><span class="sc-row-title">Win 3 levels</span><div class="sc-progress" data-value="3" data-max="3" data-label="value" data-color="green"></div></div>
+    <button class="sc-button" data-color="orange" data-size="sm">Claim</button>
+  </div>
+  <div class="sc-row">
+    <div class="sc-slot" data-icon="gem" data-count="50" data-size="sm" data-color="purple"></div>
+    <div class="sc-row-body"><span class="sc-row-title">Open 3 chests</span><div class="sc-progress" data-value="0" data-max="3" data-label="value" data-color="green"></div></div>
+    <button class="sc-button" data-color="sky" data-size="sm">Go</button>
+  </div>
+  <div class="sc-row" data-state="done">
+    <div class="sc-slot" data-icon="heart" data-count="1" data-size="sm" data-color="red" data-state="claimed"></div>
+    <div class="sc-row-body"><span class="sc-row-title">Log in today</span><div class="sc-progress" data-value="1" data-max="1" data-label="value" data-color="green"></div></div>
+    <button class="sc-button" data-color="dark" data-size="sm" disabled>Done</button>
+  </div>
+</div>` },
+    { title: 'Leaderboard', desc: 'data-variant="leader". Highlight the player row with yellow.',
+      html: `<div class="list">
+  <div class="sc-row" data-variant="leader" data-color="purple"><span class="sc-row-rank">1</span><span class="sc-row-avatar" data-icon="avatar"></span><span class="sc-row-title">DragonKing</span><span class="sc-row-score" data-icon="trophy">9820</span></div>
+  <div class="sc-row" data-variant="leader" data-color="blue"><span class="sc-row-rank">2</span><span class="sc-row-avatar" data-icon="helmet"></span><span class="sc-row-title">Knight_77</span><span class="sc-row-score" data-icon="trophy">7410</span></div>
+  <div class="sc-row" data-variant="leader" data-color="yellow"><span class="sc-row-rank">9999</span><span class="sc-row-avatar" data-icon="avatar"></span><span class="sc-row-title">You</span><span class="sc-row-score" data-icon="trophy">2569</span></div>
+</div>` },
+    { title: 'Friend row', desc: 'Any parts work: avatar + name + an icon button.',
+      html: `<div class="list">
+  <div class="sc-row">
+    <span class="sc-row-avatar" data-icon="avatar"></span>
+    <div class="sc-row-body"><span class="sc-row-title">Player</span><span class="sc-row-score" data-icon="trophy" style="margin-left:0">5090</span></div>
+    <button class="sc-icon-button" data-icon="gift" data-color="sky" aria-label="Send gift"></button>
+  </div>
+</div>` },
+    { title: 'Live: claim a mission', desc: 'Tap Claim: the reward floats up, then the row turns done.',
+      html: `<div class="list">
+  <div class="sc-row" data-color="yellow" id="liveRow">
+    <div class="sc-slot" data-icon="coin" data-count="250" data-size="sm" data-color="white"></div>
+    <div class="sc-row-body"><span class="sc-row-title">Collect 100 stars</span><div class="sc-progress" data-value="100" data-max="100" data-label="value" data-color="green"></div></div>
+    <button class="sc-button" data-color="orange" data-size="sm">Claim</button>
+  </div>
+</div>`,
+      setup(p) {
+        const row = p.querySelector('#liveRow'), btn = row.querySelector('.sc-button');
+        btn.onclick = e => {
+          SC.float('+250', btn, { icon: 'coin' });
+          row.dataset.color = 'white'; row.dataset.state = 'done';
+          btn.dataset.color = 'dark'; SC.setLabel(btn, 'Done'); btn.disabled = true;
+          row.querySelector('.sc-slot').dataset.state = 'claimed';
+        };
+      } },
+  ],
+  api: [
+    ['data-color', 'white yellow blue sky green purple red dark', 'white', 'Row color. Titles are dark on white/yellow, outlined white on others.'],
+    ['data-variant', 'leader', '', 'Shorter row for rankings.'],
+    ['data-state', 'done', '', 'Faded, already claimed.'],
+    ['.sc-row-body', '', '', 'Middle column (title + progress).'],
+    ['.sc-row-title', 'text', '', 'Name or mission text (ellipsis when long).'],
+    ['.sc-row-rank', 'number', '', 'Rank badge.'],
+    ['.sc-row-avatar', 'data-icon', '', 'Framed square picture.'],
+    ['.sc-row-score', 'number + data-icon', '', 'Score on the right.'],
+  ],
+  rules: [
+    '<b>Mission</b>: reward slot (sm) + body (title + progress) + button. Yellow row + orange <b>Claim</b> when complete; white row + sky <b>Go</b> in progress; <code class="inline">data-state="done"</code> + disabled dark button after claiming.',
+    '<b>Leaderboard</b>: <code class="inline">data-variant="leader"</code>, rank + avatar + title + score. Highlight the player’s own row in yellow; top 3 can use purple/blue.',
+    'Stack rows in a column with 8–10px gaps inside a popup body or screen middle; the list may scroll only inside a popup, never the page.',
+    'Keep titles short (they cut off with …).',
+    'Use <code class="inline">avatar</code> or <code class="inline">helmet</code> icons for player pictures until the game provides real ones.',
+  ],
+});
+</script>
+</body>
+</html>

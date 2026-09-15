@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.21.1",
+  "version": "0.22.0",
   "items": [
     {
       "name": "core",
@@ -1800,6 +1800,78 @@
         {
           "title": "Not enough coins",
           "js": "SC.toast('Not enough coins!', { kind: 'error', icon: 'coin' });"
+        }
+      ]
+    },
+    {
+      "name": "row",
+      "type": "registry:layout",
+      "title": "Item Row",
+      "description": "Colored card row layout for missions, leaderboards and friend lists; filled with kit parts plus row parts.",
+      "whenToUse": "Lists: daily missions, achievements, leaderboards, friends, inbox.",
+      "files": [
+        "components/row/row.css"
+      ],
+      "docs": "components/row/row.md",
+      "dependencies": [
+        "core",
+        "slot",
+        "progress",
+        "button"
+      ],
+      "html": "<div class=\"sc-row\" data-color=\"yellow\">\n  <div class=\"sc-slot\" data-icon=\"coin\" data-count=\"500\" data-size=\"sm\" data-color=\"white\"></div>\n  <div class=\"sc-row-body\">\n    <span class=\"sc-row-title\">Win 3 levels</span>\n    <div class=\"sc-progress\" data-value=\"3\" data-max=\"3\" data-label=\"value\" data-color=\"green\"></div>\n  </div>\n  <button class=\"sc-button\" data-color=\"orange\" data-size=\"sm\">Claim</button>\n</div>",
+      "props": {
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "white",
+            "yellow",
+            "blue",
+            "sky",
+            "green",
+            "purple",
+            "red",
+            "dark"
+          ],
+          "default": "white"
+        },
+        "data-variant": {
+          "type": "enum",
+          "values": [
+            "leader"
+          ],
+          "optional": true
+        },
+        "data-state": {
+          "type": "enum",
+          "values": [
+            "done"
+          ],
+          "optional": true
+        }
+      },
+      "parts": {
+        ".sc-row-body": "Middle column",
+        ".sc-row-title": "Text",
+        ".sc-row-rank": "Rank badge",
+        ".sc-row-avatar[data-icon]": "Framed picture",
+        ".sc-row-score[data-icon]": "Right score"
+      },
+      "events": [],
+      "js": {
+        "SC.setLabel(part, text)": "Update title/rank/score text"
+      },
+      "rules": [
+        "Mission: white+Go in progress, yellow+orange Claim when complete, data-state=done + disabled dark Done after claim.",
+        "Leaderboard: data-variant=leader; player row yellow.",
+        "Column with 8-10px gaps inside popup body or screen middle; never scroll the page.",
+        "Short titles.",
+        "avatar/helmet icons for player pictures."
+      ],
+      "examples": [
+        {
+          "title": "Leaderboard row",
+          "html": "<div class=\"sc-row\" data-variant=\"leader\" data-color=\"blue\"><span class=\"sc-row-rank\">4</span><span class=\"sc-row-avatar\" data-icon=\"avatar\"></span><span class=\"sc-row-title\">Player</span><span class=\"sc-row-score\" data-icon=\"trophy\">5154</span></div>"
         }
       ]
     }

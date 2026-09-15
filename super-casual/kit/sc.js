@@ -14,8 +14,8 @@
   To use a different folder: <script src="kit/sc.js" data-assets="my/icons/"></script>
 */
 (function () {
-  const TEXT_COMPONENTS = '.sc-button, .sc-icon-button';
-  const ICON_COMPONENTS = '.sc-button[data-icon], .sc-icon-button[data-icon]';
+  const TEXT_COMPONENTS = '.sc-button, .sc-icon-button, .sc-row-title, .sc-row-rank, .sc-row-score';
+  const ICON_COMPONENTS = '.sc-button[data-icon], .sc-icon-button[data-icon], .sc-row-avatar[data-icon], .sc-row-score[data-icon]';
   const COUNTERS = '.sc-counter';
   const SLOTS = '.sc-slot';
   const POPUPS = '.sc-popup';
@@ -34,7 +34,7 @@
   const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot, .sc-tab, .sc-tabbar-item';
   const MESSAGES = '.sc-popup-message, .sc-popup-value';
   const SCREENS = '.sc-screen';
-  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}, ${TAGS}, ${BANNERS}`;
+  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}, ${TAGS}, ${BANNERS}, .sc-row-avatar`;
   const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, ${TOGGLES}, ${CHECKBOXES}, ${TAB_ITEMS}`;
 
   const script = document.currentScript;
@@ -872,7 +872,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.21.1',
+    version: '0.22.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */

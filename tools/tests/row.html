@@ -1,0 +1,53 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Row regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/row/row.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/slot/slot.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/progress/progress.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/button/button.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>body { margin:20px; font:14px system-ui; background:#243453; color:white; } #fixtures { width:380px; display:grid; gap:10px; } li { margin:6px 0; } .fail { color:#ff9da7; }</style>
+<h1>Row checks</h1>
+<p id="summary">Running…</p>
+<div id="fixtures">
+  <div class="sc-row" id="m" data-color="yellow">
+    <div class="sc-slot" data-icon="coin" data-count="500" data-size="sm"></div>
+    <div class="sc-row-body"><span class="sc-row-title">A very very long mission title that must be cut off</span><div class="sc-progress" data-value="3" data-max="3" data-label="value"></div></div>
+    <button class="sc-button" data-color="orange" data-size="sm">Claim</button>
+  </div>
+  <div class="sc-row" id="l" data-variant="leader" data-color="blue">
+    <span class="sc-row-rank">4</span><span class="sc-row-avatar" data-icon="avatar"></span><span class="sc-row-title">Player</span><span class="sc-row-score" data-icon="trophy">5154</span>
+  </div>
+</div>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const settle = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  try {
+    const m = $('#m'), l = $('#l');
+    const t = m.querySelector('.sc-row-title');
+    check('title text built', t.querySelector('.sc-text')?.dataset.text.startsWith('A very'));
+    check('light row title is plain dark text', getComputedStyle(t.querySelector('.sc-text')).webkitTextStrokeWidth === '0px' && getComputedStyle(t.querySelector('.sc-text')).color === 'rgb(29, 26, 46)');
+    check('long title is cut (row does not overflow)', m.scrollWidth <= m.clientWidth + 1 && t.scrollWidth > t.clientWidth);
+    check('parts inside still upgrade (slot, progress, button)', !!m.querySelector('.sc-slot img') && !!m.querySelector('.sc-progress-fill') && !!m.querySelector('.sc-button .sc-text'));
+    check('leader rank, avatar icon, score icon + text', l.querySelector('.sc-row-rank .sc-text')?.dataset.text === '4' && l.querySelector('.sc-row-avatar img')?.src.endsWith('/avatar.png') && l.querySelector('.sc-row-score img')?.src.endsWith('/trophy.png') && l.querySelector('.sc-row-score .sc-text')?.dataset.text === '5154');
+    check('dark row title is outlined', parseFloat(getComputedStyle(l.querySelector('.sc-row-title .sc-text')).webkitTextStrokeWidth) > 0);
+    check('leader row is shorter', l.offsetHeight < m.offsetHeight && l.offsetHeight >= 52);
+    check('score pushed to the right edge', Math.abs(l.getBoundingClientRect().right - l.querySelector('.sc-row-score').getBoundingClientRect().right) < 20);
+    SC.setLabel(l.querySelector('.sc-row-score'), '6000'); l.querySelector('.sc-row-avatar').dataset.icon = 'helmet'; await settle();
+    check('setLabel on score keeps icon; avatar icon swaps', l.querySelector('.sc-row-score .sc-text').dataset.text === '6000' && !!l.querySelector('.sc-row-score img') && l.querySelector('.sc-row-avatar img').src.endsWith('/helmet.png'));
+    const fresh = document.createElement('div'); fresh.className = 'sc-row'; fresh.innerHTML = '<span class="sc-row-avatar" data-icon="avatar"></span><span class="sc-row-title">New</span>';
+    $('#fixtures').append(fresh); await settle();
+    check('inserted row parts upgrade', !!fresh.querySelector('.sc-row-avatar img') && fresh.querySelector('.sc-row-title .sc-text')?.dataset.text === 'New');
+    let records = 0; const mo = new MutationObserver(x => records += x.length); mo.observe($('#fixtures'), { attributes: true, subtree: true, childList: true });
+    await new Promise(r => setTimeout(r, 900)); mo.disconnect();
+    check('no endless updates', records === 0);
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Row';
+});
+</script>

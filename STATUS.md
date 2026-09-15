@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.21.1-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.22.0-A**
 
 ## Next task
-**Build Item Row.** Mission row (icon slot + title + progress bar + Claim/Go button, yellow when claimable) and leaderboard row (rank + `avatar` icon + name + trophy score, highlighted for the player) matching the reference sheet. Target API: `<div class="sc-row" data-variant="mission|leader" …>`. Follow AGENTS.md §4.
+**Build Loading Bar / Screen.** A loading screen block-in-a-component: `.sc-loading` full screen (inside Screen Shell) with game title area, a glossy progress bar with percent, a rotating tip line and an optional spinning kit icon. JS: `SC.loading.set(el, pct)`, `SC.loading.done(el)` fades it out and fires `done`. Reuse Progress Bar and Screen Shell. Follow AGENTS.md §4.
 
 ## In progress
 _Nothing._
@@ -32,15 +32,15 @@ _Nothing._
 | 19 | Title Banner Ribbon | `.sc-banner` | v0.19.0-A |
 | 20 | Hint Bubble | `.sc-hint / data-hint` | v0.20.0-A |
 | 21 | Toast Message | `SC.toast()` | v0.21.0-A |
+| 22 | Item Row | `.sc-row` | v0.22.0-A |
 
 ## Left — components (in this order)
-1. Item Row (mission, leaderboard) ← next
-2. Loading Bar / Screen
-3. Top Bar (avatar, level, resources) 🖼 avatar image needed
-4. Level Badge 🖼 badge image needed (placeholder in `super-casual/old-demos/success.html`)
-5. Notification Dot 🖼 red "!" image needed
-6. Shop Card 🖼 pack images needed
-7. Tutorial Hand 🖼 hand image needed
+1. Loading Bar / Screen ← next
+2. Top Bar (avatar, level, resources) 🖼 avatar image needed
+3. Level Badge 🖼 badge image needed (placeholder in `super-casual/old-demos/success.html`)
+4. Notification Dot 🖼 red "!" image needed
+5. Shop Card 🖼 pack images needed
+6. Tutorial Hand 🖼 hand image needed
 
 ## Left — blocks (full screens built ONLY from kit components)
 Gameplay HUD · Pause · Success · Fail (old versions exist in `super-casual/old-demos/`; build each block as one `.sc-screen`) · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading
