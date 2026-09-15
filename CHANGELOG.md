@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.32.0-A — Pause block
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `kit/blocks/pause.html`, a pause menu over a frozen stand-in game. A HUD pause button opens the `PAUSED` popup (LEVEL 12 sub-tag, static backdrop). It has quick settings in a panel (Sound/Music/Vibration Toggles with the new `sound`/`music` icons, right-aligned) and stacked Resume (lg green) / Restart (restart icon) / Home (home icon). Toggles fire `change` for the game to apply and save.
+- Tested: Opened at 375×812. Toggles line up at the same right edge, the Vibration toggle switches ON, and Resume closes the popup and unfreezes the game.
+- Notes for next agent: Rows inside `.sc-panel` need `align-self:stretch; width:100%` or they shrink to content.
+
 ## v0.31.0-A — Fail block
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `kit/blocks/fail.html`, the level-failed screen over the game. It has a dim Screen Shell with a gem counter, `FAILED` red title (shake), empty arc stars, "So close!" with a 78% orange progress bar, and a timed continue offer: "Continue?" + ring timer (8 s, warn at 3). Revive by video or for 20 gems (toast if short), plus Retry (restart icon) and Give up buttons. The offer hides when the timer ends.

@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Block: Pause — Super Casual UI Kit</title>
+<!-- BLOCK: Pause menu with quick settings. Built only from kit components. -->
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/screen/screen.css">
+<link rel="stylesheet" href="../components/popup/popup.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../components/toggle/toggle.css">
+<script src="../sc.js"></script>
+<style>
+  /* Layout glue only */
+  html, body { margin:0; height:100%; overflow:hidden; background:#1f2d4b; }
+  #game { position:fixed; inset:0; width:100%; height:100%; display:block; }
+  .setting { display:flex; align-items:center; gap:10px; padding:4px 2px; width:100%; box-sizing:border-box; align-self:stretch; }
+  .setting > img { width:34px; height:34px; object-fit:contain; }
+  .setting > .sc-text { --fs:20px; font-size:var(--fs); flex:1; }
+</style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- HUD with the pause button -->
+  <div class="sc-screen" id="hud">
+    <div class="sc-screen-top">
+      <button class="sc-icon-button" data-icon="pause" data-color="sky" id="pauseBtn" aria-label="Pause"></button>
+    </div>
+  </div>
+
+  <!-- Pause popup -->
+  <div class="sc-popup" id="pause" data-title="PAUSED" data-sub="LEVEL 12" data-backdrop="static">
+    <div class="sc-panel">
+      <div class="setting"><img src="../assets/sound.png" alt=""><span class="sc-text" data-text="Sound">Sound</span><button class="sc-toggle" data-checked data-setting="sound" aria-label="Sound"></button></div>
+      <div class="setting"><img src="../assets/music.png" alt=""><span class="sc-text" data-text="Music">Music</span><button class="sc-toggle" data-checked data-setting="music" aria-label="Music"></button></div>
+      <div class="setting"><img src="../assets/energy.png" alt=""><span class="sc-text" data-text="Vibration">Vibration</span><button class="sc-toggle" data-setting="vibration" aria-label="Vibration"></button></div>
+    </div>
+    <div class="sc-popup-actions" data-layout="stack">
+      <button class="sc-button" data-color="green" data-size="lg" data-close>RESUME</button>
+      <button class="sc-button" data-color="yellow" data-icon="restart" id="restart">Restart</button>
+      <button class="sc-button" data-color="red" data-icon="home" id="home">Home</button>
+    </div>
+  </div>
+
+<script>
+  // --- Stand-in game (replace with your engine) ---
+  const canvas = document.getElementById('game'), ctx = canvas.getContext('2d');
+  let paused = true, t0 = 0;
+  function resize() { const d = devicePixelRatio || 1; canvas.width = innerWidth * d; canvas.height = innerHeight * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
+  addEventListener('resize', resize); resize();
+  (function loop(t) { if (!paused) t0 += 16;
+    ctx.fillStyle = '#244a6b'; ctx.fillRect(0, 0, innerWidth, innerHeight);
+    ctx.beginPath(); ctx.arc(innerWidth / 2 + Math.cos(t0 / 400) * 100, innerHeight / 2, 30, 0, 7); ctx.fillStyle = '#f5c02e'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#050308'; ctx.stroke();
+    requestAnimationFrame(loop); })(0);
+
+  // --- UI wiring ---
+  const $ = id => document.getElementById(id);
+  $('pauseBtn').onclick = () => { paused = true; SC.popup.open('pause'); };
+  $('pause').addEventListener('close', () => { paused = false; });
+  document.addEventListener('change', e => {
+    if (e.target.matches('.sc-toggle[data-setting]')) console.log('setting', e.target.dataset.setting, e.detail.checked);   // game: apply + save
+  });
+  $('restart').onclick = () => { t0 = 0; SC.popup.close('pause'); };
+  $('home').onclick = () => { SC.popup.close('pause'); /* game: go to menu */ };
+</script>
+</body>
+</html>

@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.31.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.32.0-A**
 
 ## Next task
-**Build the Pause block** (`kit/blocks/pause.html`, add a row to `blocks/README.md`). Pause popup over a frozen game: `PAUSED` popup with a LEVEL sub-tag, quick settings (Sound, Music, Vibration Toggles with `sound`/`music` icons next to their labels), and Resume (lg green) / Restart / Home buttons stacked. Resume closes and resumes; toggles fire change. Update registry `blocks[]`, STATUS "Done — blocks", docs NAV "Blocks" group and CHANGELOG.
+**Build the Start block** (`kit/blocks/start.html`, add a row to `blocks/README.md`). Home/start screen: Top Bar (avatar, level, coins, gems), game title (Screen Title gold) in the middle with a big PLAY button (yellow lg), side icon buttons (settings with Notification Dot, daily reward `calendar` with alert, shop), and a Bottom Tab Bar (Shop / Home / Rank) with `data-panel` switching to simple Shop and Rank placeholder screens. PLAY hides the menu and starts the stand-in game. Update registry `blocks[]`, STATUS "Done — blocks", docs NAV "Blocks" group and CHANGELOG.
 
 ## In progress
 _Nothing._
@@ -46,12 +46,13 @@ _Nothing._
 | 1 | Gameplay HUD | `blocks/hud.html` | v0.29.0-A |
 | 2 | Success | `blocks/success.html` | v0.30.0-A |
 | 3 | Fail | `blocks/fail.html` | v0.31.0-A |
+| 4 | Pause | `blocks/pause.html` | v0.32.0-A |
 
 ## Left — components (in this order)
 _All components done._
 
 ## Left — blocks (full screens built ONLY from kit components)
-Pause · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading
+Start · Reward Reveal · Daily Reward · Settings · Shop · Loading
 (Old pre-kit versions of some screens: `super-casual/old-demos/`. Each block = one HTML file in `kit/blocks/` using only kit components + layout glue.)
 
 ## Left — other
