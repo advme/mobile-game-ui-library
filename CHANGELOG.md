@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.21.0-A — Toast Message component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `SC.toast(text, {kind, icon, duration, pos})`: a glossy pill message (info dark / success green / error red / reward gold) with outlined kit text and an optional kit icon. It slides in at the top or bottom (12px + safe area) and removes itself. Separate queues for top and bottom show one at a time, with at most 3 waiting and repeated text dropped. It never blocks taps and uses an aria-live polite layer. Added the AI manual, registry item, docs page and `tools/tests/toast.html`.
+- Tested: `tools/tests/index.html`: 10 pages pass (adds toast 12/12, covering show, kind/icon, live region, 12px layer offset, queue order, duplicate drop, cap, parallel bottom queue, drain). Live docs demo queues error → reward with a separate bottom toast.
+- Notes for next agent: Measure the fixed `.sc-toast-layer`, not the toast, in tests: the toast is mid slide-in animation.
+
 ## v0.20.0-A — Hint Bubble component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added the Hint Bubble: a white speech bubble with an outlined border and a rounded rotated-square pointer (no polygons) in 4 directions, 2 sizes. `data-hint` on any element shows it on tap (auto-hides after 2.5 s, on a second tap or a tap elsewhere). `SC.hint.show(target, text, {pos, duration})` / `SC.hint.hide(target?)` handle tutorials (`duration: 0` stays). Floating bubbles are placed next to the target, clamped 12px inside the screen with the pointer still aiming at the target, scale with the target's Screen Shell, reposition on resize/scroll, and never block taps. Added the AI manual, registry item, docs page, `tools/tests/hint.html` and `icons/PROMPT-icons4.md` (owed image prompt).

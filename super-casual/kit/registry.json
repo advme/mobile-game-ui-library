@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "items": [
     {
       "name": "core",
@@ -1767,6 +1767,39 @@
         {
           "title": "Tutorial",
           "js": "SC.hint.show(playBtn, 'Tap Play to start!', { duration: 0 });"
+        }
+      ]
+    },
+    {
+      "name": "toast",
+      "type": "registry:ui",
+      "title": "Toast Message",
+      "description": "Short self-hiding message pill at the top/bottom of the screen; queued; JS only.",
+      "whenToUse": "Feedback for an action: not enough coins, saved, purchase complete, +1 life.",
+      "files": [
+        "components/toast/toast.css"
+      ],
+      "docs": "components/toast/toast.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "",
+      "props": {},
+      "events": [],
+      "js": {
+        "SC.toast(text, {kind, icon, duration, pos})": "kind info|success|error|reward (default info); icon kit name; duration ms (default 1800); pos top|bottom (default top)"
+      },
+      "rules": [
+        "1-5 words; questions go in a Popup.",
+        "error = failed action, success = worked, reward = small gain, info otherwise.",
+        "Don't toast what is already visible; use SC.float near the object.",
+        "Top by default.",
+        "Never call every frame."
+      ],
+      "examples": [
+        {
+          "title": "Not enough coins",
+          "js": "SC.toast('Not enough coins!', { kind: 'error', icon: 'coin' });"
         }
       ]
     }

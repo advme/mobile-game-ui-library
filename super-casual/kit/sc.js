@@ -386,6 +386,37 @@
     b && b.classList.add('sc-hint-tap');
   });
 
+  /* ---------- Toast Message ---------- */
+  const toastQueues = { top: [], bottom: [] }, toastBusy = { top: false, bottom: false };
+  function toast(text, { kind = 'info', icon, duration = 1800, pos = 'top' } = {}) {
+    pos = pos === 'bottom' ? 'bottom' : 'top';
+    text = String(text);
+    const q = toastQueues[pos];
+    if (q.some(t => t.text === text) || q.length >= 3) return;
+    q.push({ text, kind, icon, duration: Math.max(600, Number(duration) || 1800) });
+    if (!toastBusy[pos]) nextToast(pos);
+  }
+  function nextToast(pos) {
+    const item = toastQueues[pos].shift();
+    if (!item) { toastBusy[pos] = false; return; }
+    toastBusy[pos] = true;
+    let layer = document.querySelector(`.sc-toast-layer[data-pos="${pos}"]`);
+    if (!layer) {
+      layer = document.createElement('div'); layer.className = 'sc-toast-layer'; layer.dataset.pos = pos;
+      layer.setAttribute('role', 'status'); layer.setAttribute('aria-live', 'polite');
+      document.body.append(layer);
+    }
+    const el = document.createElement('div');
+    el.className = 'sc-toast'; el.dataset.kind = ['info', 'success', 'error', 'reward'].includes(item.kind) ? item.kind : 'info';
+    el.append(textSpan(item.text));
+    if (item.icon) { el.dataset.icon = item.icon; upgradeIcon(el); }
+    layer.replaceChildren(el);
+    setTimeout(() => {
+      el.classList.add('sc-closing');
+      setTimeout(() => { el.remove(); nextToast(pos); }, 200);
+    }, item.duration);
+  }
+
   /* ---------- Counter ---------- */
   function formatNumber(n, format) {
     n = Math.round(Number(n) || 0);
@@ -841,7 +872,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.20.0',
+    version: '0.21.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */
@@ -893,6 +924,8 @@
     tabbar: tabs,
     /** Hint bubbles: SC.hint.show(target, text, {pos, duration}) · SC.hint.hide(target?) */
     hint,
+    /** Short message at the top/bottom: SC.toast('Saved!', { kind, icon, duration, pos }) */
+    toast,
     /** Floating feedback text: SC.float('+50', event | element | {x, y}, { color, size, icon, style }) */
     float,
     /** URL of an icon in the kit: SC.icon('coin') */

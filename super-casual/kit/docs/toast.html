@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toast Message — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/toast/toast.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+.row { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; }
+.col { display:flex; flex-direction:column; align-items:center; gap:14px; }
+/* Docs only: static copies of toasts so they can be seen without tapping */
+.preview .sc-toast { animation:none; }
+</style>
+</head>
+<body>
+<script>
+SCDocs.page({
+  title: 'Toast Message',
+  lead: 'A short message that slides in at the top of the screen and goes away by itself — "Not enough coins!", "Saved", "+1 Life".',
+  hero: `<div class="col">
+  <div class="sc-toast" data-kind="error"><span class="sc-text" data-text="Not enough coins!">Not enough coins!</span></div>
+  <button class="sc-button" data-color="yellow" id="heroToast">Show a toast</button>
+</div>`,
+  css: ['components/toast/toast.css'],
+  usageNote: 'JavaScript only. Call SC.toast() when something happens; it builds, queues and removes itself.',
+  usage: `SC.toast('Not enough coins!', { kind: 'error', icon: 'coin' });`,
+  examples: [
+    { title: 'Kinds', desc: 'info (dark), success (green), error (red), reward (gold). Static copies shown here.',
+      html: `<div class="col">
+  <div class="sc-toast"><span class="sc-text" data-text="Level saved">Level saved</span></div>
+  <div class="sc-toast" data-kind="success"><img src="assets/check.png" alt=""><span class="sc-text" data-text="Purchase complete!">Purchase complete!</span></div>
+  <div class="sc-toast" data-kind="error"><img src="assets/heart-empty.png" alt=""><span class="sc-text" data-text="No lives left">No lives left</span></div>
+  <div class="sc-toast" data-kind="reward"><img src="assets/heart.png" alt=""><span class="sc-text" data-text="+1 Life">+1 Life</span></div>
+</div>`, },
+    { title: 'Live: try them', desc: 'Tap several quickly — they queue and show one after another.',
+      html: `<div class="row">
+  <button class="sc-button" data-size="sm" data-color="dark" data-t="info">Info</button>
+  <button class="sc-button" data-size="sm" data-color="green" data-t="success">Success</button>
+  <button class="sc-button" data-size="sm" data-color="red" data-t="error">Error</button>
+  <button class="sc-button" data-size="sm" data-color="yellow" data-t="reward">Reward</button>
+  <button class="sc-button" data-size="sm" data-color="sky" data-t="bottom">Bottom</button>
+</div>`,
+      setup(p) {
+        const msgs = { info: ['Settings saved', null], success: ['Purchase complete!', 'check'], error: ['Not enough gems!', 'gem'], reward: ['+50 coins', 'coin'] };
+        p.querySelectorAll('[data-t]').forEach(b => b.onclick = () => {
+          if (b.dataset.t === 'bottom') return SC.toast('Tap again to exit', { pos: 'bottom' });
+          const [text, icon] = msgs[b.dataset.t]; SC.toast(text, { kind: b.dataset.t, icon });
+        });
+      } },
+  ],
+  api: [
+    ['text', 'string', '', 'Message (keep it under ~5 words).'],
+    ['kind', 'info success error reward', 'info', 'Pill color.'],
+    ['icon', 'icon-name', '', 'Kit icon on the left.'],
+    ['duration', 'ms', '1800', 'Time on screen (minimum 600).'],
+    ['pos', 'top bottom', 'top', 'Screen edge.'],
+  ],
+  js: `SC.toast('Saved');                                         // info
+SC.toast('Not enough coins!', { kind: 'error', icon: 'coin' });
+SC.toast('+1 Life', { kind: 'reward', icon: 'heart', duration: 1200 });
+SC.toast('Tap again to exit', { pos: 'bottom' });`,
+  rules: [
+    '<b>Short</b>: 1–5 words. It is feedback, not a question — anything the player must answer is a Popup.',
+    '<b>error</b> when an action fails (not enough coins), <b>success</b> when it worked, <b>reward</b> for small gains, <b>info</b> otherwise.',
+    'Do not toast things the player can already see happen (use Floating Text next to the object instead).',
+    'Top by default; bottom only for hints about the bottom bar.',
+    'Do not call it every frame — the queue drops repeats, but spamming still feels bad.',
+  ],
+});
+document.getElementById('heroToast').onclick = () => SC.toast('Not enough coins!', { kind: 'error', icon: 'coin' });
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+/*
+  Toast Message — Super Casual UI Kit
+  Requires: core.css, sc.js
+
+  JavaScript only:
+    SC.toast('Not enough coins!', { kind: 'error', icon: 'coin' });
+
+  Options:
+  kind       info | success | error | reward     default: info   (pill color)
+  icon       kit icon name on the left           optional
+  duration   ms on screen                        default: 1800
+  pos        top | bottom                        default: top
+
+  One toast at a time per position; new ones wait in a queue (max 3 waiting; the same text is not queued twice).
+  Sits 12px + safe area from the top/bottom edge, above everything, never blocks taps.
+*/
+.sc-toast-layer {
+  position:fixed; left:0; right:0; z-index:1200; display:flex; justify-content:center; pointer-events:none;
+  padding:0 12px;
+}
+.sc-toast-layer[data-pos="top"]    { top:calc(12px + env(safe-area-inset-top, 0px)); }
+.sc-toast-layer[data-pos="bottom"] { bottom:calc(12px + env(safe-area-inset-bottom, 0px)); }
+
+.sc-toast {
+  --band:#4a4466; --base:#383252; --lip:#1f1b33;
+  display:inline-flex; align-items:center; gap:8px; box-sizing:border-box; max-width:100%; min-height:46px;
+  padding:6px 18px 9px; border:var(--sc-line) solid var(--sc-outline); border-radius:23px;
+  background:linear-gradient(var(--band) 0 50%, var(--base) 50%);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.2), inset 0 -4px 0 var(--lip), 0 6px 14px rgba(0,0,0,.25);
+  font-family:var(--sc-font); user-select:none; -webkit-user-select:none;
+  animation:sc-toast-in .28s cubic-bezier(.3,1.5,.6,1);
+}
+.sc-toast[data-kind="success"] { --band:#47d97a; --base:#1fbf5a; --lip:#0a7f3b; }
+.sc-toast[data-kind="error"]   { --band:#fd6a78; --base:#e8303f; --lip:#8a0620; }
+.sc-toast[data-kind="reward"]  { --band:#ffd05a; --base:#ffae2e; --lip:#c0651a; }
+.sc-toast > .sc-text { --fs:18px; font-size:var(--fs); white-space:normal; text-align:center; line-height:1.15; }
+.sc-toast > img { width:30px; height:30px; flex:none; object-fit:contain; margin:-4px 0 -2px -6px; translate:var(--ox, 0%) var(--oy, 0%); }
+.sc-toast-layer[data-pos="bottom"] .sc-toast { animation-name:sc-toast-in-up; }
+.sc-toast.sc-closing { animation:sc-toast-out .2s ease-in forwards; }
+@keyframes sc-toast-in    { from { opacity:0; transform:translateY(-120%); } }
+@keyframes sc-toast-in-up { from { opacity:0; transform:translateY(120%); } }
+@keyframes sc-toast-out   { to { opacity:0; transform:scale(.85); } }
+@media (prefers-reduced-motion:reduce) { .sc-toast { animation-duration:.01s !important; } }

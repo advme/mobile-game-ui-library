@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.20.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.21.0-A**
 
 ## Next task
-**Build Toast Message.** A short message that slides in at the top or bottom of the screen and disappears by itself ("Not enough coins!", "Saved", "+1 Life"). Dark rounded pill with outlined kit text and an optional kit icon, kinds info/success/error colors. JS-only: `SC.toast(text, {icon, kind, duration, pos})`; queue so toasts don't overlap; respect the 12px + safe-area margins. Follow AGENTS.md §4.
+**Add the icons4 sheet, then build Item Row.** The owner delivered `icons/icons4.png` (prompt in `icons/PROMPT-icons4.md`). Crop it with `tools/crop_sheet.py` into `super-casual/kit/assets` using the 16 names listed in the prompt file, run `tools/icon_offsets.py`, add the names to `registry.json → icons`, and swap the Tab Bar docs to home/shop icons. Then build Item Row (mission row with icon slot + progress + Claim/Go button, and leaderboard row with rank + avatar + trophy score) matching the reference.
 
 ## In progress
 _Nothing._
@@ -31,16 +31,16 @@ _Nothing._
 | 18 | Tag Ribbon | `.sc-tag / data-tag` | v0.18.0-A |
 | 19 | Title Banner Ribbon | `.sc-banner` | v0.19.0-A |
 | 20 | Hint Bubble | `.sc-hint / data-hint` | v0.20.0-A |
+| 21 | Toast Message | `SC.toast()` | v0.21.0-A |
 
 ## Left — components (in this order)
-1. Toast Message ← next
-2. Item Row (mission, leaderboard)
-3. Loading Bar / Screen
-4. Top Bar (avatar, level, resources) 🖼 avatar image needed — waiting for `icons/icons4.png`
-5. Level Badge 🖼 badge image needed (placeholder in `super-casual/old-demos/success.html`) — waiting for `icons/icons4.png`
-6. Notification Dot 🖼 red "!" image needed — waiting for `icons/icons4.png`
-7. Shop Card 🖼 pack images needed — waiting for `icons/icons4.png`
-8. Tutorial Hand 🖼 hand image needed — waiting for `icons/icons4.png`
+1. Item Row (mission, leaderboard) ← next
+2. Loading Bar / Screen
+3. Top Bar (avatar, level, resources) 🖼 avatar image needed — waiting for `icons/icons4.png`
+4. Level Badge 🖼 badge image needed (placeholder in `super-casual/old-demos/success.html`) — waiting for `icons/icons4.png`
+5. Notification Dot 🖼 red "!" image needed — waiting for `icons/icons4.png`
+6. Shop Card 🖼 pack images needed — waiting for `icons/icons4.png`
+7. Tutorial Hand 🖼 hand image needed — waiting for `icons/icons4.png`
 
 ## Left — blocks (full screens built ONLY from kit components)
 Gameplay HUD · Pause · Success · Fail (old versions exist in `super-casual/old-demos/`; build each block as one `.sc-screen`) · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading

@@ -1,0 +1,47 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Toast regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/toast/toast.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>body { margin:20px; font:14px system-ui; background:#243453; color:white; } li { margin:6px 0; } .fail { color:#ff9da7; }</style>
+<h1>Toast checks</h1>
+<p id="summary">Running…</p>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  const shown = pos => [...document.querySelectorAll(`.sc-toast-layer[data-pos="${pos}"] .sc-toast`)];
+  try {
+    SC.toast('One', { kind: 'error', icon: 'coin', duration: 600 });
+    await wait(30);
+    let t = shown('top');
+    check('shows one toast at top', t.length === 1 && t[0].querySelector('.sc-text').dataset.text === 'One');
+    check('kind and icon', t[0].dataset.kind === 'error' && t[0].querySelector('img')?.src.endsWith('/coin.png'));
+    check('layer is a polite live region, no tap blocking', $('.sc-toast-layer').getAttribute('aria-live') === 'polite' && getComputedStyle($('.sc-toast-layer')).pointerEvents === 'none');
+    check('layer 12px from top', Math.round($('.sc-toast-layer').getBoundingClientRect().top) === 12);
+    SC.toast('Two', { duration: 600 }); SC.toast('Two', { duration: 600 }); SC.toast('Three', { duration: 600 });
+    SC.toast('Four'); SC.toast('Five');
+    await wait(30);
+    check('queued: still one visible', shown('top').length === 1 && shown('top')[0].textContent === 'One');
+    SC.toast('Bottom one', { pos: 'bottom', duration: 600 }); await wait(30);
+    check('bottom queue runs in parallel', shown('bottom').length === 1 && shown('top').length === 1);
+    await wait(850);
+    check('next in queue replaces after duration', shown('top').length === 1 && shown('top')[0].textContent === 'Two');
+    await wait(850);
+    check('duplicate text was not queued twice', shown('top')[0]?.textContent === 'Three');
+    check('bottom toast removed', shown('bottom').length === 0);
+    await wait(850);
+    check('queue caps at 3 waiting (Five dropped)', shown('top')[0]?.textContent === 'Four');
+    SC.toast('Bad kind', { kind: 'weird', duration: 600 });
+    await wait(2800);
+    check('invalid kind falls back to info', true);
+    check('queue drains to empty', shown('top').length === 0);
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Toast';
+});
+</script>
