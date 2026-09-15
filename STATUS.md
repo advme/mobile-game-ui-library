@@ -30,17 +30,17 @@ _Nothing._
 | 17 | Bottom Tab Bar | `.sc-tabbar` | v0.17.0-A |
 
 ## Left — components (in this order)
-1. Top Bar (avatar, level, resources) 🖼 avatar image needed ← next
-2. Level Badge 🖼 badge image needed (placeholder in `super-casual/old-demos/success.html`)
-3. Notification Dot 🖼 red "!" image needed
-4. Tag Ribbon (NEW, HOT, BEST)
-5. Title Banner Ribbon (NEW SKIN!)
-6. Tooltip / Hint Bubble
-7. Toast Message
-8. Item Row (mission, leaderboard)
-9. Shop Card 🖼 pack images needed
-10. Loading Bar / Screen
-11. Tutorial Hand 🖼 hand image needed
+1. Tag Ribbon (NEW, HOT, BEST) ← next
+2. Title Banner Ribbon (NEW SKIN!)
+3. Tooltip / Hint Bubble
+4. Toast Message
+5. Item Row (mission, leaderboard)
+6. Loading Bar / Screen
+7. Top Bar (avatar, level, resources) 🖼 avatar image needed — waiting for `icons/icons4.png`
+8. Level Badge 🖼 badge image needed (placeholder in `super-casual/old-demos/success.html`) — waiting for `icons/icons4.png`
+9. Notification Dot 🖼 red "!" image needed — waiting for `icons/icons4.png`
+10. Shop Card 🖼 pack images needed — waiting for `icons/icons4.png`
+11. Tutorial Hand 🖼 hand image needed — waiting for `icons/icons4.png`
 
 ## Left — blocks (full screens built ONLY from kit components)
 Gameplay HUD · Pause · Success · Fail (old versions exist in `super-casual/old-demos/`; build each block as one `.sc-screen`) · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading
