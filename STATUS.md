@@ -1,6 +1,6 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.10.1-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.10.2-A**
 
 ## Next task
 **Convert Count Bubble.** It's the small round number badge on the corner of buttons and slots (e.g. "2" on booster buttons in `super-casual/old-demos/hud.html`). Target API: `data-badge="3"` on any `.sc-button`, `.sc-icon-button` or `.sc-slot` shows the bubble (blue by default, `data-badge-color="red"` optional). Follow AGENTS.md §4.
@@ -51,5 +51,4 @@ Gameplay HUD · Pause · Success · Fail (old versions exist in `super-casual/*.
 - Final: let a fresh AI agent build a screen using only the kit, then fix what confuses it
 
 ## Links
-- Live site: https://advme.github.io/mobile-game-ui-library/
-- Kit docs: https://advme.github.io/mobile-game-ui-library/super-casual/kit/docs/button.html
+- Repo is **private** (since v0.10.2-A), so GitHub Pages is off. Preview locally: `python3 tools/serve.py 8765` → http://localhost:8765/super-casual/kit/docs/button.html

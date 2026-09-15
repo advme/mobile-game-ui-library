@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.10.2-A — Repo made private
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: GitHub repo switched to private at the owner's request. GitHub Pages (live docs site) is therefore offline. Removed live-site links from README, AGENTS.md, STATUS.md.
+- Tested: `gh repo view` reports PRIVATE.
+- Notes for next agent: preview only locally with `tools/serve.py`.
+
 ## v0.10.1-A — Clean up project folder
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Moved early experiments (home screen, blueprint button, fonts tests, loose images) and all reference screenshots into `_archive/` (local only, gitignored). Moved old pre-kit demo pages into `super-casual/old-demos/`. Rewrote README, updated links in `index.html`, AGENTS.md and STATUS.md.

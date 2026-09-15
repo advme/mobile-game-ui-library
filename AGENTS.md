@@ -60,7 +60,7 @@ Copy the pattern of an existing component (e.g. `progress`, `timer`):
 ## 6. Git workflow
 - Work on `main` in small commits. Don't rewrite history.
 - Never commit reference images from other games (see `.gitignore`).
-- GitHub Pages serves the repo root: https://advme.github.io/mobile-game-ui-library/
+- The repo is **private**; GitHub Pages is off. Preview with `tools/serve.py`.
 
 ## 7. Handoff protocol (REQUIRED after every task)
 When you finish a task (or are about to run out of budget), **before stopping**:
