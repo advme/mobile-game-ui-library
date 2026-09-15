@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.19.0",
+  "version": "0.20.0",
   "items": [
     {
       "name": "core",
@@ -1711,6 +1711,62 @@
         {
           "title": "New skin",
           "html": "<div class=\"sc-banner\" data-color=\"pink\" data-animate=\"unfurl\">NEW SKIN!</div>"
+        }
+      ]
+    },
+    {
+      "name": "hint",
+      "type": "registry:ui",
+      "title": "Hint Bubble",
+      "description": "White speech bubble with a pointer; tap-to-show via data-hint or programmatic tutorial hints.",
+      "whenToUse": "Info explanations, item effects, tutorial steps.",
+      "files": [
+        "components/hint/hint.css"
+      ],
+      "docs": "components/hint/hint.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<button class=\"sc-icon-button\" data-icon=\"info\" data-hint=\"Win 3 levels to unlock\" aria-label=\"Info\"></button>",
+      "props": {
+        "data-hint": {
+          "type": "string",
+          "optional": true,
+          "description": "On any element: bubble text shown on tap"
+        },
+        "data-hint-pos": {
+          "type": "enum",
+          "values": [
+            "top",
+            "bottom",
+            "left",
+            "right"
+          ],
+          "default": "top"
+        }
+      },
+      "parts": {
+        ".sc-hint": "Static bubble: data-pos top|bottom|left|right (side it sits on), data-size sm|md"
+      },
+      "events": [],
+      "js": {
+        "SC.hint.show(target, text, {pos, duration})": "Show floating bubble; duration 0 = stay; returns bubble or null",
+        "SC.hint.hide(target?)": "Hide one or all"
+      },
+      "rules": [
+        "Max ~8 words; longer text in a Popup.",
+        "data-hint on info buttons and non-obvious items.",
+        "Tutorials: SC.hint.show(..., {duration:0}); hide when the player acts; one at a time.",
+        "Pick the side with most free space."
+      ],
+      "examples": [
+        {
+          "title": "Tap to show",
+          "html": "<div class=\"sc-slot\" data-icon=\"clover\" data-count=\"5\" data-hint=\"Lucky clover: +10% coins\"></div>"
+        },
+        {
+          "title": "Tutorial",
+          "js": "SC.hint.show(playBtn, 'Tap Play to start!', { duration: 0 });"
         }
       ]
     }

@@ -1,0 +1,57 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hint regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/hint/hint.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/button/button.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>body { margin:0; padding:120px 40px; font:14px system-ui; background:#243453; color:white; } #fixtures { display:flex; gap:40px; } li { margin:6px 0; } .fail { color:#ff9da7; } #edge { position:fixed; left:2px; top:200px; }</style>
+<h1>Hint checks</h1>
+<p id="summary">Running…</p>
+<div id="fixtures">
+  <button id="a" class="sc-button" data-hint="Hello there">A</button>
+  <button id="b" class="sc-button" data-hint="Below" data-hint-pos="bottom">B</button>
+  <span id="static" class="sc-hint" data-pos="left">Static</span>
+</div>
+<button id="edge" class="sc-button" data-size="sm">E</button>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  const bubbles = () => [...document.querySelectorAll('.sc-hint-float')].filter(b => !b.classList.contains('sc-closing'));
+  const rect = el => el.getBoundingClientRect();
+  try {
+    check('static hint has pointer', getComputedStyle($('#static'), '::after').content !== 'none' && getComputedStyle($('#static')).position === 'relative');
+    $('#a').click(); await wait(300);
+    let bs = bubbles();
+    check('tap shows one bubble with text + role', bs.length === 1 && bs[0].textContent === 'Hello there' && bs[0].getAttribute('role') === 'tooltip');
+    check('bubble sits above target', rect(bs[0]).bottom <= rect($('#a')).top + 1);
+    check('pointer x aims at target center', Math.abs(rect(bs[0]).left + parseFloat(bs[0].style.getPropertyValue('--ax')) - (rect($('#a')).left + rect($('#a')).width / 2)) < 2);
+    check('bubble does not block taps', getComputedStyle(bs[0]).pointerEvents === 'none');
+    $('#a').click(); await wait(200);
+    check('second tap hides it', bubbles().length === 0 && !document.querySelector('.sc-hint-float'));
+    $('#b').click(); await wait(300);
+    check('bottom position below target', rect(bubbles()[0]).top >= rect($('#b')).bottom - 1 && bubbles()[0].dataset.pos === 'bottom');
+    document.body.click(); await wait(200);
+    check('tap elsewhere hides tap hints', bubbles().length === 0);
+    const e = SC.hint.show($('#edge'), 'A long hint near the left edge of the screen', { pos: 'top', duration: 0 }); await wait(300);
+    check('clamped 12px from the edge', rect(e).left >= 11.5);
+    check('pointer still aims at target near edge', Math.abs(rect(e).left + parseFloat(e.style.getPropertyValue('--ax')) - (rect($('#edge')).left + rect($('#edge')).width / 2)) < 18);
+    document.body.click(); await wait(200);
+    check('code hints survive outside taps', bubbles().length === 1);
+    SC.hint.show($('#edge'), 'Replaced', { duration: 0 }); await wait(20);
+    check('showing again replaces (one per target)', bubbles().length === 1 && bubbles()[0].textContent === 'Replaced');
+    SC.hint.show($('#a'), 'Short', { duration: 150 }); await wait(400);
+    check('duration auto-hides', !bubbles().some(b => b.textContent === 'Short'));
+    SC.hint.hide(); await wait(200);
+    check('hide() with no target hides all', !document.querySelector('.sc-hint-float'));
+    check('unknown id returns null', SC.hint.show('nope', 'x') === null);
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Hint';
+});
+</script>

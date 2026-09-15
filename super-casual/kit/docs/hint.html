@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hint Bubble — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/hint/hint.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../components/slot/slot.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+.row { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:30px; padding:34px 0; }
+</style>
+</head>
+<body>
+<script>
+SCDocs.page({
+  title: 'Hint Bubble',
+  lead: 'A white speech bubble that points at something — info explanations, tutorial steps, "tap here" nudges.',
+  hero: `<div class="row">
+  <span class="sc-hint">Hint Text</span>
+  <button class="sc-icon-button" data-icon="info" data-color="blue" data-hint="Win 3 levels in a row to unlock the chest" aria-label="Info"></button>
+</div>`,
+  css: ['components/hint/hint.css'],
+  usageNote: 'Add data-hint to any element: tapping it shows the bubble, which hides after 2.5 s or on the next tap.',
+  usage: `<button class="sc-icon-button" data-icon="info" data-hint="Win 3 levels to unlock" aria-label="Info"></button>`,
+  examples: [
+    { title: 'Pointer directions', desc: 'Static .sc-hint with data-pos = side the bubble sits on (the pointer faces the opposite way).',
+      html: `<div class="row">
+  <span class="sc-hint" data-pos="top">On top</span>
+  <span class="sc-hint" data-pos="bottom">Below</span>
+  <span class="sc-hint" data-pos="left">Left</span>
+  <span class="sc-hint" data-pos="right">Right</span>
+  <span class="sc-hint" data-size="sm">Small</span>
+</div>` },
+    { title: 'Tap to show', desc: 'data-hint-pos picks the side. Near a screen edge the bubble slides inward and the pointer still aims at the target.',
+      html: `<div class="row">
+  <div class="sc-slot" data-icon="clover" data-count="5" data-color="green" data-hint="Lucky clover: +10% coins" data-hint-pos="top"></div>
+  <button class="sc-button" data-color="sky" data-size="sm" data-hint="Opens the shop" data-hint-pos="bottom">Bottom</button>
+  <button class="sc-button" data-color="purple" data-size="sm" data-hint="Right side" data-hint-pos="right">Right</button>
+</div>` },
+    { title: 'Live: tutorial step', desc: 'SC.hint.show with duration 0 stays until you call SC.hint.hide — for tutorial steps.',
+      html: `<div class="row">
+  <button class="sc-button" data-color="green" id="tutPlay">Play</button>
+  <button class="sc-button" data-color="dark" data-size="sm" id="tutStart">Start tutorial</button>
+</div>`,
+      setup(p) {
+        const play = p.querySelector('#tutPlay');
+        p.querySelector('#tutStart').onclick = e => { e.stopPropagation(); SC.hint.show(play, 'Tap Play to start your first level!', { duration: 0 }); };
+        play.onclick = () => SC.hint.hide(play);
+      } },
+  ],
+  api: [
+    ['data-hint', 'text', '', 'On any element: bubble text shown on tap.'],
+    ['data-hint-pos', 'top bottom left right', 'top', 'Where the bubble appears.'],
+    ['.sc-hint data-pos', 'top bottom left right', 'top', 'Static bubble: which side it sits on.'],
+    ['.sc-hint data-size', 'sm md', 'md', 'Text 12 / 15 px.'],
+  ],
+  js: `SC.hint.show(button, 'Tap to upgrade!', { pos: 'top', duration: 0 }); // 0 = stay
+SC.hint.show('shopBtn', 'New items!');   // id works too; hides after 2.5 s
+SC.hint.hide(button);                    // hide one
+SC.hint.hide();                          // hide all`,
+  rules: [
+    '<b>Short</b>: up to ~8 words. Longer explanations go in a Popup.',
+    'Use <code class="inline">data-hint</code> on info (i) buttons and on items whose effect is not obvious.',
+    'For tutorials use <code class="inline">SC.hint.show(target, text, {duration: 0})</code> and hide it when the player does the action.',
+    'Only one tutorial hint at a time. Pick the side with the most free space (top by default).',
+    'Hints never block taps — the target underneath stays tappable.',
+  ],
+});
+</script>
+</body>
+</html>

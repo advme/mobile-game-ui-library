@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.20.0-A — Hint Bubble component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added the Hint Bubble: a white speech bubble with an outlined border and a rounded rotated-square pointer (no polygons) in 4 directions, 2 sizes. `data-hint` on any element shows it on tap (auto-hides after 2.5 s, on a second tap or a tap elsewhere). `SC.hint.show(target, text, {pos, duration})` / `SC.hint.hide(target?)` handle tutorials (`duration: 0` stays). Floating bubbles are placed next to the target, clamped 12px inside the screen with the pointer still aiming at the target, scale with the target's Screen Shell, reposition on resize/scroll, and never block taps. Added the AI manual, registry item, docs page, `tools/tests/hint.html` and `icons/PROMPT-icons4.md` (owed image prompt).
+- Tested: `tools/tests/index.html`: 9 pages pass (adds hint 15/15, covering static pointer, tap show/hide, positions, pointer aim, edge clamp, code hints vs outside taps, replace, duration, hide all). Visual check of all pointer directions and tap demos.
+- Notes for next agent: Bubble geometry tests must wait ~300ms for the pop-in `scale` animation before measuring rects.
+
 ## v0.19.0-A — Title Banner Ribbon component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `.sc-banner`, a ribbon banner with a glossy band (outlined kit text) and darker folded tails behind both ends, built from skewed rounded pseudo-elements (no polygons). It has 10 colors, 3 sizes and `unfurl`/`drop` entrance animations. The runtime wraps the text in `.sc-banner-band` so the tails render behind the band. Works with `SC.setLabel` and `SC.replay`. Added the AI manual, registry item, docs page and `tools/tests/banner.html`.

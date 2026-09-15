@@ -332,6 +332,60 @@
     upgradeText(band);
   }
 
+  /* ---------- Tooltip / Hint Bubble ---------- */
+  const HINT_POS = ['top', 'bottom', 'left', 'right'];
+  const openHints = new Map();   // target → bubble
+  function placeHint(target, bubble) {
+    if (!target.isConnected) return hint.hide(target);
+    const r = target.getBoundingClientRect(), pos = bubble.dataset.pos;
+    const w = bubble.offsetWidth, h = bubble.offsetHeight, gap = 10, m = 12;
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    let x = pos === 'left' ? r.left - w - gap : pos === 'right' ? r.right + gap : cx - w / 2;
+    let y = pos === 'top' ? r.top - h - gap : pos === 'bottom' ? r.bottom + gap : cy - h / 2;
+    x = Math.max(m, Math.min(innerWidth - m - w, x)); y = Math.max(m, Math.min(innerHeight - m - h, y));
+    const ax = Math.max(16, Math.min(w - 16, cx - x)), ay = Math.max(14, Math.min(h - 14, cy - y));
+    bubble.style.translate = `${Math.round(x)}px ${Math.round(y)}px`;
+    bubble.style.setProperty('--ax', ax + 'px'); bubble.style.setProperty('--ay', ay + 'px');
+    bubble.style.setProperty('--ox', (pos === 'left' ? w : pos === 'right' ? 0 : ax) + 'px');
+    bubble.style.setProperty('--oy', (pos === 'top' ? h : pos === 'bottom' ? 0 : ay) + 'px');
+  }
+  const hint = {
+    show(target, text, { pos = 'top', duration = 2500 } = {}) {
+      if (typeof target === 'string') target = document.getElementById(target);
+      if (!target) return null;
+      hint.hide(target, { instant: true });
+      const bubble = document.createElement('div');
+      bubble.className = 'sc-hint sc-hint-float'; bubble.setAttribute('role', 'tooltip');
+      bubble.dataset.pos = HINT_POS.includes(pos) ? pos : 'top';
+      bubble.textContent = text;
+      const shell = target.closest('.sc-screen'), sc = shell ? Number(getComputedStyle(shell).getPropertyValue('--sc-s')) || 1 : 1;
+      if (sc !== 1) { bubble.style.setProperty('--h-fs', 15 * sc + 'px'); bubble.style.setProperty('--arrow', 13 * sc + 'px'); }
+      document.body.append(bubble);
+      placeHint(target, bubble);
+      openHints.set(target, bubble);
+      if (duration > 0) bubble._scTimer = setTimeout(() => hint.hide(target), duration);
+      return bubble;
+    },
+    hide(target, { instant = false } = {}) {
+      const targets = target ? [typeof target === 'string' ? document.getElementById(target) : target] : [...openHints.keys()];
+      targets.forEach(t => {
+        const bubble = openHints.get(t); if (!bubble) return;
+        openHints.delete(t); clearTimeout(bubble._scTimer);
+        if (instant) return bubble.remove();
+        bubble.classList.add('sc-closing'); setTimeout(() => bubble.remove(), 150);
+      });
+    },
+  };
+  const replaceHints = () => openHints.forEach((b, t) => placeHint(t, b));
+  addEventListener('resize', replaceHints); addEventListener('scroll', replaceHints, true);
+  document.addEventListener('click', e => {
+    const t = e.target.closest && e.target.closest('[data-hint]');
+    if (!t) { if (openHints.size) [...openHints].forEach(([tt, b]) => b.classList.contains('sc-hint-tap') && hint.hide(tt)); return; }
+    if (openHints.has(t)) return hint.hide(t);
+    const b = hint.show(t, t.dataset.hint, { pos: t.dataset.hintPos });
+    b && b.classList.add('sc-hint-tap');
+  });
+
   /* ---------- Counter ---------- */
   function formatNumber(n, format) {
     n = Math.round(Number(n) || 0);
@@ -787,7 +841,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.19.0',
+    version: '0.20.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */
@@ -837,6 +891,8 @@
     tabs,
     /** Bottom tab bar: same API as tabs. SC.tabbar.get(el) · SC.tabbar.set(el, value, {emit?}) */
     tabbar: tabs,
+    /** Hint bubbles: SC.hint.show(target, text, {pos, duration}) · SC.hint.hide(target?) */
+    hint,
     /** Floating feedback text: SC.float('+50', event | element | {x, y}, { color, size, icon, style }) */
     float,
     /** URL of an icon in the kit: SC.icon('coin') */

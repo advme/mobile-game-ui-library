@@ -1,0 +1,46 @@
+/*
+  Tooltip / Hint Bubble — Super Casual UI Kit
+  Requires: core.css, sc.js
+
+  Tap-to-show on any element:
+    <button class="sc-icon-button" data-icon="info" data-hint="Win 3 levels to unlock" aria-label="Info"></button>
+  From code (tutorials):
+    SC.hint.show(target, 'Tap here to jump!', { pos: 'top', duration: 0 })   // 0 = stays until SC.hint.hide()
+  Static, placed by you:
+    <span class="sc-hint" data-pos="bottom">Hint Text</span>
+
+  data-hint       text shown in a bubble when the element is tapped (auto-hides after 2.5 s)
+  data-hint-pos   top | bottom | left | right   where the bubble appears             default: top
+  .sc-hint data-pos   side the bubble sits on; the pointer faces the other way      default: top
+  data-size       sm | md   on .sc-hint                                              default: md
+
+  JS: SC.hint.show(target, text, {pos, duration}) → bubble · SC.hint.hide(target?) (no target = hide all)
+*/
+.sc-hint {
+  --h-fs:15px; --arrow:13px; --ax:50%; --ay:50%;
+  position:relative; display:inline-block; box-sizing:border-box; max-width:230px; width:max-content;
+  padding:calc(var(--h-fs) * .45) calc(var(--h-fs) * .85) calc(var(--h-fs) * .55);
+  border:var(--sc-line) solid var(--sc-outline); border-radius:calc(var(--h-fs) * .8);
+  background:#fff; box-shadow:inset 0 -3px 0 #d9dff0;
+  font:900 var(--h-fs)/1.2 var(--sc-font); color:#1d1a2e; text-align:center; white-space:normal; overflow-wrap:break-word;
+  user-select:none; -webkit-user-select:none; pointer-events:none;
+}
+.sc-hint[data-size="sm"] { --h-fs:12px; --arrow:10px; }
+
+/* Pointer: rotated rounded square with two outlined sides (no polygons) */
+.sc-hint::after {
+  content:""; position:absolute; width:var(--arrow); height:var(--arrow); box-sizing:border-box; background:#fff;
+  border:var(--sc-line) solid var(--sc-outline); border-top-color:transparent; border-left-color:transparent;
+  border-radius:0 0 3px 0;
+}
+.sc-hint:is(:not([data-pos]), [data-pos="top"])::after { left:var(--ax); bottom:calc(var(--arrow) / -2 - 1px); transform:translateX(-50%) rotate(45deg); }
+.sc-hint[data-pos="bottom"]::after { left:var(--ax); top:calc(var(--arrow) / -2 - 1px); transform:translateX(-50%) rotate(225deg); }
+.sc-hint[data-pos="left"]::after   { top:var(--ay); right:calc(var(--arrow) / -2 - 1px); transform:translateY(-50%) rotate(-45deg); }
+.sc-hint[data-pos="right"]::after  { top:var(--ay); left:calc(var(--arrow) / -2 - 1px); transform:translateY(-50%) rotate(135deg); }
+
+/* Floating bubbles created by sc.js */
+.sc-hint.sc-hint-float { position:fixed; left:0; top:0; z-index:1100; transform-origin:var(--ox, 50%) var(--oy, 100%); animation:sc-hint-pop .22s cubic-bezier(.3,1.6,.6,1); }
+.sc-hint.sc-hint-float.sc-closing { animation:sc-hint-out .14s ease-in forwards; }
+@keyframes sc-hint-pop { from { opacity:0; scale:.6; } }
+@keyframes sc-hint-out { to { opacity:0; scale:.8; } }
+@media (prefers-reduced-motion:reduce) { .sc-hint.sc-hint-float { animation:none; } }
