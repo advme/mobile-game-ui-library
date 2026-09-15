@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.10.1-A — Clean up project folder
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Moved early experiments (home screen, blueprint button, fonts tests, loose images) and all reference screenshots into `_archive/` (local only, gitignored). Moved old pre-kit demo pages into `super-casual/old-demos/`. Rewrote README, updated links in `index.html`, AGENTS.md and STATUS.md.
+- Tested: local server: index, kit docs, kit icons, old demo pages and their images all return 200.
+- Notes for next agent: `_archive/` exists only on the owner's Mac. Never commit it. Old demos are at `super-casual/old-demos/`.
+
 ## v0.10.0-A — Super Casual kit: 10 components + multi-agent handoff system
 - Agent: A (Claude) · Date: 2026-09-15
 - Done:

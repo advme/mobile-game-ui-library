@@ -6,7 +6,7 @@ center (alpha-weighted centroid) and writes CSS that nudges the icon so it *look
 centered inside buttons and slots. Only part of the difference is applied (STRENGTH),
 because full correction overshoots.
 
-Usage: python3 tools/icon_offsets.py super-casual/assets super-casual/icon-offsets.css
+Usage: python3 tools/icon_offsets.py super-casual/kit/assets super-casual/kit/assets/offsets.css
 """
 import os, sys
 import numpy as np

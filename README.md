@@ -1,16 +1,14 @@
 # Mobile Game UI Library
 
-A shadcn-style UI kit for mobile games, built for the Pixelfork AI Engine.
+A shadcn-style UI kit for mobile hyper-casual and casual games, built for the Pixelfork AI Engine.
 
-- UI (buttons, bars, panels, text) is built in code.
-- Image assets (icons, items, scenes) are generated images in `assets/`.
+- **Kit:** `super-casual/kit`. Docs: https://advme.github.io/mobile-game-ui-library/super-casual/kit/docs/button.html
+- **AI agents:** start with `AGENTS.md`, then `STATUS.md`.
 
-## Preview
+## Preview locally
 
 ```bash
-python3 -m http.server 8765
+python3 tools/serve.py 8765
 ```
 
-Then open http://localhost:8765/home-screen.src.html
-
-`home-screen.html` is a single-file copy with images embedded (`python3 build.py home-screen.src.html home-screen.html`).
+Then open http://localhost:8765/super-casual/kit/docs/button.html

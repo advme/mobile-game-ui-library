@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.10.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.10.1-A**
 
 ## Next task
-**Convert Count Bubble.** It's the small round number badge on the corner of buttons and slots (e.g. "2" on booster buttons in `super-casual/hud.html`). Target API: `data-badge="3"` on any `.sc-button`, `.sc-icon-button` or `.sc-slot` shows the bubble (blue by default, `data-badge-color="red"` optional). Follow AGENTS.md §4.
+**Convert Count Bubble.** It's the small round number badge on the corner of buttons and slots (e.g. "2" on booster buttons in `super-casual/old-demos/hud.html`). Target API: `data-badge="3"` on any `.sc-button`, `.sc-icon-button` or `.sc-slot` shows the bubble (blue by default, `data-badge-color="red"` optional). Follow AGENTS.md §4.
 
 ## In progress
 _Nothing._
@@ -24,14 +24,14 @@ _Nothing._
 
 ## Left — components (in this order)
 1. Count Bubble ← next
-2. Screen Shell (full-page mobile layout: top bar / centered middle / bottom bar, scales to any phone. Exists inline in `super-casual/success.html` → `fit()`)
+2. Screen Shell (full-page mobile layout: top bar / centered middle / bottom bar, scales to any phone. Exists inline in `super-casual/old-demos/success.html` → `fit()`)
 3. Toggle (ON / OFF)
 4. Slider
 5. Checkbox
 6. Tabs (segmented)
 7. Bottom Tab Bar
 8. Top Bar (avatar, level, resources) 🖼 avatar image needed
-9. Level Badge 🖼 badge image needed (placeholder in `super-casual/success.html`)
+9. Level Badge 🖼 badge image needed (placeholder in `super-casual/old-demos/success.html`)
 10. Notification Dot 🖼 red "!" image needed
 11. Tag Ribbon (NEW, HOT, BEST)
 12. Title Banner Ribbon (NEW SKIN!)
