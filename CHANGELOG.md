@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.29.0-A — Gameplay HUD block
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Started Blocks. Added `kit/blocks/hud.html`, a complete in-game HUD built only from kit components over a stand-in canvas. Top row: pause, a star-marker score bar and coins. Second row: lives counter and timer pill. Boosters with count bubbles at the bottom. It also has a Pause popup that pauses/resumes the timer and restarts. Taps score, count coins up, float +10, and pop STAR! at markers. Added `blocks/README.md`, a `blocks` list in `registry.json`, a "Blocks" group in the docs menu, and a "Done — blocks" table in STATUS. AGENTS.md file map now lists `blocks/` and `tools/tests/`.
+- Tested: Opened at 375×812. Taps update score/coins with floats, the star marker fires, boosters decrement their badges, Pause opens the popup and pauses the timer (00:58 held), Resume closes it. Nothing scrolls and there are no console errors from the page.
+- Notes for next agent: Blocks are pages, not components: no test page, but check each at 375×812. Toasts cover the top bar in HUDs; use `SC.float(..., null, {style:'pop'})` for mid-screen celebrations instead.
+
 ## v0.28.0-A — Tutorial Hand component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `SC.tutorial.point(target, {gesture, to, text, spotlight, once})` → Promise and `SC.tutorial.clear()` / `SC.tutorial.active`. It shows the kit `hand` icon with its fingertip placed exactly on the target, a tap ripple, swipe (up/down/left/right) and drag-to-destination animations, and an optional Hint Bubble. The spotlight dims the screen with a rounded hole (box-shadow) and 4 transparent blockers, so only the target is tappable. It follows moving targets. Hint bubbles now render above the spotlight. Added the AI manual, registry item, docs page (live 3-step tutorial, gesture previews) and `tools/tests/tutorial.html`. This completes the component list.

@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.28.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.29.0-A**
 
 ## Next task
-**All components are done. Start Blocks: build the Gameplay HUD block.** Create `super-casual/kit/blocks/hud.html`, a complete full-screen example built ONLY from kit components (no custom CSS except layout glue): `.sc-screen` with counters + timer pill + pause icon button in the top bar, a progress bar, booster icon buttons with `data-badge` at the bottom, and a stand-in canvas. Pause opens a Pause popup. Add a "Blocks" group to the docs NAV (`docs/docs.js`) linking to it, plus `blocks/README.md` explaining that blocks are copy-paste screens for AI agents. Reference: `super-casual/old-demos/hud.html`. Then do Pause, Success, Fail, Start, Reward Reveal, Daily Reward, Settings, Shop, Loading the same way.
+**Build the Success block** (`kit/blocks/success.html`, add a row to `blocks/README.md`). Full result screen after winning a level: dim Screen Shell over the game, `CLEAR!` Screen Title (drop), Star Rating (arc, animated), XP bar with Level Badge (`data-level`), a REWARDS label and a grid of Reward Slots that pop in (`SC.popIn`), and bottom buttons Claim / x2 Claim (video icon) + Home icon button. Claim counts coins up in a top counter and floats +coins. Reference: `super-casual/old-demos/success.html`. Update registry `blocks[]`, STATUS "Done — blocks", docs NAV "Blocks" group and CHANGELOG.
 
 ## In progress
 _Nothing._
@@ -40,11 +40,17 @@ _Nothing._
 | 27 | Shop Card | `.sc-shopcard` | v0.27.0-A |
 | 28 | Tutorial Hand | `SC.tutorial` | v0.28.0-A |
 
+## Done — blocks (`super-casual/kit/blocks`)
+| # | Block | File | Version |
+|---|-------|------|---------|
+| 1 | Gameplay HUD | `blocks/hud.html` | v0.29.0-A |
+
 ## Left — components (in this order)
 _All components done._
 
 ## Left — blocks (full screens built ONLY from kit components)
-Gameplay HUD · Pause · Success · Fail (old versions exist in `super-casual/old-demos/`; build each block as one `.sc-screen`) · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading
+Pause · Success · Fail · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading
+(Old pre-kit versions of some screens: `super-casual/old-demos/`. Each block = one HTML file in `kit/blocks/` using only kit components + layout glue.)
 
 ## Left — other
 - Docs pages: Introduction, Installation

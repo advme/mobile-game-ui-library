@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.28.0",
+  "version": "0.29.0",
   "items": [
     {
       "name": "core",
@@ -2273,5 +2273,27 @@
       "coin-pile"
     ],
     "note": "Use by name with data-icon. arrow-left is arrow-right mirrored."
-  }
+  },
+  "blocks": [
+    {
+      "name": "hud",
+      "type": "registry:block",
+      "title": "Gameplay HUD",
+      "file": "blocks/hud.html",
+      "description": "In-game overlay: pause button, star-marker score bar, coins, lives, timer pill, booster buttons with counts, pause popup.",
+      "whenToUse": "Any level-based or score-based game while playing.",
+      "components": [
+        "screen",
+        "icon-button",
+        "progress",
+        "counter",
+        "timer",
+        "bubble",
+        "popup",
+        "button",
+        "float",
+        "toast"
+      ]
+    }
+  ]
 }

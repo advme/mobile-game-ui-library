@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Block: Gameplay HUD — Super Casual UI Kit</title>
+<!-- BLOCK: Gameplay HUD. Built only from kit components. Copy this file and replace the stand-in game. -->
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/screen/screen.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/counter/counter.css">
+<link rel="stylesheet" href="../components/progress/progress.css">
+<link rel="stylesheet" href="../components/timer/timer.css">
+<link rel="stylesheet" href="../components/bubble/bubble.css">
+<link rel="stylesheet" href="../components/popup/popup.css">
+<link rel="stylesheet" href="../components/float/float.css">
+<link rel="stylesheet" href="../components/toast/toast.css">
+<script src="../sc.js"></script>
+<style>
+  /* Layout glue only */
+  html, body { margin:0; height:100%; overflow:hidden; background:#1f2d4b; }
+  #game { position:fixed; inset:0; width:100%; height:100%; display:block; }
+  .hud-score { flex:1; min-width:0; }
+  .hud-boosters { display:flex; gap:14px; }
+</style>
+</head>
+<body>
+  <!-- 1. The game (any engine) -->
+  <canvas id="game"></canvas>
+
+  <!-- 2. HUD: no backdrop, so taps on empty space reach the game -->
+  <div class="sc-screen" id="hud">
+    <div class="sc-screen-top">
+      <button class="sc-icon-button" data-icon="pause" data-color="sky" id="pauseBtn" aria-label="Pause"></button>
+      <div class="hud-score">
+        <div class="sc-progress" id="score" data-value="0" data-max="100" data-stars="33,66,100" data-color="green" data-size="lg"></div>
+      </div>
+      <div class="sc-counter" id="coins" data-icon="coin" data-value="350" data-size="sm"></div>
+    </div>
+    <div class="sc-screen-top" data-align="between" style="margin-top:10px">
+      <div class="sc-counter" id="lives" data-icon="heart" data-value="3" data-max="3" data-size="sm"></div>
+      <div class="sc-timer" id="clock" data-variant="pill" data-seconds="60" data-warn="10" data-icon="energy"></div>
+    </div>
+    <div class="sc-screen-bottom">
+      <div class="hud-boosters">
+        <button class="sc-icon-button" data-variant="flat" data-icon="key" data-badge="2" data-booster aria-label="Key booster, 2 left"></button>
+        <button class="sc-icon-button" data-variant="flat" data-icon="crystal-ball" data-badge="1" data-booster aria-label="Crystal booster, 1 left"></button>
+        <button class="sc-icon-button" data-variant="flat" data-icon="clover" data-badge="3" data-booster aria-label="Clover booster, 3 left"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Pause popup (outside the screen) -->
+  <div class="sc-popup" id="pause" data-title="PAUSED" data-sub="LEVEL 12" data-backdrop="static" hidden>
+    <div class="sc-popup-actions" data-layout="stack">
+      <button class="sc-button" data-color="green" data-size="lg" data-close id="resume">RESUME</button>
+      <button class="sc-button" data-color="yellow" id="restart">Restart</button>
+      <button class="sc-button" data-color="red" data-close>Quit</button>
+    </div>
+  </div>
+
+<script>
+  // --- Stand-in game: tap anywhere to score (replace with your engine) ---
+  const canvas = document.getElementById('game'), ctx = canvas.getContext('2d');
+  let W, H, paused = false;
+  function resize() { const d = devicePixelRatio || 1; W = innerWidth; H = innerHeight; canvas.width = W * d; canvas.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
+  addEventListener('resize', resize); resize();
+  (function loop(t) { ctx.fillStyle = '#1f2d4b'; ctx.fillRect(0, 0, W, H);
+    for (let i = 0; i < 6; i++) { const x = W / 2 + Math.cos(t / 900 + i) * W * .3, y = H / 2 + Math.sin(t / 700 + i * 2) * H * .2;
+      ctx.beginPath(); ctx.arc(x, y, 26, 0, 7); ctx.fillStyle = ['#01bcff', '#15f15c', '#f5c02e'][i % 3]; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#050308'; ctx.stroke(); }
+    requestAnimationFrame(loop); })(0);
+
+  // --- UI wiring ---
+  const $ = id => document.getElementById(id);
+  canvas.addEventListener('pointerdown', e => {
+    if (paused) return;
+    SC.setValue($('score'), Math.min(100, Number($('score').dataset.value) + 7));
+    SC.setValue($('coins'), Number($('coins').dataset.value) + 10);
+    SC.float('+10', e, { icon: 'coin' });
+  });
+  $('score').addEventListener('star', () => SC.float('STAR!', null, { size: 'lg', style: 'pop', color: 'gold', icon: 'star' }));
+  $('clock').addEventListener('done', () => SC.toast('Time is up!', { kind: 'error' }));
+
+  $('pauseBtn').onclick = () => { paused = true; SC.timer.pause($('clock')); SC.popup.open('pause'); };
+  $('pause').addEventListener('close', () => { paused = false; SC.timer.start($('clock')); });
+  $('restart').onclick = () => { SC.setValue($('score'), 0); SC.timer.reset($('clock')); SC.popup.close('pause'); };
+
+  document.querySelectorAll('[data-booster]').forEach(b => b.onclick = () => {
+    const left = Number(b.dataset.badge);
+    if (!left) return SC.toast('No boosters left', { kind: 'error' });
+    SC.setBadge(b, left - 1); SC.float('Boost!', b, { color: 'sky' });
+  });
+</script>
+</body>
+</html>
