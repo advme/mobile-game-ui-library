@@ -1,6 +1,6 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.41.1-A**
+**Last updated:** 2026-09-16 · by **A (Claude)** · version **v0.42.0-A**
 
 ## Next task
 **Final check with a fresh AI.** Open a new AI session with no history. Ask it to follow `templates/pixelfork-game/AI.md` and turn the template into a small real game (e.g. "tap the falling fruit" with a fruit-themed coin via `CONFIG.images` and a Shop screen copied from `kit/blocks/shop.html`). Write down everything that confused it, then fix AI.md, the docs or the registry. Also: test the template on a real iPhone and Android phone.
@@ -63,6 +63,7 @@ _All blocks done._
 ## Left — other
 - Image prompts: icons4 delivered (home, shop, helmet, play, sound, sound-off, music, music-off, menu, restart, alert, level-badge, hand, avatar, gem-pile, coin-pile). Nothing owed right now.
 - Final: let a fresh AI agent build a game from `templates/pixelfork-game/`, then fix what confuses it ← next
+- Landscape layout (the kit is portrait-first; in phone landscape everything shrinks to ~46%).
 - Ideas after that: Level Select block (map of levels with stars/locks), Profile block, Leaderboard block, Settings inside Pause
 
 ## Links

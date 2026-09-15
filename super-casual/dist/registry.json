@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.41.1",
+  "version": "0.42.0",
   "items": [
     {
       "name": "core",
@@ -2477,8 +2477,8 @@
   },
   "blocksPreview": "blocks/preview.html?block=<file> — desktop device frames (docs only; remove the preview.js line when copying a block into a game)",
   "cdn": {
-    "css": "https://cdn.jsdelivr.net/gh/advme/mobile-game-ui-library@v0.41.1-A/super-casual/dist/kit.css",
-    "js": "https://cdn.jsdelivr.net/gh/advme/mobile-game-ui-library@v0.41.1-A/super-casual/dist/kit.js",
+    "css": "https://cdn.jsdelivr.net/gh/advme/mobile-game-ui-library@v0.42.0-A/super-casual/dist/kit.css",
+    "js": "https://cdn.jsdelivr.net/gh/advme/mobile-game-ui-library@v0.42.0-A/super-casual/dist/kit.js",
     "guide": "https://advme.github.io/mobile-game-ui-library/AI-GUIDE.md"
   }
 }

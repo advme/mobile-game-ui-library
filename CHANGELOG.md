@@ -2,6 +2,17 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.42.0-A — Responsive fixes: popups fit short screens, readable minimum text
+- Agent: A (Claude) · Date: 2026-09-16
+- Done: The owner asked if everything is fully responsive. A sweep of all 10 blocks × 10 screen sizes (320×568 … iPad Pro 13", phone landscape, desktop) found 22 problems: popups cut off on short phones (Settings on 4 sizes, Pause, Daily) and text below 9px on small phones/landscape (Shop even on Galaxy S26). Fixes:
+  - **Popup** now scales like the Screen Shell: `fitPopup()` in `sc.js` sets `--sc-pop-s = min(vw/400, vh/870, fit width, fit height)` on open, on resize and when the box changes size.
+  - The box is a fixed 330px design width, centered with `place-content: unsafe center` so a too-tall box scales around the screen center. Popup padding respects safe areas.
+  - **Readable minimum text:** `core.css` has `--sc-min-text: 10px`. `.sc-text` uses `--sc-fs = max(--fs, --sc-min-fs)` for size, outline and 3D edge. Screen Shell sets `--sc-min-fs = 10px / scale` and Popup `10px / popup scale`. Shop card bonus text follows.
+  - Start block: more spacing between side shortcuts. Docs inline popups keep `width:min(330px,100%)`.
+  - Added `tools/tests/responsive.html` (the sweep, ~3 min, not in index.html). CDN tag bumped to v0.42.0-A. Dist rebuilt.
+- Tested: `tools/tests/responsive.html` 100/100 OK (no page scroll, nothing off-screen, no text under 9 real px). Visual check of Settings popup, Shop and Start at 320×568. All 18 component test pages pass.
+- Notes for next agent: `font-size` on `.sc-text` is now `!important`. Change `--fs`, never `font-size`, on outlined text. Landscape still shrinks to ~46% (portrait-first kit).
+
 ## v0.41.1-A — Public repo + no-install AI guide
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: At the owner's request, the repo is public again and GitHub Pages is re-enabled (`.nojekyll` added). Games can use the kit with zero install via jsDelivr: `…/gh/advme/mobile-game-ui-library@v0.41.1-A/super-casual/dist/kit.css` + `kit.js` (icons resolve next to kit.js automatically). Added:

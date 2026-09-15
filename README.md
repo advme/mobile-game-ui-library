@@ -6,8 +6,8 @@ Chunky, glossy mobile game UI for AI-generated hyper-casual and casual web games
 ## Use it in a game (no install)
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/advme/mobile-game-ui-library@v0.41.1-A/super-casual/dist/kit.css">
-<script src="https://cdn.jsdelivr.net/gh/advme/mobile-game-ui-library@v0.41.1-A/super-casual/dist/kit.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/advme/mobile-game-ui-library@v0.42.0-A/super-casual/dist/kit.css">
+<script src="https://cdn.jsdelivr.net/gh/advme/mobile-game-ui-library@v0.42.0-A/super-casual/dist/kit.js"></script>
 
 <button class="sc-button" data-color="yellow" data-size="lg">PLAY</button>
 ```

@@ -1,4 +1,4 @@
-# Super Casual UI Kit v0.41.1 — bundle
+# Super Casual UI Kit v0.42.0 — bundle
 
 Copy this folder into a game as `kit/` and add two lines:
 

@@ -40,7 +40,7 @@
 .sc-shopcard-art > img { position:absolute; inset:8% 8% 16%; width:84%; height:76%; object-fit:contain; translate:var(--ox, 0%) var(--oy, 0%); }
 .sc-shopcard-amount { position:absolute; left:0; right:0; bottom:3px; text-align:center; line-height:1; }
 .sc-shopcard-amount > .sc-text { --fs:20px; font-size:var(--fs); font-variant-numeric:tabular-nums; }
-.sc-shopcard-bonus { text-align:center; font:900 12px/1.1 var(--sc-font); color:#fff7a8; text-shadow:0 1px 0 rgba(0,0,0,.35); }
+.sc-shopcard-bonus { text-align:center; font:900 max(12px, var(--sc-min-fs, 0px))/1.1 var(--sc-font); color:#fff7a8; text-shadow:0 1px 0 rgba(0,0,0,.35); }
 .sc-shopcard > .sc-shopcard-buy { width:100%; min-width:0; }
 .sc-shopcard > .sc-tag-attached { --t:12px; }
 

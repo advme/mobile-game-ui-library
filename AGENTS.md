@@ -65,6 +65,7 @@ Copy the pattern of an existing component (e.g. `progress`, `timer`):
 - **Component default colors** must use `:where(...)` so `data-color` can override them.
 - **Never use `text-overflow: ellipsis` on outlined `.sc-text`** (its outline copy isn't cut and leaves a black smudge). Clip and fade instead (`.sc-long` pattern).
 - **Show/hide kit elements with the `hidden` attribute** (core.css makes it win over component display styles). For screens and popups use `SC.screen` / `SC.popup`.
+- **Text size:** set `--fs` on `.sc-text`, never `font-size` (the kit enforces a readable minimum through `--sc-fs`). After layout changes run `tools/tests/responsive.html` (all blocks × 10 screen sizes).
 - **Never reuse a CSS variable inside its own definition** (`--fs:var(--fs)` is invalid). Use a new name (`--fs:var(--cb-fs)`).
 - **Safe areas:** components use `var(--sc-safe-top/right/bottom/left)` (defined in core.css from `env()`), never `env()` directly, so previews can simulate devices.
 - **Mobile first:** every full-page UI is one `.sc-screen` (Screen Shell, no custom resize code); full-page screens never scroll, edge margins are real pixels (12px), and taps must give press feedback on iOS (`sc.js` handles it).

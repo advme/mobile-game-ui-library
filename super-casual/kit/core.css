@@ -13,6 +13,7 @@
   --sc-line-sm: 2px;
   --sc-text-stroke: .16;   /* text outline, relative to font size */
   --sc-text-drop: .08;     /* text 3D bottom edge, relative to font size */
+  --sc-min-text: 10px;     /* smallest outlined text on a real screen, in real pixels (Screen Shell and Popup enforce it when they shrink) */
 
   /* Safe areas (notch, home bar). Components use these instead of env() so previews can simulate a device. */
   --sc-safe-top: env(safe-area-inset-top, 0px);
@@ -43,13 +44,14 @@
    (sc.js creates this automatically inside components — you rarely write it by hand) */
 .sc-text {
   --fs:25px; --ink:var(--sc-outline);
-  position:relative; display:inline-block; font-family:var(--sc-font); font-weight:900; font-size:var(--fs); line-height:1;
-  color:#fff; -webkit-text-stroke:calc(var(--fs) * var(--sc-text-stroke)) var(--ink); paint-order:stroke fill; isolation:isolate;
+  --sc-fs:max(var(--fs), var(--sc-min-fs, 0px));   /* never smaller than the readable minimum set by Screen Shell / Popup */
+  position:relative; display:inline-block; font-family:var(--sc-font); font-weight:900; font-size:var(--sc-fs) !important; line-height:1;
+  color:#fff; -webkit-text-stroke:calc(var(--sc-fs) * var(--sc-text-stroke)) var(--ink); paint-order:stroke fill; isolation:isolate;
   letter-spacing:.3px; white-space:nowrap;
 }
 .sc-text::before {
-  content:attr(data-text); position:absolute; left:0; right:0; top:calc(var(--fs) * var(--sc-text-drop)); z-index:-1;
-  color:var(--ink); -webkit-text-stroke:calc(var(--fs) * var(--sc-text-stroke)) var(--ink);
+  content:attr(data-text); position:absolute; left:0; right:0; top:calc(var(--sc-fs) * var(--sc-text-drop)); z-index:-1;
+  color:var(--ink); -webkit-text-stroke:calc(var(--sc-fs) * var(--sc-text-stroke)) var(--ink);
 }
 
 /* ---------- Glossy surface (shared by Button, glossy Icon Button, Counter "+") ----------

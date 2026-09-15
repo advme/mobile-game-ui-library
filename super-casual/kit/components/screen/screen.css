@@ -33,6 +33,7 @@
 */
 .sc-screen {
   --sc-s:1;                                        /* scale, set by sc.js */
+  --sc-min-fs:calc(var(--sc-min-text) / var(--sc-s));   /* keeps small text readable when the screen shrinks */
   --gap:14px;
   position:fixed; left:0; top:0; z-index:900; box-sizing:border-box;
   width:var(--sc-w, 100vw); height:var(--sc-h, 100vh); transform:scale(var(--sc-s)); transform-origin:0 0;
