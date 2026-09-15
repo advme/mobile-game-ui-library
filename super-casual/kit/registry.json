@@ -1,0 +1,940 @@
+{
+  "name": "super-casual",
+  "title": "Super Casual UI Kit",
+  "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
+  "version": "0.10.0",
+  "items": [
+    {
+      "name": "core",
+      "type": "registry:style",
+      "title": "Core",
+      "description": "Font, design tokens, color palette, outlined 3D text and glossy surface. Required by every component.",
+      "files": [
+        "core.css",
+        "sc.js",
+        "assets/"
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "Chunky glossy game button with outlined 3D text.",
+      "whenToUse": "Any action the player taps: play, retry, claim, buy, confirm, cancel.",
+      "files": [
+        "components/button/button.css"
+      ],
+      "docs": "components/button/button.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<button class=\"sc-button\" data-color=\"green\">Play</button>",
+      "props": {
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "sky",
+            "blue",
+            "dark",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "default": "sky"
+        },
+        "data-size": {
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        },
+        "data-width": {
+          "type": "enum",
+          "values": [
+            "full"
+          ],
+          "optional": true
+        },
+        "disabled": {
+          "type": "boolean",
+          "optional": true
+        },
+        "data-icon": {
+          "type": "icon",
+          "optional": true,
+          "description": "Leading icon by name (see icons)"
+        }
+      },
+      "js": {
+        "SC.setLabel(el, text)": "Change the label and keep the 3D text in sync",
+        "SC.setIcon(el, name)": "Change the icon"
+      },
+      "rules": [
+        "One lg button per screen for the main action",
+        "green = positive/continue/rewarded video, yellow = main play, red = destructive/quit, dark = cancel, purple = premium",
+        "Popups use sm or md; secondary left, primary right",
+        "Labels 1-2 words",
+        "Never override colors with custom CSS; use data-color"
+      ],
+      "examples": [
+        {
+          "title": "Main action",
+          "html": "<button class=\"sc-button\" data-color=\"yellow\" data-size=\"lg\">PLAY</button>"
+        },
+        {
+          "title": "Yes / No",
+          "html": "<button class=\"sc-button\" data-color=\"dark\" data-size=\"sm\">No</button>\n<button class=\"sc-button\" data-color=\"green\" data-size=\"sm\">Yes</button>"
+        },
+        {
+          "title": "With icon",
+          "html": "<button class=\"sc-button\" data-color=\"green\" data-icon=\"video\">x2 Claim</button>"
+        },
+        {
+          "title": "Full width",
+          "html": "<button class=\"sc-button\" data-color=\"green\" data-width=\"full\">RESUME</button>"
+        },
+        {
+          "title": "Disabled",
+          "html": "<button class=\"sc-button\" data-color=\"purple\" disabled>Locked</button>"
+        }
+      ]
+    },
+    {
+      "name": "icon-button",
+      "type": "registry:ui",
+      "title": "Icon Button",
+      "description": "Square or round button showing only an icon, with optional label underneath.",
+      "whenToUse": "Pause, close, settings, back/next arrows, menu shortcuts (Daily, Mail, Shop).",
+      "files": [
+        "components/icon-button/icon-button.css"
+      ],
+      "docs": "components/icon-button/icon-button.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<button class=\"sc-icon-button\" data-icon=\"pause\" aria-label=\"Pause\"></button>",
+      "props": {
+        "data-icon": {
+          "type": "icon",
+          "required": true,
+          "description": "Icon name (see icons)"
+        },
+        "data-variant": {
+          "type": "enum",
+          "values": [
+            "glossy",
+            "flat",
+            "ring"
+          ],
+          "default": "glossy"
+        },
+        "data-shape": {
+          "type": "enum",
+          "values": [
+            "square",
+            "round"
+          ],
+          "default": "square"
+        },
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "sky",
+            "blue",
+            "dark",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "default": "sky",
+          "description": "glossy only"
+        },
+        "data-size": {
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        },
+        "aria-label": {
+          "type": "string",
+          "description": "Required when there is no visible label"
+        },
+        "disabled": {
+          "type": "boolean",
+          "optional": true
+        },
+        "label": {
+          "type": "text",
+          "optional": true,
+          "description": "Plain text inside \u2192 label under the icon (use with flat)"
+        }
+      },
+      "js": {
+        "SC.setIcon(el, name)": "Change the icon"
+      },
+      "rules": [
+        "Pause in gameplay: top-left, ring or glossy sky",
+        "Close on popups: glossy red with data-icon=\"close\", top-right",
+        "Glossy for important actions, flat for menus/navigation, ring over busy game scenes",
+        "Always add aria-label when there is no visible label",
+        "Only use icon names from icons; never invent names or draw icons with code"
+      ],
+      "examples": [
+        {
+          "title": "Pause",
+          "html": "<button class=\"sc-icon-button\" data-variant=\"ring\" data-icon=\"pause\" aria-label=\"Pause\"></button>"
+        },
+        {
+          "title": "Close",
+          "html": "<button class=\"sc-icon-button\" data-color=\"red\" data-size=\"sm\" data-icon=\"close\" aria-label=\"Close\"></button>"
+        },
+        {
+          "title": "Round next",
+          "html": "<button class=\"sc-icon-button\" data-shape=\"round\" data-color=\"green\" data-icon=\"arrow-right\" aria-label=\"Next\"></button>"
+        },
+        {
+          "title": "With label",
+          "html": "<button class=\"sc-icon-button\" data-variant=\"flat\" data-size=\"lg\" data-icon=\"trophy\">Rank</button>"
+        }
+      ]
+    },
+    {
+      "name": "counter",
+      "type": "registry:ui",
+      "title": "Resource Counter",
+      "description": "Icon + dark pill + number, with optional \"+\" button. Builds itself from attributes.",
+      "whenToUse": "Showing coins, gems, energy, lives, tickets \u2014 usually top-right of the HUD or home screen.",
+      "files": [
+        "components/counter/counter.css"
+      ],
+      "docs": "components/counter/counter.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<div class=\"sc-counter\" data-icon=\"coin\" data-value=\"350\"></div>",
+      "props": {
+        "data-icon": {
+          "type": "icon",
+          "required": true
+        },
+        "data-value": {
+          "type": "number",
+          "required": true
+        },
+        "data-max": {
+          "type": "number",
+          "optional": true,
+          "description": "Shows value/max"
+        },
+        "data-plus": {
+          "type": "enum",
+          "values": [
+            "sky",
+            "blue",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "optional": true,
+          "description": "Adds a \"+\" button in this color"
+        },
+        "data-format": {
+          "type": "enum",
+          "values": [
+            "full",
+            "short"
+          ],
+          "default": "full"
+        },
+        "data-size": {
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        }
+      },
+      "events": {
+        "plus": "Dispatched on the counter when its \"+\" button is tapped"
+      },
+      "js": {
+        "SC.setValue(el, value, { animate })": "Change the value with count-up animation and bump",
+        "SC.format(n, \"short\")": "Format a number like counters do"
+      },
+      "rules": [
+        "Top-right, 12px from edges; most important resource furthest right",
+        "\"+\" color matches resource: coin orange, gem purple, energy blue, cash/ticket green",
+        "Only add \"+\" when it opens a way to get more",
+        "Energy and lives use data-max",
+        "Use data-format=\"short\" when values can pass 100,000",
+        "Always update with SC.setValue(); never write inner HTML or edit inner text"
+      ],
+      "examples": [
+        {
+          "title": "HUD resources",
+          "html": "<div class=\"sc-counter\" data-icon=\"energy\" data-value=\"5\" data-max=\"5\" data-plus=\"blue\"></div>\n<div class=\"sc-counter\" data-icon=\"coin\" data-value=\"349810\" data-plus=\"orange\"></div>\n<div class=\"sc-counter\" data-icon=\"gem\" data-value=\"120\" data-plus=\"purple\"></div>"
+        },
+        {
+          "title": "Read-only",
+          "html": "<div class=\"sc-counter\" data-icon=\"heart\" data-value=\"3\"></div>"
+        },
+        {
+          "title": "Short format",
+          "html": "<div class=\"sc-counter\" data-size=\"sm\" data-icon=\"coin\" data-value=\"12500\" data-format=\"short\"></div>"
+        }
+      ]
+    },
+    {
+      "name": "slot",
+      "type": "registry:ui",
+      "title": "Reward Slot",
+      "description": "Colored card with an item icon, count, optional tag and claimed/locked state. Builds itself from attributes.",
+      "whenToUse": "Rewards, prizes, loot, shop contents, level requirements.",
+      "files": [
+        "components/slot/slot.css"
+      ],
+      "docs": "components/slot/slot.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<div class=\"sc-slot\" data-icon=\"gem\" data-count=\"300\" data-color=\"purple\"></div>",
+      "props": {
+        "data-icon": {
+          "type": "icon",
+          "required": true
+        },
+        "data-count": {
+          "type": "number",
+          "optional": true
+        },
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "white",
+            "dark",
+            "green",
+            "sky",
+            "purple",
+            "yellow",
+            "red",
+            "lavender"
+          ],
+          "default": "dark"
+        },
+        "data-tag": {
+          "type": "string",
+          "optional": true,
+          "description": "Short label on top edge: BONUS, NEW, HOT, x2"
+        },
+        "data-state": {
+          "type": "enum",
+          "values": [
+            "claimed",
+            "locked"
+          ],
+          "optional": true
+        },
+        "data-format": {
+          "type": "enum",
+          "values": [
+            "full",
+            "short"
+          ],
+          "default": "full"
+        },
+        "data-size": {
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        }
+      },
+      "js": {
+        "SC.setValue(el, count)": "Animate the count",
+        "SC.popIn(elements, { stagger, delay })": "Reveal elements one after another"
+      },
+      "rules": [
+        "Rarity by color: white/dark common, green/sky uncommon, purple epic, yellow legendary, red special, lavender premium",
+        "Reward screens: 4-column grid, md size, reveal with SC.popIn()",
+        "Popups and rows: sm size",
+        "Tags: one short word or x2; at most one tagged slot per group",
+        "locked for unavailable rewards, claimed after collecting",
+        "Update counts with SC.setValue(); never write inner HTML"
+      ],
+      "examples": [
+        {
+          "title": "Reward grid",
+          "html": "<div class=\"sc-slot\" data-icon=\"coin\" data-count=\"1000\" data-color=\"white\" data-tag=\"BONUS\"></div>\n<div class=\"sc-slot\" data-icon=\"gift\" data-count=\"1\" data-color=\"dark\"></div>\n<div class=\"sc-slot\" data-icon=\"clover\" data-count=\"5\" data-color=\"green\"></div>\n<div class=\"sc-slot\" data-icon=\"gem\" data-count=\"300\" data-color=\"purple\"></div>"
+        },
+        {
+          "title": "States",
+          "html": "<div class=\"sc-slot\" data-size=\"sm\" data-icon=\"clover\" data-color=\"green\" data-state=\"claimed\"></div>\n<div class=\"sc-slot\" data-size=\"sm\" data-icon=\"chest\" data-color=\"yellow\" data-state=\"locked\"></div>"
+        }
+      ]
+    },
+    {
+      "name": "popup",
+      "type": "registry:ui",
+      "title": "Popup",
+      "description": "Modal window with header, title, optional sub tag and close button built automatically; author writes only the content.",
+      "whenToUse": "Confirmations, level start info, pause menu, downloads, purchase confirm, any modal over the game.",
+      "files": [
+        "components/popup/popup.css"
+      ],
+      "docs": "components/popup/popup.md",
+      "dependencies": [
+        "core",
+        "button",
+        "icon-button"
+      ],
+      "html": "<div class=\"sc-popup\" id=\"exit\" data-color=\"purple\" data-title=\"Exit Game\" hidden>\n  <p class=\"sc-popup-message\">Do you really want to exit the game?</p>\n  <div class=\"sc-popup-actions\">\n    <button class=\"sc-button\" data-color=\"dark\" data-size=\"sm\" data-close>No</button>\n    <button class=\"sc-button\" data-color=\"green\" data-size=\"sm\">Yes</button>\n  </div>\n</div>",
+      "props": {
+        "data-title": {
+          "type": "string",
+          "required": true
+        },
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "blue",
+            "red",
+            "purple"
+          ],
+          "default": "blue"
+        },
+        "data-sub": {
+          "type": "string",
+          "optional": true,
+          "description": "Small tag under the title"
+        },
+        "data-closable": {
+          "type": "enum",
+          "values": [
+            "false"
+          ],
+          "optional": true
+        },
+        "data-backdrop": {
+          "type": "enum",
+          "values": [
+            "static"
+          ],
+          "optional": true
+        },
+        "hidden": {
+          "type": "boolean",
+          "description": "Start closed"
+        }
+      },
+      "slots": {
+        ".sc-popup-message": "Outlined message text",
+        ".sc-popup-value": "Big yellow highlighted value",
+        ".sc-popup-hint": "Small soft text",
+        ".sc-panel": "Light inset card grouping items",
+        ".sc-popup-section": "Darker bottom area",
+        ".sc-popup-actions": "Button row; data-layout=\"stack\" for vertical",
+        "[data-close]": "Any element that closes the popup when tapped"
+      },
+      "events": {
+        "open": "Popup opened",
+        "close": "Popup closed"
+      },
+      "js": {
+        "SC.popup.open(id)": "Open",
+        "SC.popup.close(id)": "Close",
+        "SC.popup.toggle(id)": "Toggle"
+      },
+      "rules": [
+        "blue = info/neutral, red = warning/hard/destructive, purple = premium/special",
+        "Title 1-3 words, message 1-2 sentences, at most 3 buttons",
+        "Two buttons: sm, secondary left, primary right; three or more: data-layout=\"stack\"",
+        "Pause the game on open, resume on close",
+        "Required choices: data-closable=\"false\" + data-backdrop=\"static\"",
+        "Only one popup open at a time; never write the header or close button manually"
+      ],
+      "examples": [
+        {
+          "title": "Pause menu",
+          "html": "<div class=\"sc-popup\" id=\"pause\" data-title=\"PAUSED\" data-sub=\"LEVEL 12\" hidden>\n  <div class=\"sc-popup-actions\" data-layout=\"stack\">\n    <button class=\"sc-button\" data-color=\"green\" data-size=\"lg\" data-close>RESUME</button>\n    <button class=\"sc-button\" data-color=\"yellow\">Restart</button>\n    <button class=\"sc-button\" data-color=\"red\">Quit</button>\n  </div>\n</div>"
+        },
+        {
+          "title": "Level start",
+          "html": "<div class=\"sc-popup\" id=\"level\" data-color=\"red\" data-title=\"LEVEL 54\" data-sub=\"HARD\" hidden>\n  <div class=\"sc-panel\">\n    <div class=\"sc-slot\" data-size=\"sm\" data-icon=\"gem\" data-count=\"24\" data-color=\"white\"></div>\n  </div>\n  <div class=\"sc-popup-section\">\n    <div class=\"sc-popup-actions\"><button class=\"sc-button\" data-color=\"yellow\">PLAY</button></div>\n  </div>\n</div>"
+        }
+      ]
+    },
+    {
+      "name": "progress",
+      "type": "registry:ui",
+      "title": "Progress Bar",
+      "description": "Bar showing progress toward a goal, with optional label, left icon and star markers. Builds itself from attributes.",
+      "whenToUse": "XP, level score, health, energy, loading, timers.",
+      "files": [
+        "components/progress/progress.css"
+      ],
+      "docs": "components/progress/progress.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<div class=\"sc-progress\" data-value=\"72\" data-color=\"green\" data-label=\"percent\"></div>",
+      "props": {
+        "data-value": {
+          "type": "number",
+          "required": true
+        },
+        "data-max": {
+          "type": "number",
+          "default": 100
+        },
+        "data-label": {
+          "type": "string",
+          "optional": true,
+          "description": "percent | value | any text"
+        },
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "blue",
+            "sky",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "default": "blue"
+        },
+        "data-size": {
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        },
+        "data-icon": {
+          "type": "icon",
+          "optional": true
+        },
+        "data-stars": {
+          "type": "string",
+          "optional": true,
+          "description": "Comma-separated percent positions, e.g. \"33,66,100\""
+        }
+      },
+      "events": {
+        "star": "A star marker lit up (detail.index)"
+      },
+      "js": {
+        "SC.setValue(el, value)": "Animate fill and label"
+      },
+      "rules": [
+        "green = health/level progress, blue = XP, orange = timers/loading, red = low health/danger, yellow = max/complete",
+        "Health: data-icon=\"heart\" green; switch to red below 25%",
+        "Level goals in HUD: data-stars=\"33,66,100\", no label",
+        "XP: data-label=\"value\"",
+        "Always update with SC.setValue()",
+        "Width comes from the container"
+      ],
+      "examples": [
+        {
+          "title": "Health",
+          "html": "<div class=\"sc-progress\" data-icon=\"heart\" data-value=\"85\" data-color=\"green\"></div>"
+        },
+        {
+          "title": "XP",
+          "html": "<div class=\"sc-progress\" data-icon=\"star\" data-value=\"723\" data-max=\"1000\" data-label=\"value\"></div>"
+        },
+        {
+          "title": "Level stars",
+          "html": "<div class=\"sc-progress\" data-value=\"0\" data-max=\"3000\" data-stars=\"33,66,100\" data-color=\"green\"></div>"
+        }
+      ]
+    },
+    {
+      "name": "title",
+      "type": "registry:ui",
+      "title": "Screen Title",
+      "description": "Big gradient headline with black outline, 3D edge and optional entrance animation.",
+      "whenToUse": "Result and event screens: CLEAR!, FAILED, LEVEL UP, NEW RECORD, PAUSED.",
+      "files": [
+        "components/title/title.css"
+      ],
+      "docs": "components/title/title.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<h1 class=\"sc-title\" data-color=\"gold\" data-animate=\"drop\">CLEAR!</h1>",
+      "props": {
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "gold",
+            "red",
+            "blue",
+            "green",
+            "purple",
+            "white"
+          ],
+          "default": "gold"
+        },
+        "data-size": {
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "lg"
+        },
+        "data-animate": {
+          "type": "enum",
+          "values": [
+            "drop",
+            "pop",
+            "shake"
+          ],
+          "optional": true
+        }
+      },
+      "js": {
+        "SC.setLabel(el, text)": "Change the text",
+        "SC.replay(el)": "Play the entrance animation again"
+      },
+      "rules": [
+        "One title per screen, at the top",
+        "win gold+drop, fail red+shake, level up blue, reward purple+pop, neutral white",
+        "1-2 words, UPPERCASE, optional !",
+        "lg for result screens; md if longer than 8 letters",
+        "Not for popup headers (popups use data-title)"
+      ],
+      "examples": [
+        {
+          "title": "Win",
+          "html": "<h1 class=\"sc-title\" data-color=\"gold\" data-animate=\"drop\">CLEAR!</h1>"
+        },
+        {
+          "title": "Fail",
+          "html": "<h1 class=\"sc-title\" data-color=\"red\" data-animate=\"shake\">FAILED</h1>"
+        }
+      ]
+    },
+    {
+      "name": "stars",
+      "type": "registry:ui",
+      "title": "Star Rating",
+      "description": "Row or arc of filled/empty stars with pop-in animation. Builds itself from data-value.",
+      "whenToUse": "Level results, level select buttons, item quality, ratings.",
+      "files": [
+        "components/stars/stars.css"
+      ],
+      "docs": "components/stars/stars.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<div class=\"sc-stars\" data-value=\"2\" data-layout=\"arc\" data-size=\"lg\" data-animate></div>",
+      "props": {
+        "data-value": {
+          "type": "number",
+          "required": true
+        },
+        "data-max": {
+          "type": "number",
+          "default": 3,
+          "description": "1-5"
+        },
+        "data-size": {
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        },
+        "data-layout": {
+          "type": "enum",
+          "values": [
+            "row",
+            "arc"
+          ],
+          "default": "row"
+        },
+        "data-animate": {
+          "type": "boolean",
+          "optional": true
+        }
+      },
+      "events": {
+        "star": "Fired as each earned star appears (detail.index)"
+      },
+      "js": {
+        "SC.setValue(el, value)": "Newly earned stars pop in"
+      },
+      "rules": [
+        "Result screens: arc + lg + data-animate, under the Screen Title",
+        "Fail screens: data-value=\"0\", no animation",
+        "Level select/lists: sm, row",
+        "Play a sound on each star event",
+        "3 stars for levels; data-max=\"5\" only for ratings/item quality"
+      ],
+      "examples": [
+        {
+          "title": "Success",
+          "html": "<div class=\"sc-stars\" data-value=\"2\" data-layout=\"arc\" data-size=\"lg\" data-animate></div>"
+        },
+        {
+          "title": "Level button",
+          "html": "<div class=\"sc-stars\" data-size=\"sm\" data-value=\"3\"></div>"
+        }
+      ]
+    },
+    {
+      "name": "timer",
+      "type": "registry:ui",
+      "title": "Countdown Timer",
+      "description": "Ring or pill countdown that starts when shown, warns near the end and fires done at 0.",
+      "whenToUse": "Continue offers, level time limits, energy refills, limited-time events.",
+      "files": [
+        "components/timer/timer.css"
+      ],
+      "docs": "components/timer/timer.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<div class=\"sc-timer\" data-seconds=\"5\" data-warn=\"3\"></div>",
+      "props": {
+        "data-seconds": {
+          "type": "number",
+          "required": true
+        },
+        "data-variant": {
+          "type": "enum",
+          "values": [
+            "ring",
+            "pill"
+          ],
+          "default": "ring"
+        },
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "yellow",
+            "green",
+            "sky",
+            "blue",
+            "red",
+            "purple",
+            "orange"
+          ],
+          "default": "yellow"
+        },
+        "data-size": {
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        },
+        "data-format": {
+          "type": "enum",
+          "values": [
+            "clock",
+            "long"
+          ],
+          "default": "clock",
+          "description": "pill only"
+        },
+        "data-icon": {
+          "type": "icon",
+          "optional": true,
+          "description": "pill only"
+        },
+        "data-warn": {
+          "type": "number",
+          "optional": true,
+          "description": "Seconds left when it turns red and pulses"
+        },
+        "data-autostart": {
+          "type": "enum",
+          "values": [
+            "false"
+          ],
+          "optional": true
+        }
+      },
+      "events": {
+        "tick": "Every whole second (detail.left)",
+        "done": "Reached 0"
+      },
+      "js": {
+        "SC.timer.start(el)": "Start/resume",
+        "SC.timer.pause(el)": "Pause",
+        "SC.timer.reset(el, seconds?)": "Restart",
+        "SC.timer.add(el, seconds)": "Add time"
+      },
+      "rules": [
+        "Ring for short decisions (3-10s) with data-warn=\"3\"",
+        "Pill for level clocks and refills; data-format=\"long\" for multi-day events",
+        "Always handle the done event",
+        "Pause gameplay timers when the game pauses",
+        "Level time limits top-center in the HUD"
+      ],
+      "examples": [
+        {
+          "title": "Continue offer",
+          "html": "<div class=\"sc-timer\" data-seconds=\"5\" data-size=\"lg\" data-warn=\"3\"></div>"
+        },
+        {
+          "title": "Level clock",
+          "html": "<div class=\"sc-timer\" data-variant=\"pill\" data-seconds=\"90\" data-warn=\"10\"></div>"
+        },
+        {
+          "title": "Event",
+          "html": "<div class=\"sc-timer\" data-variant=\"pill\" data-format=\"long\" data-icon=\"calendar\" data-seconds=\"1292400\"></div>"
+        }
+      ]
+    },
+    {
+      "name": "float",
+      "type": "registry:ui",
+      "title": "Floating Text",
+      "description": "JavaScript-only feedback text that floats up and fades at a tap, element or screen position.",
+      "whenToUse": "Points, coins, damage, healing, XP, combos \u2014 anywhere the player needs instant feedback.",
+      "files": [
+        "components/float/float.css"
+      ],
+      "docs": "components/float/float.md",
+      "dependencies": [
+        "core"
+      ],
+      "js": {
+        "SC.float(text, target, { color, size, icon, style })": "Show floating text; target = pointer event | element | {x, y} | null (center)"
+      },
+      "options": {
+        "color": {
+          "type": "enum",
+          "values": [
+            "white",
+            "gold",
+            "green",
+            "red",
+            "sky",
+            "purple"
+          ],
+          "default": "white"
+        },
+        "size": {
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        },
+        "icon": {
+          "type": "icon",
+          "optional": true
+        },
+        "style": {
+          "type": "enum",
+          "values": [
+            "rise",
+            "pop"
+          ],
+          "default": "rise"
+        }
+      },
+      "rules": [
+        "white points, gold coins, green heal/bonus, red damage/miss, sky XP, purple gems",
+        "Show it where the action happened",
+        "Tiny text: +/- numbers or one word",
+        "pop + lg only for special moments",
+        "Pair coin floats with SC.setValue() on the coin counter",
+        "For canvas objects convert world position to page pixels and pass {x, y}"
+      ],
+      "examples": [
+        {
+          "title": "Tap",
+          "js": "canvas.addEventListener('pointerdown', e => SC.float('+50', e));"
+        },
+        {
+          "title": "Coin pickup",
+          "js": "SC.float('+5', coinEl, { icon: 'coin', color: 'gold' });"
+        },
+        {
+          "title": "Combo",
+          "js": "SC.float('COMBO x3!', null, { size: 'lg', color: 'gold', style: 'pop' });"
+        }
+      ]
+    }
+  ],
+  "icons": {
+    "path": "assets/",
+    "names": [
+      "arrow-right",
+      "back",
+      "calendar",
+      "cash",
+      "chat",
+      "check",
+      "chest",
+      "close",
+      "clover",
+      "coin",
+      "crown",
+      "crystal-ball",
+      "energy",
+      "gem",
+      "gift",
+      "heart",
+      "heart-empty",
+      "info",
+      "key",
+      "lock",
+      "mail",
+      "medal",
+      "pause",
+      "ruby",
+      "search",
+      "settings",
+      "star",
+      "star-empty",
+      "ticket",
+      "trophy",
+      "video",
+      "arrow-left"
+    ],
+    "note": "Use by name with data-icon. arrow-left is arrow-right mirrored."
+  }
+}

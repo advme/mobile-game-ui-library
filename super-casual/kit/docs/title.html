@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Screen Title — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/title/title.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>.col { display:flex; flex-direction:column; align-items:center; gap:22px; }</style>
+</head>
+<body>
+<script>
+  SCDocs.page({
+    title: 'Screen Title',
+    lead: 'Big gradient headline for result and event screens — CLEAR!, FAILED, LEVEL UP, NEW RECORD.',
+    hero: `<h1 class="sc-title" data-color="gold" data-animate="drop">CLEAR!</h1>`,
+    css: ['components/title/title.css'],
+    usageNote: 'Write the text as plain text — sc.js builds the gradient and outline layers.',
+    usage: `<h1 class="sc-title" data-color="gold">CLEAR!</h1>`,
+    examples: [
+      { title:'Colors', desc:'Six gradient colors.',
+        html:`<div class="col">
+  <h1 class="sc-title" data-color="gold" data-size="md">CLEAR!</h1>
+  <h1 class="sc-title" data-color="red" data-size="md">FAILED</h1>
+  <h1 class="sc-title" data-color="blue" data-size="md">LEVEL UP</h1>
+  <h1 class="sc-title" data-color="green" data-size="md">PERFECT</h1>
+  <h1 class="sc-title" data-color="purple" data-size="md">EPIC!</h1>
+  <h1 class="sc-title" data-color="white" data-size="md">PAUSED</h1>
+</div>` },
+      { title:'Sizes', desc:'sm 32px · md 46px · lg 60px (default).',
+        html:`<div class="col">
+  <h1 class="sc-title" data-size="sm">NEW RECORD</h1>
+  <h1 class="sc-title" data-size="md">NEW RECORD</h1>
+  <h1 class="sc-title">RECORD</h1>
+</div>` },
+      { title:'Live: entrance animations', desc:'drop for wins, pop for rewards, shake for fails. SC.replay() plays it again.',
+        html:`<div class="col">
+  <h1 class="sc-title" data-color="gold" data-size="md" data-animate="drop">CLEAR!</h1>
+  <h1 class="sc-title" data-color="purple" data-size="md" data-animate="pop">NEW SKIN</h1>
+  <h1 class="sc-title" data-color="red" data-size="md" data-animate="shake">FAILED</h1>
+  <button class="sc-button" data-color="sky" data-size="sm">Replay</button>
+</div>`,
+        setup(preview) {
+          preview.querySelector('.sc-button').onclick = () => preview.querySelectorAll('.sc-title').forEach(SC.replay);
+        } },
+    ],
+    api: [
+      ['data-color', 'gold red blue green purple white', 'gold', 'Gradient color.'],
+      ['data-size', 'sm md lg', 'lg', '32 / 46 / 60 px.'],
+      ['data-animate', 'drop pop shake', '', 'Entrance animation, plays when shown.'],
+    ],
+    js: `SC.setLabel(title, 'FAILED');   // change the text
+SC.replay(title);               // play the entrance animation again`,
+    rules: [
+      '<b>One title per screen</b>, at the top.',
+      '<b>Color + animation by outcome:</b> win → <code class="inline">gold</code> + <code class="inline">drop</code> · fail → <code class="inline">red</code> + <code class="inline">shake</code> · level up → <code class="inline">blue</code> · reward / new item → <code class="inline">purple</code> + <code class="inline">pop</code> · neutral (PAUSED) → <code class="inline">white</code>.',
+      '<b>Text:</b> 1–2 words, UPPERCASE, optional "!".',
+      '<b>Size:</b> <code class="inline">lg</code> for result screens; <code class="inline">md</code> if the text is longer than 8 letters.',
+      '<b>Not</b> for popup headers — popups build their own title from <code class="inline">data-title</code>.',
+    ],
+  });
+</script>
+</body>
+</html>

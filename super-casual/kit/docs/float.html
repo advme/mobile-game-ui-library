@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floating Text — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/float/float.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+  .tap-area { width:min(360px, 100%); height:220px; border-radius:14px; border:2px dashed rgba(255,255,255,.25); display:grid; place-items:center;
+              font:600 14px system-ui; color:rgba(255,255,255,.6); cursor:pointer; touch-action:manipulation; user-select:none; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+</style>
+</head>
+<body>
+<script>
+  SCDocs.page({
+    title: 'Floating Text',
+    lead: 'Quick feedback that floats up and fades where something happened — points, coins, damage, combos.',
+    hero: `<div class="tap-area" id="heroTap">Tap anywhere here</div>`,
+    css: ['components/float/float.css'],
+    usageNote: 'JavaScript only — call SC.float() when something happens. It removes itself.',
+    usage: `game.canvas.addEventListener('pointerdown', e => {
+  SC.float('+50', e);
+});`,
+    examples: [
+      { title:'Colors', desc:'white points · gold coins · green heal · red damage · sky XP · purple gems.',
+        html:`<div class="row">
+  <button class="sc-button" data-size="sm" data-color="dark">white</button>
+  <button class="sc-button" data-size="sm" data-color="yellow">gold</button>
+  <button class="sc-button" data-size="sm" data-color="green">green</button>
+  <button class="sc-button" data-size="sm" data-color="red">red</button>
+  <button class="sc-button" data-size="sm" data-color="sky">sky</button>
+  <button class="sc-button" data-size="sm" data-color="purple">purple</button>
+</div>`,
+        setup(preview) {
+          const texts = { white:'+50', gold:'+5', green:'+1', red:'-25', sky:'+10 XP', purple:'+2' };
+          preview.querySelectorAll('.sc-button').forEach(b => b.onclick = () => {
+            const c = b.textContent.trim();
+            SC.float(texts[c], b, { color: c === 'white' ? undefined : c });
+          });
+        } },
+      { title:'With icon', desc:'Shows what was collected.',
+        html:`<div class="row">
+  <button class="sc-button" data-size="sm" data-color="yellow" data-icon="coin">Coin</button>
+  <button class="sc-button" data-size="sm" data-color="purple" data-icon="gem">Gem</button>
+  <button class="sc-button" data-size="sm" data-color="red" data-icon="heart">Heart</button>
+</div>`,
+        setup(preview) {
+          const map = { Coin:['+5','coin','gold'], Gem:['+1','gem','purple'], Heart:['+1','heart','red'] };
+          preview.querySelectorAll('.sc-button').forEach(b => b.onclick = () => {
+            const [t, icon, color] = map[b.textContent.trim()];
+            SC.float(t, b, { icon, color });
+          });
+        } },
+      { title:'Sizes and pop', desc:'sm for small hits · lg + style "pop" for combos and big moments.',
+        html:`<div class="row">
+  <button class="sc-button" data-size="sm" data-color="dark">sm</button>
+  <button class="sc-button" data-size="sm" data-color="dark">md</button>
+  <button class="sc-button" data-size="sm" data-color="dark">lg</button>
+  <button class="sc-button" data-size="sm" data-color="orange">COMBO!</button>
+</div>`,
+        setup(preview) {
+          const bs = preview.querySelectorAll('.sc-button');
+          bs[0].onclick = () => SC.float('+10', bs[0], { size:'sm' });
+          bs[1].onclick = () => SC.float('+50', bs[1]);
+          bs[2].onclick = () => SC.float('+500', bs[2], { size:'lg' });
+          bs[3].onclick = () => SC.float('COMBO x3!', bs[3], { size:'lg', color:'gold', style:'pop' });
+        } },
+    ],
+    api: [
+      ['text', 'string', '', 'Required. What to show: +50, MISS, COMBO!'],
+      ['target', 'event element {x,y}', '', 'Where: a tap event, an element\'s center, or page coordinates.'],
+      ['color', 'white gold green red sky purple', 'white', 'Option.'],
+      ['size', 'sm md lg', 'md', 'Option. 18 / 26 / 38 px.'],
+      ['icon', 'icon-name', '', 'Option. Icon before the text.'],
+      ['style', 'rise pop', 'rise', 'Option. pop = big bouncy hit.'],
+    ],
+    js: `SC.float('+50', event);                                  // at a tap
+SC.float('+5', coin, { icon: 'coin', color: 'gold' });   // over an element
+SC.float('-25', { x: 180, y: 320 }, { color: 'red' });   // at coordinates
+SC.float('PERFECT!', null, { size: 'lg', style: 'pop', color: 'gold' }); // screen center`,
+    rules: [
+      '<b>Color meaning:</b> white = points · gold = coins · green = healing / bonus · red = damage / miss · sky = XP · purple = gems.',
+      '<b>Show it where the action happened</b> — pass the tap event or the element that was hit.',
+      '<b>Keep text tiny:</b> numbers with + or −, or one word (MISS, PERFECT!).',
+      '<b>Use <code class="inline">style: "pop"</code> + <code class="inline">lg</code></b> only for special moments (combo, level up), not every point.',
+      '<b>Pair with counters:</b> float "+5" with a coin icon, then <code class="inline">SC.setValue()</code> the coin counter.',
+    ],
+  });
+  const tap = document.getElementById('heroTap');
+  tap.addEventListener('pointerdown', e => SC.float('+' + (50 * (1 + Math.floor(Math.random() * 4))), e));
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+/*
+  Reward Slot — Super Casual UI Kit
+  Requires: core.css, sc.js
+
+  <div class="sc-slot" data-icon="coin" data-count="1000" data-color="white" data-tag="BONUS"></div>
+
+  data-icon    icon name from kit/assets                                          required
+  data-count   optional number shown bottom-right
+  data-color   white | dark | green | sky | purple | yellow | red | lavender     default: dark
+  data-tag     optional short label on the top edge (BONUS, NEW, HOT, x2)
+  data-state   claimed | locked                                                    optional
+  data-format  full | short                                                        default: full
+  data-size    sm | md | lg   (60 / 84 / 104 px)                                   default: md
+*/
+.sc-slot {
+  --size:84px; --slot:#505390; --slot2:#44467e;
+  position:relative; display:inline-block; vertical-align:middle; flex:none; box-sizing:border-box;
+  width:var(--size); height:var(--size);
+  border:var(--sc-line) solid var(--sc-outline); border-radius:calc(var(--size) * .14);
+  background:radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--slot) 80%, #fff) 0%, var(--slot) 55%, var(--slot2) 100%);
+  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.25), inset 0 -4px 0 rgba(0,0,0,.12);
+  font-family:var(--sc-font); user-select:none; -webkit-user-select:none;
+}
+.sc-slot[data-size="sm"] { --size:60px; border-width:var(--sc-line-sm); }
+.sc-slot[data-size="lg"] { --size:104px; }
+
+/* Colors (slot colors are softer than button colors) */
+.sc-slot[data-color="white"]    { --slot:#f2f5ff; --slot2:#dfe4f2; }
+.sc-slot[data-color="dark"]     { --slot:#505390; --slot2:#44467e; }
+.sc-slot[data-color="green"]    { --slot:#66dd10; --slot2:#4fc20a; }
+.sc-slot[data-color="sky"]      { --slot:#05c6ff; --slot2:#03a8ea; }
+.sc-slot[data-color="purple"]   { --slot:#d062ff; --slot2:#b847ee; }
+.sc-slot[data-color="yellow"]   { --slot:#ffdc4b; --slot2:#ffc62e; }
+.sc-slot[data-color="red"]      { --slot:#ff4557; --slot2:#e83246; }
+.sc-slot[data-color="lavender"] { --slot:#e2e6fd; --slot2:#f3cffb; background:linear-gradient(#c8eafc, #fdd1fb); }
+
+/* Icon */
+.sc-slot > img[data-sc-icon] {
+  position:absolute; left:13%; top:9%; width:74%; height:74%; object-fit:contain; pointer-events:none;
+  translate:var(--ox, 0%) var(--oy, 0%);
+}
+
+/* Count, bottom-right */
+.sc-slot-count { position:absolute; right:6%; bottom:3%; z-index:1; line-height:1; }
+.sc-slot-count .sc-text { --fs:calc(var(--size) * .24); font-size:var(--fs); font-variant-numeric:tabular-nums; }
+
+/* Tag on the top edge — tight around the text */
+.sc-slot-tag {
+  --t:calc(var(--size) * .15);                       /* tag font size */
+  position:absolute; left:50%; top:calc(var(--size) * -.09); z-index:2; transform:translateX(-50%);
+  padding:calc(var(--t) * .12) calc(var(--t) * .5) calc(var(--t) * .2); white-space:nowrap; line-height:1;
+  background:linear-gradient(#ff5d6c 0 50%, #e8303f 50%);
+  border:var(--sc-line-sm) solid var(--sc-outline); border-radius:calc(var(--size) * .08);
+  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35);
+}
+.sc-slot-tag .sc-text { --fs:var(--t); font-size:var(--fs); --ink:#6a0018; display:block; }
+
+/* States */
+.sc-slot-state { position:absolute; z-index:3; pointer-events:none; object-fit:contain; }
+.sc-slot[data-state]::after {
+  content:""; position:absolute; inset:0; border-radius:inherit; background:rgba(10,14,30,.42); z-index:1;
+}
+.sc-slot[data-state="claimed"] .sc-slot-state { right:-8%; bottom:-8%; width:44%; height:44%; }
+.sc-slot[data-state="locked"]  .sc-slot-state { left:50%; top:50%; width:46%; height:46%; transform:translate(-50%,-50%); }
+.sc-slot[data-state] .sc-slot-count { opacity:.55; }
+.sc-slot[data-state="locked"] > img[data-sc-icon] { filter:grayscale(.7) brightness(.8); }
+
+/* Pop-in (used by SC.popIn) */
+.sc-pop-in { animation:sc-pop-in .32s cubic-bezier(.3,1.5,.5,1) both; animation-delay:var(--sc-delay, 0s); }
+@keyframes sc-pop-in { from { opacity:0; transform:scale(.55); } }
+.sc-slot.sc-bump .sc-slot-count .sc-text { animation:sc-slot-bump .3s ease-out; }
+@keyframes sc-slot-bump { 40% { transform:scale(1.3); } }

@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#1f2d4b">
+<title>Super Casual Pause Screen</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  html, body { margin:0; height:100%; overflow:hidden; overscroll-behavior:none; }
+  body { background:#1f2d4b; -webkit-user-select:none; user-select:none; }
+
+  /* Full-page shell: 400x870 design, scaled to fit, stretched to the device shape */
+  .screen { position:absolute; left:0; top:0; width:var(--w,400px); height:var(--h,870px); transform-origin:0 0; overflow:hidden;
+            background:linear-gradient(#2a6fd6, #1f9be0 55%, #2bb37a); }
+
+  /* Gameplay HUD (behind the popup) — pinned to the edges, 12px from the sides */
+  .hud { position:absolute; left:0; right:0; top:0; display:flex; align-items:center; justify-content:space-between;
+         padding:calc(14px + env(safe-area-inset-top)) calc(12px * var(--px,1)) 0; }
+  .hud .right { display:flex; gap:10px; }
+  .hud .sc-counter .value { --min:44px; }
+  .game-hint { position:absolute; left:0; right:0; top:50%; text-align:center; font:600 13px system-ui,sans-serif; color:rgba(255,255,255,.55); }
+
+  /* Overlay: dims and blurs the game */
+  .screen .sc-overlay { position:absolute; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
+  .sc-popup { width:320px; }
+  .panel-row { display:flex; justify-content:center; gap:34px; padding:4px 0 6px; }
+  .actions.stack { flex-direction:column; align-items:stretch; gap:12px; }
+  .actions.stack .row { display:flex; gap:10px; }
+  .actions.stack .sc-btn { width:100%; min-width:0; }
+  .actions.stack .resume { height:60px; }
+  .actions.stack .resume .sc-text { --fs:23px; }
+</style>
+</head>
+<body>
+<div class="screen" id="screen">
+
+  <!-- Gameplay HUD -->
+  <div class="hud">
+    <button class="sc-icon-btn sc-surface sky" id="pauseBtn" aria-label="Pause"><img src="assets/pause.png" alt=""></button>
+    <div class="right">
+      <div class="sc-counter"><img class="icon" src="assets/heart.png" alt=""><div class="pill" style="padding-right:4px"><span class="value"><span class="sc-text" data-text="3">3</span></span></div></div>
+      <div class="sc-counter"><img class="icon" src="assets/coin.png" alt=""><div class="pill" style="padding-right:4px"><span class="value"><span class="sc-text" data-text="350">350</span></span></div></div>
+    </div>
+  </div>
+  <div class="game-hint">Game is playing… tap pause</div>
+
+  <!-- Pause popup -->
+  <div class="sc-overlay" id="pause">
+    <div class="sc-popup" role="dialog" aria-modal="true" aria-label="Paused">
+      <header>
+        <span class="sc-text" data-text="PAUSED">PAUSED</span>
+        <span class="sub">LEVEL 12</span>
+        <button class="sc-icon-btn sc-surface red close" data-action="resume" aria-label="Resume"><img src="assets/close.png" alt=""></button>
+      </header>
+      <div class="body">
+        <div class="sc-panel">
+          <div class="panel-row">
+            <div class="sc-item"><img src="assets/star.png" alt=""><span class="sc-text" data-text="2">2</span></div>
+            <div class="sc-item"><img src="assets/coin.png" alt=""><span class="sc-text" data-text="350">350</span></div>
+            <div class="sc-item"><img src="assets/heart.png" alt=""><span class="sc-text" data-text="3">3</span></div>
+          </div>
+        </div>
+        <div class="actions stack">
+          <button class="sc-surface sc-btn green resume" data-action="resume"><span class="sc-text" data-text="RESUME">RESUME</span></button>
+          <div class="row">
+            <button class="sc-surface sc-btn yellow" data-action="restart"><span class="sc-text" data-text="Restart">Restart</span></button>
+            <button class="sc-surface sc-btn red" data-action="quit"><span class="sc-text" data-text="Quit">Quit</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+  // Fit the 400x870 design to any screen (full page, no scroll)
+  const screen = document.getElementById('screen');
+  function fit() {
+    const vw = innerWidth, vh = innerHeight, s = Math.min(vw / 400, vh / 870);
+    screen.style.setProperty('--w', vw / s + 'px');
+    screen.style.setProperty('--h', vh / s + 'px');
+    screen.style.setProperty('--px', 1 / s);   // real-pixel edge margins
+    screen.style.transform = `scale(${s})`;
+  }
+  addEventListener('resize', fit); fit();
+
+  // Pause / resume
+  const overlay = document.getElementById('pause');
+  document.getElementById('pauseBtn').onclick = () => overlay.hidden = false;
+  overlay.addEventListener('click', e => {
+    const action = e.target.closest('[data-action]')?.dataset.action;
+    if (action === 'resume' || e.target === overlay) overlay.hidden = true;
+    if (action === 'restart' || action === 'quit') overlay.hidden = true;   // hook game logic here
+  });
+
+  // Press feedback on phones
+  document.querySelectorAll('.sc-surface, .sc-icon-btn').forEach(b => {
+    b.addEventListener('pointerdown', () => b.classList.add('pressed'));
+    ['pointerup','pointercancel','pointerleave'].forEach(e => b.addEventListener(e, () => b.classList.remove('pressed')));
+  });
+  document.addEventListener('touchstart', () => {}, { passive:true });
+</script>
+</body>
+</html>

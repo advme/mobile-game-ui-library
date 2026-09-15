@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Countdown Timer — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/timer/timer.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>.col { display:flex; flex-direction:column; align-items:center; gap:16px; } .row { display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center; }</style>
+</head>
+<body>
+<script>
+  SCDocs.page({
+    title: 'Countdown Timer',
+    lead: 'Counts down and tells the game when time is up — continue offers, level clocks, energy refills, limited-time events.',
+    hero: `<div class="row">
+  <div class="sc-timer" data-seconds="10" data-size="lg" data-warn="3"></div>
+  <div class="sc-timer" data-variant="pill" data-seconds="83" data-warn="10"></div>
+  <div class="sc-timer" data-variant="pill" data-format="long" data-icon="calendar" data-seconds="1292400"></div>
+</div>`,
+    css: ['components/timer/timer.css'],
+    usageNote: 'The timer builds itself and starts counting as soon as it is on the page.',
+    usage: `<div class="sc-timer" data-seconds="5"></div>`,
+    examples: [
+      { title:'Ring', desc:'Circular countdown — continue offers, turn timers.',
+        html:`<div class="row">
+  <div class="sc-timer" data-seconds="30" data-size="sm"></div>
+  <div class="sc-timer" data-seconds="30"></div>
+  <div class="sc-timer" data-seconds="30" data-size="lg"></div>
+</div>` },
+      { title:'Ring colors', desc:'Uses the kit colors.',
+        html:`<div class="row">
+  <div class="sc-timer" data-seconds="20" data-color="yellow"></div>
+  <div class="sc-timer" data-seconds="20" data-color="green"></div>
+  <div class="sc-timer" data-seconds="20" data-color="sky"></div>
+  <div class="sc-timer" data-seconds="20" data-color="purple"></div>
+</div>` },
+      { title:'Pill', desc:'Text clock — level time limits, refill timers. data-format="long" for days and hours.',
+        html:`<div class="col">
+  <div class="sc-timer" data-variant="pill" data-seconds="95"></div>
+  <div class="sc-timer" data-variant="pill" data-icon="energy" data-seconds="754"></div>
+  <div class="sc-timer" data-variant="pill" data-format="long" data-icon="calendar" data-seconds="1292400"></div>
+</div>` },
+      { title:'Live: continue offer', desc:'data-warn turns it red and pulsing near the end. "done" fires at 0. Try +5s, Pause, Reset.',
+        html:`<div class="col">
+  <div class="sc-timer" id="liveTimer" data-seconds="8" data-size="lg" data-warn="3" data-autostart="false"></div>
+  <span id="timerLog" style="font:600 13px system-ui;color:#b8c4e0">events: —</span>
+  <div class="row">
+    <button class="sc-button" data-color="green" data-size="sm">Start</button>
+    <button class="sc-button" data-color="dark" data-size="sm">Pause</button>
+    <button class="sc-button" data-color="sky" data-size="sm">+5s</button>
+    <button class="sc-button" data-color="yellow" data-size="sm">Reset</button>
+  </div>
+</div>`,
+        setup(preview) {
+          const t = preview.querySelector('#liveTimer'), log = preview.querySelector('#timerLog');
+          const [start, pause, add, reset] = preview.querySelectorAll('.sc-button');
+          t.addEventListener('tick', e => log.textContent = 'events: tick ' + e.detail.left);
+          t.addEventListener('done', () => log.textContent = 'events: done — offer expired');
+          start.onclick = () => SC.timer.start(t);
+          pause.onclick = () => SC.timer.pause(t);
+          add.onclick = () => SC.timer.add(t, 5);
+          reset.onclick = () => SC.timer.reset(t);
+        } },
+    ],
+    api: [
+      ['data-seconds', 'number', '', 'Required. Duration.'],
+      ['data-variant', 'ring pill', 'ring', 'Circle or text clock.'],
+      ['data-color', 'yellow green sky blue red purple orange', 'yellow', 'Ring color.'],
+      ['data-size', 'sm md lg', 'md', 'Ring 36 / 48 / 72 px.'],
+      ['data-format', 'clock long', 'clock', 'Pill text: 01:23 or 14d 23h.'],
+      ['data-icon', 'icon-name', '', 'Icon on the left of a pill.'],
+      ['data-warn', 'seconds', '', 'Turns red and pulses when this few seconds are left.'],
+      ['data-autostart', 'false', '', 'Wait for SC.timer.start().'],
+    ],
+    js: `continueTimer.addEventListener('done', () => showRetry());   // time is up
+continueTimer.addEventListener('tick', e => beep(e.detail.left)); // every second
+
+SC.timer.start(t);      // start or resume
+SC.timer.pause(t);      // pause
+SC.timer.reset(t, 10);  // restart (optionally with new seconds)
+SC.timer.add(t, 5);     // add bonus time`,
+    rules: [
+      '<b>Ring</b> for short decisions (continue offer, 3–10 s) with <code class="inline">data-warn="3"</code>.',
+      '<b>Pill</b> for level clocks and refills; <code class="inline">data-format="long"</code> for events that last days.',
+      '<b>Always handle</b> the <code class="inline">done</code> event — expire the offer, end the level, or refill.',
+      '<b>Pause</b> gameplay timers when the game pauses (<code class="inline">SC.timer.pause</code>).',
+      '<b>Level time limits</b> go top-center in the HUD, next to the score.',
+    ],
+  });
+</script>
+</body>
+</html>

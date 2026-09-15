@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Super Casual Popup</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:#1f2d4b; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:20px; box-sizing:border-box; }
+  .panel-row { display:flex; justify-content:center; gap:26px; padding:4px 0 6px; }
+  .panel-row img { width:44px; height:44px; object-fit:contain; }
+</style>
+</head>
+<body>
+  <button class="sc-surface sc-btn sky" data-open="download"><span class="sc-text" data-text="Download">Download</span></button>
+  <button class="sc-surface sc-btn red" data-open="level"><span class="sc-text" data-text="Level">Level</span></button>
+  <button class="sc-surface sc-btn purple" data-open="exit"><span class="sc-text" data-text="Exit">Exit</span></button>
+
+  <!-- Blue: message + highlighted value + hint + one button -->
+  <div class="sc-overlay" id="download">
+    <div class="sc-popup" role="dialog" aria-modal="true" aria-label="Download Data">
+      <header>
+        <span class="sc-text" data-text="Download Data">Download Data</span>
+        <button class="sc-icon-btn sc-surface red close" aria-label="Close"><img src="assets/close.png" alt=""></button>
+      </header>
+      <div class="body">
+        <span class="sc-text msg" data-text="Additional content needs to be downloaded to play.">Additional content needs to be downloaded to play.</span>
+        <span class="value"><span class="sc-text" data-text="40.5MB">40.5MB</span></span>
+        <p class="hint">Please connect to a Wi-Fi network<br>to avoid data usage fees.</p>
+        <div class="actions">
+          <button class="sc-surface sc-btn sky" data-close><span class="sc-text" data-text="Download">Download</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Red: sub tag + light panel + darker section + button -->
+  <div class="sc-overlay" id="level" hidden>
+    <div class="sc-popup red" role="dialog" aria-modal="true" aria-label="Level 54">
+      <header>
+        <span class="sc-text" data-text="LEVEL 54">LEVEL 54</span>
+        <span class="sub">HARD</span>
+        <button class="sc-icon-btn sc-surface red close" aria-label="Close"><img src="assets/close.png" alt=""></button>
+      </header>
+      <div class="body">
+        <div class="sc-panel">
+          <div class="panel-row">
+            <div class="sc-item"><img src="assets/gem.png" alt=""><span class="sc-text" data-text="24">24</span></div>
+            <div class="sc-item"><img src="assets/ruby.png" alt=""><span class="sc-text" data-text="12">12</span></div>
+            <div class="sc-item"><img src="assets/crystal-ball.png" alt=""><span class="sc-text" data-text="3">3</span></div>
+          </div>
+        </div>
+        <div class="section alt">
+          <div class="panel-row">
+            <div class="sc-slot sky small"><img class="icon" src="assets/key.png" alt=""><span class="count"><span class="sc-text" data-text="3">3</span></span></div>
+            <div class="sc-slot green small"><img class="icon" src="assets/clover.png" alt=""><span class="count"><span class="sc-text" data-text="1">1</span></span></div>
+            <div class="sc-slot yellow small"><img class="icon" src="assets/chest.png" alt=""><span class="count"><span class="sc-text" data-text="1">1</span></span></div>
+          </div>
+          <div class="actions">
+            <button class="sc-surface sc-btn yellow" data-close><span class="sc-text" data-text="PLAY">PLAY</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Purple: question + two buttons -->
+  <div class="sc-overlay" id="exit" hidden>
+    <div class="sc-popup purple" role="dialog" aria-modal="true" aria-label="Exit">
+      <header>
+        <span class="sc-text" data-text="Exit Game">Exit Game</span>
+        <button class="sc-icon-btn sc-surface red close" aria-label="Close"><img src="assets/close.png" alt=""></button>
+      </header>
+      <div class="body">
+        <span class="sc-text msg" data-text="Do you really want to exit the game?">Do you really want to exit the game?</span>
+        <div class="actions">
+          <button class="sc-surface sc-btn dark" data-close><span class="sc-text" data-text="No">No</span></button>
+          <button class="sc-surface sc-btn green" data-close><span class="sc-text" data-text="Yes">Yes</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Open / close: buttons with data-open, the X, any data-close button, tapping the dark backdrop, or Escape
+  const open = id => document.getElementById(id).hidden = false;
+  const close = overlay => overlay.hidden = true;
+  document.querySelectorAll('[data-open]').forEach(b => b.onclick = () => open(b.dataset.open));
+  document.querySelectorAll('.sc-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o || e.target.closest('.close, [data-close]')) close(o); });
+  });
+  addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.sc-overlay:not([hidden])').forEach(close); });
+
+  // Press feedback on phones
+  document.querySelectorAll('.sc-surface, .sc-icon-btn').forEach(b => {
+    b.addEventListener('pointerdown', () => b.classList.add('pressed'));
+    ['pointerup','pointercancel','pointerleave'].forEach(e => b.addEventListener(e, () => b.classList.remove('pressed')));
+  });
+  document.addEventListener('touchstart', () => {}, { passive:true });
+</script>
+</body>
+</html>

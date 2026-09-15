@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resource Counter — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/counter/counter.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+</head>
+<body>
+<script>
+  SCDocs.page({
+    title: 'Resource Counter',
+    lead: 'Shows how much of a resource the player has — coins, gems, energy, lives. Optional "+" button to get more.',
+    hero: `<div class="sc-counter" data-icon="energy" data-value="5" data-max="5" data-plus="blue"></div>
+<div class="sc-counter" data-icon="coin" data-value="349810" data-plus="orange"></div>
+<div class="sc-counter" data-icon="gem" data-value="120" data-plus="purple"></div>`,
+    css: ['components/counter/counter.css'],
+    usageNote: 'The component builds itself from its attributes — no inner HTML needed.',
+    usage: `<div class="sc-counter" data-icon="coin" data-value="350"></div>`,
+    examples: [
+      { title:'Basic', desc:'Icon + value. Read-only.',
+        html:`<div class="sc-counter" data-icon="coin" data-value="350"></div>
+<div class="sc-counter" data-icon="heart" data-value="3"></div>
+<div class="sc-counter" data-icon="star" data-value="24"></div>` },
+      { title:'With "+" button', desc:'data-plus sets the button color. Listen for the "plus" event.',
+        html:`<div class="sc-counter" data-icon="coin" data-value="1200" data-plus="orange"></div>
+<div class="sc-counter" data-icon="gem" data-value="120" data-plus="purple"></div>
+<div class="sc-counter" data-icon="ticket" data-value="8" data-plus="green"></div>` },
+      { title:'With maximum', desc:'data-max shows value/max — for energy or lives.',
+        html:`<div class="sc-counter" data-icon="energy" data-value="3" data-max="5" data-plus="blue"></div>
+<div class="sc-counter" data-icon="heart" data-value="5" data-max="5"></div>` },
+      { title:'Short numbers', desc:'data-format="short" turns big numbers into 12.5K, 3.4M.',
+        html:`<div class="sc-counter" data-icon="coin" data-value="12500" data-format="short"></div>
+<div class="sc-counter" data-icon="cash" data-value="3400000" data-format="short" data-plus="green"></div>` },
+      { title:'Sizes', desc:'sm for tight HUDs, md by default, lg for reward screens.',
+        html:`<div class="sc-counter" data-size="sm" data-icon="coin" data-value="350" data-plus="orange"></div>
+<div class="sc-counter" data-icon="coin" data-value="350" data-plus="orange"></div>
+<div class="sc-counter" data-size="lg" data-icon="coin" data-value="350" data-plus="orange"></div>` },
+      { title:'Live: tap "+"', desc:'Each tap adds coins with a count-up animation.',
+        html:`<div class="sc-counter" id="liveCoins" data-icon="coin" data-value="350" data-plus="orange"></div>`,
+        setup(preview) {
+          const c = preview.querySelector('.sc-counter');
+          c.addEventListener('plus', () => SC.setValue(c, Number(c.dataset.value) + 250));
+        } },
+    ],
+    api: [
+      ['data-icon', 'icon-name', '', 'Required. coin, gem, energy, heart, star, ticket, cash…'],
+      ['data-value', 'number', '', 'Required. The amount.'],
+      ['data-max', 'number', '', 'Shows value/max.'],
+      ['data-plus', 'sky blue green yellow orange red purple pink mint', '', 'Adds a "+" button in this color.'],
+      ['data-format', 'full short', 'full', 'short: 12500 → 12.5K.'],
+      ['data-size', 'sm md lg', 'md', 'Overall size.'],
+    ],
+    js: `// Update the value (animated count + bump)
+SC.setValue(coins, 350000);
+
+// Update instantly
+SC.setValue(coins, 350000, { animate: false });
+
+// "+" button tapped
+coins.addEventListener('plus', () => openShop());`,
+    rules: [
+      '<b>Placement:</b> top-right of the screen, 12px from the edges. Most important resource furthest right.',
+      '<b>"+" color</b> matches the resource: coin → <code class="inline">orange</code>, gem → <code class="inline">purple</code>, energy → <code class="inline">blue</code>, cash/ticket → <code class="inline">green</code>.',
+      '<b>Only add "+"</b> when tapping it opens a way to get more (shop, video).',
+      '<b>Energy and lives</b> use <code class="inline">data-max</code>.',
+      '<b>Use</b> <code class="inline">data-format="short"</code> when values can pass 100,000 on small screens.',
+      '<b>Always update</b> with <code class="inline">SC.setValue()</code> so the player sees the change.',
+    ],
+  });
+</script>
+</body>
+</html>

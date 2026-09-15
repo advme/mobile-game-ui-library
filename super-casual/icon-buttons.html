@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Super Casual Icon Buttons</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  body { margin:0; min-height:100vh; background:#1f2d4b; padding:32px 18px 60px; box-sizing:border-box; font-family:system-ui,sans-serif; }
+  main { max-width:620px; margin:auto; }
+  h2 { font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:#8fa0c8; margin:30px 0 14px; }
+  .row { display:flex; flex-wrap:wrap; align-items:center; gap:16px; }
+</style>
+</head>
+<body>
+<main>
+  <h2>Glossy</h2>
+  <div class="row">
+    <button class="sc-icon-btn sc-surface sky"    aria-label="Pause"><img src="assets/pause.png" alt=""></button>
+    <button class="sc-icon-btn sc-surface green"  aria-label="Confirm"><img src="assets/check.png" alt=""></button>
+    <button class="sc-icon-btn sc-surface red"    aria-label="Close"><img src="assets/close.png" alt=""></button>
+    <button class="sc-icon-btn sc-surface yellow" aria-label="Watch video"><img src="assets/video.png" alt=""></button>
+    <button class="sc-icon-btn sc-surface blue"   aria-label="Search"><img src="assets/search.png" alt=""></button>
+    <button class="sc-icon-btn sc-surface dark"   aria-label="Settings"><img src="assets/settings.png" alt=""></button>
+  </div>
+
+  <h2>Glossy round</h2>
+  <div class="row">
+    <button class="sc-icon-btn sc-surface purple round" aria-label="Confirm"><img src="assets/check.png" alt=""></button>
+    <button class="sc-icon-btn sc-surface red round"    aria-label="Close"><img src="assets/close.png" alt=""></button>
+    <button class="sc-icon-btn sc-surface green round"  aria-label="Next"><img src="assets/arrow-right.png" alt=""></button>
+    <button class="sc-icon-btn sc-surface sky round"    aria-label="Back"><img src="assets/back.png" alt=""></button>
+  </div>
+
+  <h2>Flat dark</h2>
+  <div class="row">
+    <button class="sc-icon-btn flat" aria-label="Settings"><img src="assets/settings.png" alt=""></button>
+    <button class="sc-icon-btn flat" aria-label="Mail"><img src="assets/mail.png" alt=""></button>
+    <button class="sc-icon-btn flat" aria-label="Chat"><img src="assets/chat.png" alt=""></button>
+    <button class="sc-icon-btn flat" aria-label="Previous"><img class="flip" src="assets/arrow-right.png" alt=""></button>
+    <button class="sc-icon-btn flat" aria-label="Next"><img src="assets/arrow-right.png" alt=""></button>
+  </div>
+
+  <h2>White ring</h2>
+  <div class="row">
+    <button class="sc-icon-btn ring" aria-label="Pause"><img src="assets/pause.png" alt=""></button>
+    <button class="sc-icon-btn ring" aria-label="Locked"><img src="assets/lock.png" alt=""></button>
+    <button class="sc-icon-btn ring round" aria-label="Close"><img src="assets/close.png" alt=""></button>
+    <button class="sc-icon-btn ring round" aria-label="Back"><img src="assets/back.png" alt=""></button>
+  </div>
+
+  <h2>Labeled</h2>
+  <div class="row">
+    <button class="sc-icon-btn flat labeled lg"><img src="assets/calendar.png" alt=""><span class="sc-text" data-text="Daily">Daily</span></button>
+    <button class="sc-icon-btn flat labeled lg"><img src="assets/mail.png" alt=""><span class="sc-text" data-text="Mail">Mail</span></button>
+    <button class="sc-icon-btn flat labeled lg"><img src="assets/trophy.png" alt=""><span class="sc-text" data-text="Rank">Rank</span></button>
+    <button class="sc-icon-btn flat labeled lg"><img src="assets/chest.png" alt=""><span class="sc-text" data-text="Shop">Shop</span></button>
+  </div>
+
+  <h2>Sizes</h2>
+  <div class="row">
+    <button class="sc-icon-btn sc-surface sky sm" aria-label="Pause"><img src="assets/pause.png" alt=""></button>
+    <button class="sc-icon-btn sc-surface sky" aria-label="Pause"><img src="assets/pause.png" alt=""></button>
+    <button class="sc-icon-btn sc-surface sky lg" aria-label="Pause"><img src="assets/pause.png" alt=""></button>
+  </div>
+</main>
+<script>
+  document.querySelectorAll('.sc-icon-btn').forEach(b => {
+    b.addEventListener('pointerdown', () => b.classList.add('pressed'));
+    ['pointerup','pointercancel','pointerleave'].forEach(e => b.addEventListener(e, () => b.classList.remove('pressed')));
+  });
+  document.addEventListener('touchstart', () => {}, { passive:true });
+</script>
+</body>
+</html>

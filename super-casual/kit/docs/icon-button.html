@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Icon Button — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+</head>
+<body>
+<script>
+  SCDocs.page({
+    title: 'Icon Button',
+    lead: 'A square or round button that shows only an icon — pause, close, settings, arrows. Add a label for home-screen shortcuts.',
+    hero: `<button class="sc-icon-button" data-icon="pause" data-color="sky" data-size="lg" aria-label="Pause"></button>`,
+    css: ['components/icon-button/icon-button.css'],
+    usageNote: 'Pick an icon by name with data-icon — sc.js loads it from kit/assets. Always add aria-label when there is no visible label.',
+    usage: `<button class="sc-icon-button" data-icon="pause" aria-label="Pause"></button>`,
+    examples: [
+      { title:'Glossy', desc:'Default style. Takes any data-color.',
+        html:`<button class="sc-icon-button" data-icon="pause" data-color="sky" aria-label="Pause"></button>
+<button class="sc-icon-button" data-icon="check" data-color="green" aria-label="Confirm"></button>
+<button class="sc-icon-button" data-icon="close" data-color="red" aria-label="Close"></button>
+<button class="sc-icon-button" data-icon="video" data-color="yellow" aria-label="Watch video"></button>
+<button class="sc-icon-button" data-icon="search" data-color="blue" aria-label="Search"></button>
+<button class="sc-icon-button" data-icon="settings" data-color="dark" aria-label="Settings"></button>` },
+      { title:'Round', desc:'Add data-shape="round" for a glossy ball.',
+        html:`<button class="sc-icon-button" data-shape="round" data-icon="check" data-color="purple" aria-label="Confirm"></button>
+<button class="sc-icon-button" data-shape="round" data-icon="close" data-color="red" aria-label="Close"></button>
+<button class="sc-icon-button" data-shape="round" data-icon="arrow-right" data-color="green" aria-label="Next"></button>
+<button class="sc-icon-button" data-shape="round" data-icon="back" data-color="sky" aria-label="Back"></button>` },
+      { title:'Flat', desc:'Quiet dark buttons for menus and navigation. arrow-left is arrow-right mirrored.',
+        html:`<button class="sc-icon-button" data-variant="flat" data-icon="settings" aria-label="Settings"></button>
+<button class="sc-icon-button" data-variant="flat" data-icon="mail" aria-label="Mail"></button>
+<button class="sc-icon-button" data-variant="flat" data-icon="chat" aria-label="Chat"></button>
+<button class="sc-icon-button" data-variant="flat" data-icon="arrow-left" aria-label="Previous"></button>
+<button class="sc-icon-button" data-variant="flat" data-icon="arrow-right" aria-label="Next"></button>` },
+      { title:'Ring', desc:'White ring — good over busy game scenes (pause in gameplay, close on popups).',
+        html:`<button class="sc-icon-button" data-variant="ring" data-icon="pause" aria-label="Pause"></button>
+<button class="sc-icon-button" data-variant="ring" data-icon="lock" aria-label="Locked"></button>
+<button class="sc-icon-button" data-variant="ring" data-shape="round" data-icon="close" aria-label="Close"></button>
+<button class="sc-icon-button" data-variant="ring" data-shape="round" data-icon="back" aria-label="Back"></button>` },
+      { title:'With label', desc:'Plain text inside puts a label under the icon. Use with the flat variant.',
+        html:`<button class="sc-icon-button" data-variant="flat" data-size="lg" data-icon="calendar">Daily</button>
+<button class="sc-icon-button" data-variant="flat" data-size="lg" data-icon="mail">Mail</button>
+<button class="sc-icon-button" data-variant="flat" data-size="lg" data-icon="trophy">Rank</button>
+<button class="sc-icon-button" data-variant="flat" data-size="lg" data-icon="chest">Shop</button>` },
+      { title:'Sizes', desc:'sm 44px · md 56px · lg 72px.',
+        html:`<button class="sc-icon-button" data-size="sm" data-icon="pause" aria-label="Pause"></button>
+<button class="sc-icon-button" data-icon="pause" aria-label="Pause"></button>
+<button class="sc-icon-button" data-size="lg" data-icon="pause" aria-label="Pause"></button>` },
+      { title:'Disabled', desc:'Use the native disabled attribute.',
+        html:`<button class="sc-icon-button" data-icon="video" data-color="green" disabled aria-label="No videos left"></button>
+<button class="sc-icon-button" data-variant="flat" data-icon="mail" disabled aria-label="Mail"></button>` },
+    ],
+    api: [
+      ['data-icon', 'icon-name', '', 'Icon from kit/assets: pause close check settings back arrow-right arrow-left search info lock video mail chat calendar trophy chest…'],
+      ['data-variant', 'glossy flat ring', 'glossy', 'Visual style.'],
+      ['data-shape', 'square round', 'square', 'Rounded square or circle.'],
+      ['data-color', 'sky blue dark green yellow orange red purple pink mint', 'sky', 'Glossy variant only.'],
+      ['data-size', 'sm md lg', 'md', '44 / 56 / 72 px.'],
+      ['aria-label', 'text', '', 'Required when there is no visible label.'],
+      ['disabled', 'boolean', '', 'Grey and not clickable.'],
+    ],
+    js: `pauseButton.addEventListener('click', () => game.pause());
+SC.setIcon(soundButton, 'check');   // swap the icon`,
+    rules: [
+      '<b>Pause</b> in gameplay: top-left, <code class="inline">data-variant="ring"</code> or glossy <code class="inline">sky</code>.',
+      '<b>Close</b> on popups: glossy <code class="inline">red</code> with <code class="inline">data-icon="close"</code>, top-right.',
+      '<b>Glossy</b> for important actions, <b>flat</b> for menus and navigation, <b>ring</b> over busy game scenes.',
+      '<b>Always</b> add <code class="inline">aria-label</code> when there is no visible label.',
+      '<b>Only</b> use icon names that exist in <code class="inline">kit/assets</code> (see registry.json → icons).',
+    ],
+  });
+</script>
+</body>
+</html>

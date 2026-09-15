@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reward Slot — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/slot/slot.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>.reward-grid { display:grid; grid-template-columns:repeat(4, max-content); gap:14px; }</style>
+</head>
+<body>
+<script>
+  SCDocs.page({
+    title: 'Reward Slot',
+    lead: 'A colored card with an item icon and a count. Use it to show rewards, prizes, loot and item requirements.',
+    hero: `<div class="sc-slot" data-icon="coin" data-count="1000" data-color="white" data-tag="BONUS"></div>
+<div class="sc-slot" data-icon="gift" data-count="1" data-color="dark"></div>
+<div class="sc-slot" data-icon="clover" data-count="5" data-color="green"></div>
+<div class="sc-slot" data-icon="gem" data-count="300" data-color="purple"></div>`,
+    css: ['components/slot/slot.css'],
+    usageNote: 'The slot builds itself from its attributes — no inner HTML needed.',
+    usage: `<div class="sc-slot" data-icon="gem" data-count="300" data-color="purple"></div>`,
+    examples: [
+      { title:'Colors', desc:'Eight soft card colors.',
+        html:`<div class="sc-slot" data-icon="coin" data-count="1000" data-color="white"></div>
+<div class="sc-slot" data-icon="gift" data-count="1" data-color="dark"></div>
+<div class="sc-slot" data-icon="heart" data-count="5" data-color="green"></div>
+<div class="sc-slot" data-icon="energy" data-count="3" data-color="sky"></div>
+<div class="sc-slot" data-icon="gem" data-count="300" data-color="purple"></div>
+<div class="sc-slot" data-icon="star" data-count="3" data-color="yellow"></div>
+<div class="sc-slot" data-icon="ruby" data-count="1" data-color="red"></div>
+<div class="sc-slot" data-icon="chest" data-count="3" data-color="lavender"></div>` },
+      { title:'Tag', desc:'A short label on the top edge — BONUS, NEW, HOT, x2.',
+        html:`<div class="sc-slot" data-icon="coin" data-count="1000" data-color="white" data-tag="BONUS"></div>
+<div class="sc-slot" data-icon="chest" data-color="lavender" data-tag="NEW"></div>
+<div class="sc-slot" data-icon="gem" data-count="500" data-color="purple" data-tag="x2"></div>` },
+      { title:'States', desc:'claimed dims the slot and adds a check; locked dims it and adds a lock.',
+        html:`<div class="sc-slot" data-icon="clover" data-count="1" data-color="green" data-state="claimed"></div>
+<div class="sc-slot" data-icon="key" data-count="1" data-color="red" data-state="locked"></div>
+<div class="sc-slot" data-icon="crown" data-color="yellow"></div>` },
+      { title:'Sizes', desc:'sm 60px for popups and rows · md 84px · lg 104px for big reward reveals.',
+        html:`<div class="sc-slot" data-size="sm" data-icon="gem" data-count="20" data-color="purple"></div>
+<div class="sc-slot" data-icon="gem" data-count="20" data-color="purple"></div>
+<div class="sc-slot" data-size="lg" data-icon="gem" data-count="20" data-color="purple"></div>` },
+      { title:'Short numbers', desc:'data-format="short" for big amounts.',
+        html:`<div class="sc-slot" data-icon="coin" data-count="25000" data-format="short" data-color="white"></div>
+<div class="sc-slot" data-icon="cash" data-count="1200000" data-format="short" data-color="green"></div>` },
+      { title:'Live: reward reveal', desc:'SC.popIn() pops slots in one by one; SC.setValue() doubles the counts.',
+        html:`<div class="reward-grid">
+  <div class="sc-slot" data-icon="coin" data-count="1000" data-color="white" data-tag="BONUS"></div>
+  <div class="sc-slot" data-icon="gift" data-count="1" data-color="dark"></div>
+  <div class="sc-slot" data-icon="clover" data-count="5" data-color="green"></div>
+  <div class="sc-slot" data-icon="ruby" data-count="1" data-color="sky"></div>
+</div>
+<button class="sc-button" data-color="sky" data-size="sm">Replay</button>
+<button class="sc-button" data-color="green" data-size="sm" data-icon="video">x2</button>`,
+        setup(preview) {
+          const slots = preview.querySelectorAll('.sc-slot');
+          const [replay, double] = preview.querySelectorAll('.sc-button');
+          const base = [...slots].map(s => s.dataset.count);
+          SC.popIn(slots);
+          replay.onclick = () => { slots.forEach((s, i) => SC.setValue(s, base[i], { animate: false })); SC.popIn(slots); };
+          double.onclick = () => slots.forEach(s => SC.setValue(s, Number(s.dataset.count) * 2));
+        } },
+    ],
+    api: [
+      ['data-icon', 'icon-name', '', 'Required. Any icon from kit/assets.'],
+      ['data-count', 'number', '', 'Amount shown bottom-right.'],
+      ['data-color', 'white dark green sky purple yellow red lavender', 'dark', 'Card color.'],
+      ['data-tag', 'text', '', 'Short label on the top edge.'],
+      ['data-state', 'claimed locked', '', 'Dims the slot and shows a check or a lock.'],
+      ['data-format', 'full short', 'full', 'short: 25000 → 25K.'],
+      ['data-size', 'sm md lg', 'md', '60 / 84 / 104 px.'],
+    ],
+    js: `SC.setValue(slot, 2000);                  // animate the count (e.g. after x2)
+slot.dataset.state = 'claimed';           // mark as claimed
+SC.popIn(grid.children, { stagger: .07 }); // reveal slots one by one`,
+    rules: [
+      '<b>Rarity by color:</b> white/dark = common · green/sky = uncommon · purple = epic · yellow = legendary · red = special · lavender = premium.',
+      '<b>Reward screens:</b> grid of 4 columns, <code class="inline">md</code> size, revealed with <code class="inline">SC.popIn()</code>.',
+      '<b>Popups and rows:</b> <code class="inline">sm</code> size.',
+      '<b>Tags</b> are 1 short word or x2 — at most one tagged slot per group.',
+      '<b>Use</b> <code class="inline">data-state="locked"</code> for rewards the player can\'t get yet, <code class="inline">claimed</code> after collecting.',
+      '<b>Doubling rewards</b> (x2 Claim): update with <code class="inline">SC.setValue()</code> so counts animate.',
+    ],
+  });
+</script>
+</body>
+</html>

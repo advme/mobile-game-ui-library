@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Button — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+</head>
+<body>
+<script>
+  const colors = ['sky','blue','dark','green','yellow','orange','red','purple','pink','mint'];
+  SCDocs.page({
+    title: 'Button',
+    lead: 'A chunky, glossy game button with outlined 3D text. Use it for any action the player taps.',
+    hero: `<button class="sc-button" data-color="yellow" data-size="lg">PLAY</button>`,
+    css: ['components/button/button.css'],
+    usageNote: 'Write the label as plain text — sc.js turns it into the outlined 3D text.',
+    usage: `<button class="sc-button" data-color="green">Play</button>`,
+    examples: [
+      { title:'Colors', desc:'Ten colors. The text outline automatically matches the button.',
+        html: colors.map(c => `<button class="sc-button" data-color="${c}">${c[0].toUpperCase() + c.slice(1)}</button>`).join('\n') },
+      { title:'Sizes', desc:'Small for popups and rows, medium by default, large for the main action.',
+        html:`<button class="sc-button" data-color="green" data-size="sm">Small</button>\n<button class="sc-button" data-color="green">Medium</button>\n<button class="sc-button" data-color="green" data-size="lg">Large</button>` },
+      { title:'With icon', desc:'Add data-icon with any icon name from the kit.',
+        html:`<button class="sc-button" data-color="green" data-icon="video">x2 Claim</button>\n<button class="sc-button" data-color="purple" data-icon="gem">20</button>` },
+      { title:'Yes / No', desc:'Secondary on the left, primary on the right.',
+        html:`<button class="sc-button" data-color="dark" data-size="sm">No</button>\n<button class="sc-button" data-color="green" data-size="sm">Yes</button>` },
+      { title:'Full width', desc:'Stretches to its container — useful inside popups.', narrow:true,
+        html:`<button class="sc-button" data-color="green" data-width="full" data-size="lg">RESUME</button>\n<button class="sc-button" data-color="red" data-width="full">Quit</button>` },
+      { title:'Disabled', desc:'Use the native disabled attribute.',
+        html:`<button class="sc-button" data-color="purple" disabled>Locked</button>\n<button class="sc-button" data-color="green" data-icon="video" disabled>No ads left</button>` },
+    ],
+    api: [
+      ['data-color', 'sky blue dark green yellow orange red purple pink mint', 'sky', 'Button color and matching text outline.'],
+      ['data-size', 'sm md lg', 'md', 'Height 52 / 64 / 76 px.'],
+      ['data-width', 'full', '', 'Stretch to the container width.'],
+      ['data-icon', 'icon-name', '', 'Optional leading icon from kit/assets (video, gem, coin…).'],
+      ['disabled', 'boolean', '', 'Grey and not clickable.'],
+    ],
+    js: `button.addEventListener('click', () => startGame());  // normal DOM events
+SC.setLabel(button, 'Claimed');                       // change the label
+SC.setIcon(button, 'check');                          // change the icon
+button.disabled = true;                                // disable`,
+    rules: [
+      '<b>One <code class="inline">lg</code> button per screen</b> — the main action (PLAY, RETRY, CLAIM).',
+      '<b>Color meaning:</b> green = positive / continue / rewarded video · yellow = main play action · red = destructive or quit · dark = cancel · purple = premium · sky / blue = neutral.',
+      '<b>Popups</b> use <code class="inline">sm</code> or <code class="inline">md</code>. Two buttons: secondary left, primary right.',
+      '<b>Labels</b> are 1–2 words.',
+      '<b>Never</b> override colors with custom CSS — pick a <code class="inline">data-color</code>.',
+    ],
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Progress Bar — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/progress/progress.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>.stack { width:min(320px, 100%); display:flex; flex-direction:column; gap:18px; }</style>
+</head>
+<body>
+<script>
+  SCDocs.page({
+    title: 'Progress Bar',
+    lead: 'Shows progress toward a goal — XP, level progress, health, loading. Optional icon on the left and star markers.',
+    hero: `<div class="stack">
+  <div class="sc-progress" data-icon="heart" data-value="85" data-color="green" data-label="percent"></div>
+  <div class="sc-progress" data-value="723" data-max="1000" data-label="value"></div>
+</div>`,
+    css: ['components/progress/progress.css'],
+    usageNote: 'The bar builds itself from its attributes. It stretches to the width of its container.',
+    usage: `<div class="sc-progress" data-value="72" data-color="green" data-label="percent"></div>`,
+    examples: [
+      { title:'Colors', desc:'Uses the kit colors.',
+        html:`<div class="stack">
+  <div class="sc-progress" data-value="75" data-color="blue"></div>
+  <div class="sc-progress" data-value="60" data-color="green"></div>
+  <div class="sc-progress" data-value="45" data-color="orange"></div>
+  <div class="sc-progress" data-value="30" data-color="red"></div>
+  <div class="sc-progress" data-value="90" data-color="purple"></div>
+</div>` },
+      { title:'Labels', desc:'percent → "72%", value → "723 / 1000", or any text.',
+        html:`<div class="stack">
+  <div class="sc-progress" data-value="72" data-label="percent" data-color="green"></div>
+  <div class="sc-progress" data-value="723" data-max="1000" data-label="value"></div>
+  <div class="sc-progress" data-value="100" data-label="MAX" data-color="yellow"></div>
+</div>` },
+      { title:'With icon', desc:'data-icon puts an icon on the left end — health, energy, XP.',
+        html:`<div class="stack">
+  <div class="sc-progress" data-icon="heart" data-value="85" data-color="green"></div>
+  <div class="sc-progress" data-icon="energy" data-value="3" data-max="5" data-label="value" data-color="sky"></div>
+  <div class="sc-progress" data-icon="star" data-value="60" data-color="yellow" data-size="lg" data-label="percent"></div>
+</div>` },
+      { title:'Star markers', desc:'data-stars places stars at percent positions; they light up when reached.',
+        html:`<div class="stack">
+  <div class="sc-progress" data-value="70" data-stars="33,66,100" data-color="green"></div>
+</div>` },
+      { title:'Sizes', desc:'sm 14px (no label) · md 24px · lg 32px.',
+        html:`<div class="stack">
+  <div class="sc-progress" data-size="sm" data-value="60" data-color="orange"></div>
+  <div class="sc-progress" data-value="60" data-color="orange" data-label="percent"></div>
+  <div class="sc-progress" data-size="lg" data-value="60" data-color="orange" data-label="percent"></div>
+</div>` },
+      { title:'Live: score to 3 stars', desc:'SC.setValue() animates the fill and label; the "star" event fires when a marker lights.',
+        html:`<div class="stack">
+  <div class="sc-progress" id="liveBar" data-value="0" data-max="3000" data-stars="33,66,100" data-color="green"></div>
+  <div class="sc-progress" id="liveXp" data-icon="star" data-value="0" data-max="1000" data-label="value" data-color="blue"></div>
+</div>
+<button class="sc-button" data-color="green" data-size="sm">+500</button>
+<button class="sc-button" data-color="dark" data-size="sm">Reset</button>`,
+        setup(preview) {
+          const bar = preview.querySelector('#liveBar'), xp = preview.querySelector('#liveXp');
+          const [add, reset] = preview.querySelectorAll('.sc-button');
+          add.onclick = () => { SC.setValue(bar, Math.min(+bar.dataset.value + 500, 3000)); SC.setValue(xp, Math.min(+xp.dataset.value + 170, 1000)); };
+          reset.onclick = () => { SC.setValue(bar, 0, { animate:false }); SC.setValue(xp, 0, { animate:false }); preview.querySelectorAll('.sc-lit').forEach(m => m.classList.remove('sc-lit')); SC.upgrade(preview); };
+        } },
+    ],
+    api: [
+      ['data-value', 'number', '', 'Required. Current amount.'],
+      ['data-max', 'number', '100', 'Maximum.'],
+      ['data-label', 'percent value text', '', 'Text on the bar. Hidden on sm and when stars are shown.'],
+      ['data-color', 'blue sky green yellow orange red purple pink mint', 'blue', 'Fill color.'],
+      ['data-size', 'sm md lg', 'md', '14 / 24 / 32 px tall.'],
+      ['data-icon', 'icon-name', '', 'Icon on the left end.'],
+      ['data-stars', '"33,66,100"', '', 'Star markers at percent positions.'],
+    ],
+    js: `SC.setValue(xpBar, 850);                          // animated fill + label
+bar.addEventListener('star', e => playSound(e.detail.index)); // a star lit up`,
+    rules: [
+      '<b>Color meaning:</b> green = health / level progress · blue = XP · orange = timers, loading · red = low health or danger · yellow = max / complete.',
+      '<b>Health:</b> <code class="inline">data-icon="heart"</code> + green; switch to red below 25% with <code class="inline">data-color</code>.',
+      '<b>Level goals:</b> use <code class="inline">data-stars="33,66,100"</code> in the gameplay HUD, no label.',
+      '<b>XP:</b> <code class="inline">data-label="value"</code> so the player sees exact numbers.',
+      '<b>Always update</b> with <code class="inline">SC.setValue()</code> so the fill animates.',
+      '<b>Width</b> comes from the container — put the bar inside a sized element.',
+    ],
+  });
+</script>
+</body>
+</html>

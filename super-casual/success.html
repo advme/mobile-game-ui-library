@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#121325">
+<title>Super Casual Success Screen</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  html, body { margin:0; height:100%; overflow:hidden; overscroll-behavior:none; }
+  body { background:#101426; -webkit-user-select:none; user-select:none; }
+
+  /* Full-page shell: 400x870 design, scaled to fit, stretched to the device shape */
+  .screen { position:absolute; left:0; top:0; width:var(--w,400px); height:var(--h,870px); transform-origin:0 0; overflow:hidden;
+            background:radial-gradient(ellipse 70% 30% at 50% 28%, rgba(255,214,80,.10), transparent 70%), linear-gradient(#131426, #0c1c29); }
+  .content { position:absolute; left:50%; top:50%; width:400px; height:870px; margin:-435px 0 0 -200px; }
+
+  .title { position:absolute; left:0; right:0; top:80px; text-align:center; }
+  /* Stars */
+  .star { position:absolute; width:96px; height:96px; object-fit:contain; transform:scale(0) rotate(var(--rot)); }
+  .star.show { animation:star-pop .45s cubic-bezier(.3,1.6,.5,1) forwards; }
+  @keyframes star-pop { 0% { transform:scale(0) rotate(var(--rot)); } 100% { transform:scale(1) rotate(var(--rot)); } }
+  .s1 { left:46px;  top:210px; --rot:-14deg; }
+  .s2 { left:152px; top:160px; --rot:0deg; width:100px; height:100px; }
+  .s3 { left:258px; top:210px; --rot:14deg; }
+
+  /* XP bar with level badge */
+  .xp { position:absolute; left:112px; top:390px; width:190px; height:24px; }
+  .xp .track { position:absolute; inset:0 0 0 14px; background:#1f2029; border:var(--sc-line-sm) solid #050308; border-radius:5px; overflow:hidden; }
+  .xp .fill { position:absolute; left:0; top:0; bottom:0; width:0; background:linear-gradient(#4a97ff 0 45%, #3586fd 45%); transition:width 1s ease-out .9s; }
+  .xp .num { position:absolute; left:14px; right:0; top:4px; text-align:center; }
+  .xp .num .sc-text { --fs:13px; }
+  .badge { position:absolute; left:-14px; top:-9px; width:40px; height:40px; z-index:1; }
+  .badge .ph { position:absolute; inset:0; border:2px dashed #7d8aa8; border-radius:50%; background:#3a4560; }
+  .badge .sc-text { position:absolute; left:0; right:0; top:10px; text-align:center; --fs:19px; }
+
+  /* Rewards heading with divider lines */
+  .rewards-label { position:absolute; left:0; right:0; top:466px; display:flex; align-items:center; justify-content:center; gap:10px; }
+  .rewards-label i { display:block; width:56px; height:2px; border-radius:2px; background:#dfe6f5; position:relative; }
+  .rewards-label i::after { content:""; position:absolute; top:50%; width:7px; height:7px; border:2px solid #dfe6f5; border-radius:2px; background:#101426; transform:translate(-50%,-50%) rotate(45deg); }
+  .rewards-label i:first-child::after { left:100%; }
+  .rewards-label i:last-child::after { left:0; }
+  .rewards-label .sc-text { --fs:14px; letter-spacing:1px; }
+
+  .grid { position:absolute; left:50%; top:500px; transform:translateX(-50%); display:grid; grid-template-columns:repeat(4, 66px); gap:12px 11px; }
+  .grid .sc-slot { --size:66px; border-width:var(--sc-line-sm); opacity:0; transform:scale(.6); }
+  .grid .sc-slot.show { animation:slot-pop .3s cubic-bezier(.3,1.5,.5,1) forwards; }
+  @keyframes slot-pop { to { opacity:1; transform:scale(1); } }
+  .grid .sc-slot .tag { top:-9px; }
+
+  /* Claim buttons */
+  .actions { position:absolute; left:0; right:0; top:742px; display:flex; justify-content:center; gap:14px; }
+  .actions .sc-btn { width:140px; height:56px; --r:13px; --lipH:5px; --shine:8px; display:flex; align-items:center; justify-content:center; gap:6px; }
+  .actions .sc-btn .sc-text { --fs:19px; }
+  .actions .sc-btn img { width:28px; height:28px; object-fit:contain; margin-bottom:2px; }
+  .sc-btn.claimed { filter:saturate(.3) brightness(.8); pointer-events:none; }
+
+  .counted .count .sc-text { animation:sc-bump .3s ease-out; }
+</style>
+</head>
+<body>
+<div class="screen" id="screen">
+  <div class="content">
+
+    <div class="title"><h1 class="sc-title" data-text="CLEAR!" style="margin:0"><span>CLEAR!</span></h1></div>
+
+    <img class="star s1" src="assets/star.png" alt="">
+    <img class="star s2" src="assets/star.png" alt="">
+    <img class="star s3" src="assets/star-empty.png" alt="">
+
+    <div class="xp">
+      <div class="track"><div class="fill" id="xpFill"></div></div>
+      <div class="num"><span class="sc-text" data-text="723 / 1000">723 / 1000</span></div>
+      <div class="badge"><div class="ph" title="Placeholder: level badge image"></div><span class="sc-text" data-text="5">5</span></div>
+    </div>
+
+    <div class="rewards-label"><i></i><span class="sc-text" data-text="REWARDS">REWARDS</span><i></i></div>
+    <div class="grid" id="grid"></div>
+
+    <div class="actions">
+      <button class="sc-surface sc-btn sky" id="claim"><span class="sc-text" data-text="Claim">Claim</span></button>
+      <button class="sc-surface sc-btn green" id="claim2"><img src="assets/video.png" alt=""><span class="sc-text" data-text="x2 Claim">x2 Claim</span></button>
+    </div>
+
+  </div>
+</div>
+<script>
+  // Fit the 400x870 design to any screen (full page, no scroll)
+  const screen = document.getElementById('screen');
+  function fit() {
+    const vw = innerWidth, vh = innerHeight, s = Math.min(vw / 400, vh / 870);
+    screen.style.setProperty('--w', vw / s + 'px');
+    screen.style.setProperty('--h', vh / s + 'px');
+    screen.style.transform = `scale(${s})`;
+  }
+  addEventListener('resize', fit); fit();
+
+  // Rewards: [color, icon, count, tag]
+  const rewards = [
+    ['white', 'coin', 1000, 'BONUS'], ['dark', 'gift', 1], ['green', 'clover', 5], ['sky', 'ruby', 1],
+    ['purple', 'gem', 300], ['yellow', 'energy', 3], ['red', 'crystal-ball', 3], ['lavender', 'chest', 3],
+  ];
+  const grid = document.getElementById('grid');
+  grid.innerHTML = rewards.map(([c, icon, n, tag]) => `
+    <div class="sc-slot ${c}">
+      ${tag ? `<span class="tag"><span class="sc-text" data-text="${tag}">${tag}</span></span>` : ''}
+      <img class="icon" src="assets/${icon}.png" alt="">
+      <span class="count"><span class="sc-text" data-text="${n}">${n}</span></span>
+    </div>`).join('');
+
+  // Intro sequence: stars pop one by one, XP fills, rewards pop in
+  const STARS_EARNED = 2;
+  document.querySelectorAll('.star').forEach((s, i) => setTimeout(() => s.classList.add('show'), 250 + i * 250));
+  requestAnimationFrame(() => document.getElementById('xpFill').style.width = '72.3%');
+  grid.querySelectorAll('.sc-slot').forEach((s, i) => setTimeout(() => s.classList.add('show'), 1100 + i * 70));
+
+  // x2 Claim doubles every reward, then both buttons lock
+  const lock = () => ['claim', 'claim2'].forEach(id => document.getElementById(id).classList.add('claimed'));
+  document.getElementById('claim2').onclick = () => {
+    grid.querySelectorAll('.count .sc-text').forEach(t => { const v = Number(t.textContent) * 2; t.textContent = v; t.dataset.text = v; });
+    grid.classList.remove('counted'); void grid.offsetWidth; grid.classList.add('counted');
+    lock();
+  };
+  document.getElementById('claim').onclick = lock;
+
+  // Press feedback on phones
+  document.querySelectorAll('.sc-surface').forEach(b => {
+    b.addEventListener('pointerdown', () => b.classList.add('pressed'));
+    ['pointerup','pointercancel','pointerleave'].forEach(e => b.addEventListener(e, () => b.classList.remove('pressed')));
+  });
+  document.addEventListener('touchstart', () => {}, { passive:true });
+</script>
+</body>
+</html>

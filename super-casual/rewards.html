@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Super Casual Reward Slots</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  body { margin:0; min-height:100vh; background:#1f2d4b; padding:44px 20px; box-sizing:border-box; display:flex; flex-direction:column; align-items:center; gap:44px; }
+  .grid { display:grid; grid-template-columns:repeat(4, max-content); gap:14px; }
+  .grid.small { gap:10px; }
+</style>
+</head>
+<body>
+  <div class="grid" id="big"></div>
+  <div class="grid small" id="small"></div>
+<script>
+  // [color, icon, count, tag]
+  const rewards = [
+    ['white', 'coin', '1000', 'BONUS'],
+    ['dark', 'gift', '1'],
+    ['green', 'heart', '5'],
+    ['sky', 'energy', '3'],
+    ['purple', 'gem', '300'],
+    ['yellow', 'star', '3'],
+    ['red', 'heart', '1'],
+    ['lavender', 'gift', '3'],
+  ];
+  const slot = ([color, icon, count, tag], size = '') => `
+    <div class="sc-slot ${color} ${size}">
+      ${tag ? `<span class="tag"><span class="sc-text" data-text="${tag}">${tag}</span></span>` : ''}
+      <img class="icon" src="assets/${icon}.png" alt="">
+      <span class="count"><span class="sc-text" data-text="${count}">${count}</span></span>
+    </div>`;
+  document.getElementById('big').innerHTML = rewards.map(r => slot(r)).join('');
+  document.getElementById('small').innerHTML = rewards.map(r => slot(r, 'small')).join('');
+</script>
+</body>
+</html>

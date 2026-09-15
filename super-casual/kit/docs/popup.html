@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Popup — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../components/slot/slot.css">
+<link rel="stylesheet" href="../components/popup/popup.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+  /* Docs only: show popups inline inside preview boxes instead of full-screen */
+  .preview .sc-popup.inline { position:relative; inset:auto; padding:0; background:none; animation:none; display:grid; }
+  .preview .sc-popup.inline .sc-popup-box { animation:none; }
+</style>
+</head>
+<body>
+<script>
+  SCDocs.page({
+    title: 'Popup',
+    lead: 'A modal window over the game: confirmations, level info, downloads, pause menus. You write the content — the kit builds the header, close button, backdrop and animations.',
+    hero: `<div class="sc-popup inline" data-color="blue" data-title="Download Data">
+  <p class="sc-popup-message">Additional content needs to be downloaded to play.</p>
+  <p class="sc-popup-value">40.5MB</p>
+  <p class="sc-popup-hint">Please connect to a Wi-Fi network<br>to avoid data usage fees.</p>
+  <div class="sc-popup-actions">
+    <button class="sc-button" data-color="sky" data-close>Download</button>
+  </div>
+</div>`,
+    css: ['components/button/button.css', 'components/icon-button/icon-button.css', 'components/popup/popup.css'],
+    usageNote: 'Popups start closed with the hidden attribute. Open them with SC.popup.open(id). Anything with data-close closes the popup.',
+    usage: `<div class="sc-popup" id="exit" data-color="purple" data-title="Exit Game" hidden>
+  <p class="sc-popup-message">Do you really want to exit the game?</p>
+  <div class="sc-popup-actions">
+    <button class="sc-button" data-color="dark" data-size="sm" data-close>No</button>
+    <button class="sc-button" data-color="green" data-size="sm" id="exitYes">Yes</button>
+  </div>
+</div>
+
+<script>
+  SC.popup.open('exit');
+<\/script>`,
+    examples: [
+      { title:'Live: open a popup', desc:'Opens full-screen over the page. Close with the X, a button, the dark backdrop or Escape.',
+        html:`<button class="sc-button" data-color="purple" id="openExit">Exit Game</button>
+<button class="sc-button" data-color="red" id="openLevel">Level 54</button>`,
+        setup(preview) {
+          preview.querySelector('#openExit').onclick = () => SC.popup.open('demoExit');
+          preview.querySelector('#openLevel').onclick = () => SC.popup.open('demoLevel');
+        } },
+      { title:'Confirm', desc:'Message + two buttons. Secondary left, primary right.',
+        html:`<div class="sc-popup inline" data-color="purple" data-title="Exit Game">
+  <p class="sc-popup-message">Do you really want to exit the game?</p>
+  <div class="sc-popup-actions">
+    <button class="sc-button" data-color="dark" data-size="sm" data-close>No</button>
+    <button class="sc-button" data-color="green" data-size="sm">Yes</button>
+  </div>
+</div>` },
+      { title:'Sub tag, panel and section', desc:'data-sub adds a tag under the title. .sc-panel groups content; .sc-popup-section adds a darker bottom area.',
+        html:`<div class="sc-popup inline" data-color="red" data-title="LEVEL 54" data-sub="HARD">
+  <div class="sc-panel">
+    <div class="sc-slot" data-size="sm" data-icon="gem" data-count="24" data-color="white"></div>
+    <div class="sc-slot" data-size="sm" data-icon="ruby" data-count="12" data-color="white"></div>
+    <div class="sc-slot" data-size="sm" data-icon="crystal-ball" data-count="3" data-color="white"></div>
+  </div>
+  <div class="sc-popup-section">
+    <div class="sc-popup-actions">
+      <button class="sc-button" data-color="yellow" data-close>PLAY</button>
+    </div>
+  </div>
+</div>` },
+      { title:'Stacked buttons', desc:'data-layout="stack" makes buttons full width, one per row.',
+        html:`<div class="sc-popup inline" data-color="blue" data-title="PAUSED" data-sub="LEVEL 12">
+  <div class="sc-popup-actions" data-layout="stack">
+    <button class="sc-button" data-color="green" data-size="lg" data-close>RESUME</button>
+    <button class="sc-button" data-color="yellow">Restart</button>
+    <button class="sc-button" data-color="red">Quit</button>
+  </div>
+</div>` },
+      { title:'Not closable', desc:'data-closable="false" hides the X; data-backdrop="static" ignores taps outside. Use for required choices.',
+        html:`<div class="sc-popup inline" data-color="blue" data-title="Maintenance" data-closable="false" data-backdrop="static">
+  <p class="sc-popup-message">Under maintenance. Please check the announcements.</p>
+  <div class="sc-popup-actions">
+    <button class="sc-button" data-color="sky">Confirm</button>
+  </div>
+</div>` },
+    ],
+    api: [
+      ['data-title', 'text', '', 'Required. Header title.'],
+      ['data-color', 'blue red purple', 'blue', 'Popup color.'],
+      ['data-sub', 'text', '', 'Small tag under the title (NORMAL, HARD, LEVEL 12).'],
+      ['data-closable', 'false', '', 'Hides the X button.'],
+      ['data-backdrop', 'static', '', 'Tapping outside does not close.'],
+      ['hidden', 'boolean', '', 'Closed. Remove with SC.popup.open().'],
+      ['data-close', 'on any child', '', 'Closes the popup when tapped.'],
+      ['.sc-popup-message', 'class', '', 'Outlined message text.'],
+      ['.sc-popup-value', 'class', '', 'Big yellow highlighted value.'],
+      ['.sc-popup-hint', 'class', '', 'Small soft text.'],
+      ['.sc-panel', 'class', '', 'Light inset card for grouped content.'],
+      ['.sc-popup-section', 'class', '', 'Darker area at the bottom.'],
+      ['.sc-popup-actions', 'class', '', 'Button row. data-layout="stack" for vertical.'],
+    ],
+    js: `SC.popup.open('exit');          // open
+SC.popup.close('exit');         // close
+SC.popup.toggle('pause');       // open or close
+
+exit.addEventListener('open',  () => game.pause());
+exit.addEventListener('close', () => game.resume());`,
+    rules: [
+      '<b>Color meaning:</b> blue = info / neutral · red = warning, hard levels, destructive · purple = premium or special.',
+      '<b>Keep it short:</b> title 1–3 words, message 1–2 sentences, at most 3 buttons.',
+      '<b>Buttons:</b> two in a row → <code class="inline">sm</code>, secondary left, primary right. Three or more → <code class="inline">data-layout="stack"</code>.',
+      '<b>Pause the game</b> while a popup is open (listen to the <code class="inline">open</code> / <code class="inline">close</code> events).',
+      '<b>Required choices</b> use <code class="inline">data-closable="false"</code> + <code class="inline">data-backdrop="static"</code>.',
+      '<b>Only one popup</b> open at a time.',
+    ],
+  });
+
+  // Docs only: inline examples are for looking at — don't let their buttons close them
+  document.addEventListener('click', e => { if (e.target.closest('.sc-popup.inline')) e.stopPropagation(); }, true);
+
+  // Real (full-screen) popups for the live example
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="sc-popup" id="demoExit" data-color="purple" data-title="Exit Game" hidden>
+      <p class="sc-popup-message">Do you really want to exit the game?</p>
+      <div class="sc-popup-actions">
+        <button class="sc-button" data-color="dark" data-size="sm" data-close>No</button>
+        <button class="sc-button" data-color="green" data-size="sm" data-close>Yes</button>
+      </div>
+    </div>
+    <div class="sc-popup" id="demoLevel" data-color="red" data-title="LEVEL 54" data-sub="HARD" hidden>
+      <div class="sc-panel">
+        <div class="sc-slot" data-size="sm" data-icon="gem" data-count="24" data-color="white"></div>
+        <div class="sc-slot" data-size="sm" data-icon="ruby" data-count="12" data-color="white"></div>
+        <div class="sc-slot" data-size="sm" data-icon="crystal-ball" data-count="3" data-color="white"></div>
+      </div>
+      <div class="sc-popup-section">
+        <div class="sc-popup-actions"><button class="sc-button" data-color="yellow" data-close>PLAY</button></div>
+      </div>
+    </div>`);
+</script>
+</body>
+</html>

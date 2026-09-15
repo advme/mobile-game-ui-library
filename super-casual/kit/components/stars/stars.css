@@ -1,0 +1,41 @@
+/*
+  Star Rating — Super Casual UI Kit
+  Requires: core.css, sc.js
+
+  <div class="sc-stars" data-value="2" data-layout="arc" data-size="lg" data-animate></div>
+
+  data-value    earned stars (0…max)                     required
+  data-max      total stars (1–5)                        default: 3
+  data-size     sm | md | lg   (22 / 44 / 96 px)         default: md
+  data-layout   row | arc   (arc: middle star raised, outer stars tilted — result screens, 3 stars)
+  data-animate  present → stars pop in one by one when shown
+
+  Events: "star" (detail.index) as each earned star appears — hook sounds here.
+  JS:     SC.setValue(stars, 3)   // newly earned stars pop in
+*/
+.sc-stars {
+  --s:44px; --gap:calc(var(--s) * .06);
+  display:inline-flex; align-items:center; gap:var(--gap); vertical-align:middle; user-select:none; -webkit-user-select:none;
+}
+.sc-stars[data-size="sm"] { --s:22px; --gap:1px; }
+.sc-stars[data-size="lg"] { --s:96px; --gap:calc(var(--s) * .08); }
+
+.sc-star { position:relative; width:var(--s); height:var(--s); flex:none; }
+.sc-star img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; pointer-events:none; }
+.sc-star .sc-star-full { opacity:0; transform:scale(.4); }
+.sc-star.sc-on .sc-star-full { opacity:1; transform:none; }
+.sc-star.sc-on .sc-star-empty { opacity:0; }
+
+/* Arc layout: middle raised, outer stars tilted outward */
+.sc-stars[data-layout="arc"] { align-items:flex-end; padding-top:calc(var(--s) * .45); }
+.sc-stars[data-layout="arc"] .sc-star:nth-child(1) { transform:rotate(-14deg); }
+.sc-stars[data-layout="arc"] .sc-star:nth-child(2) { width:calc(var(--s) * 1.06); height:calc(var(--s) * 1.06); margin-bottom:calc(var(--s) * .45); }
+.sc-stars[data-layout="arc"] .sc-star:nth-child(3) { transform:rotate(14deg); }
+
+/* Pop-in */
+.sc-star.sc-pop .sc-star-full { animation:sc-star-pop .5s cubic-bezier(.3,1.7,.5,1) both; animation-delay:var(--d, 0s); }
+.sc-star.sc-pop .sc-star-empty { animation:sc-star-empty .45s ease-out both; animation-delay:var(--d, 0s); }
+.sc-stars[data-animate] .sc-star:not(.sc-on) .sc-star-empty { animation:sc-star-fade .4s ease-out both; animation-delay:var(--d, 0s); }
+@keyframes sc-star-pop { 0% { opacity:0; transform:scale(0) rotate(-30deg); } 70% { opacity:1; transform:scale(1.25) rotate(6deg); } 100% { opacity:1; transform:none; } }
+@keyframes sc-star-empty { 0% { opacity:1; } 60% { opacity:1; } 100% { opacity:0; } }
+@keyframes sc-star-fade { from { opacity:0; transform:scale(.6); } }

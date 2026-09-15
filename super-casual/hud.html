@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#2a6fd6">
+<title>Super Casual Gameplay HUD</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  html, body { margin:0; height:100%; overflow:hidden; overscroll-behavior:none; }
+  body { background:#1f2d4b; -webkit-user-select:none; user-select:none; touch-action:manipulation; }
+
+  /* Full-page shell: 400x870 design, scaled to fit, stretched to the device shape */
+  .screen { position:absolute; left:0; top:0; width:var(--w,400px); height:var(--h,870px); transform-origin:0 0; overflow:hidden;
+            background:linear-gradient(#2a6fd6, #1f9be0 55%, #2bb37a); }
+  .edge { --m:calc(12px * var(--px, 1)); }   /* real-pixel margin from screen edges */
+
+  /* Stand-in for the game */
+  .game { position:absolute; inset:0; }
+  .game-hint { position:absolute; left:0; right:0; top:52%; text-align:center; font:600 14px system-ui,sans-serif; color:rgba(255,255,255,.6); pointer-events:none; }
+
+  /* Top HUD */
+  .top { position:absolute; left:0; right:0; top:0; padding:calc(12px + env(safe-area-inset-top)) var(--m) 0; pointer-events:none; }
+  .top > * { pointer-events:auto; }
+  .row1 { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .score { flex:1; max-width:190px; display:flex; flex-direction:column; align-items:center; gap:6px; padding-top:2px; }
+  .score .num .sc-text { --fs:30px; }
+  .score .sc-bar-wrap { width:100%; }
+  .score .sc-bar { height:18px; }
+  .score .sc-bar .fill { transition:width .25s ease-out; }
+  .row2 { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
+  .lives { display:flex; gap:2px; }
+  .lives img { width:32px; height:32px; object-fit:contain; }
+  .moves { display:flex; align-items:center; gap:6px; height:32px; padding:0 12px 0 10px; border-radius:9px; background:rgba(20,19,26,.78); }
+  .moves .lbl { font-family:var(--sc-font); font-size:12px; color:#b8c4e0; letter-spacing:.5px; }
+  .moves .sc-text { --fs:19px; }
+  .sc-counter.bump .value .sc-text { animation:sc-bump .25s ease-out; }
+
+  /* Bottom boosters */
+  .boosters { position:absolute; left:0; right:0; bottom:calc(18px + env(safe-area-inset-bottom)); display:flex; justify-content:center; gap:18px; }
+  .boosters .sc-icon-btn { --size:66px; }
+  .boosters .sc-icon-btn.empty { filter:grayscale(1) brightness(.7); }
+</style>
+</head>
+<body>
+<div class="screen edge" id="screen">
+
+  <div class="game" id="game"></div>
+  <div class="game-hint">Tap to score</div>
+
+  <div class="top">
+    <div class="row1">
+      <a class="sc-icon-btn sc-surface sky" href="pause.html" aria-label="Pause"><img src="assets/pause.png" alt=""></a>
+
+      <div class="score">
+        <span class="num"><span class="sc-text" id="score" data-text="0">0</span></span>
+        <div class="sc-bar-wrap">
+          <div class="sc-bar green" id="bar" style="--value:0%"><div class="fill"></div></div>
+          <div class="marker" style="left:33%"><img src="assets/star-empty.png" alt=""><img class="on" src="assets/star.png" alt=""></div>
+          <div class="marker" style="left:66%"><img src="assets/star-empty.png" alt=""><img class="on" src="assets/star.png" alt=""></div>
+          <div class="marker" style="left:97%"><img src="assets/star-empty.png" alt=""><img class="on" src="assets/star.png" alt=""></div>
+        </div>
+      </div>
+
+      <div class="sc-counter" id="coins" style="--min:48px"><img class="icon" src="assets/coin.png" alt=""><div class="pill" style="padding-right:4px"><span class="value"><span class="sc-text" data-text="350">350</span></span></div></div>
+    </div>
+
+    <div class="row2">
+      <div class="lives">
+        <img src="assets/heart.png" alt=""><img src="assets/heart.png" alt=""><img src="assets/heart-empty.png" alt="">
+      </div>
+      <div class="moves"><span class="lbl">MOVES</span><span class="sc-text" id="moves" data-text="24">24</span></div>
+    </div>
+  </div>
+
+  <div class="boosters">
+    <button class="sc-icon-btn flat" data-booster aria-label="Key booster"><img src="assets/key.png" alt=""><span class="sc-bubble"><span class="sc-text" data-text="2">2</span></span></button>
+    <button class="sc-icon-btn flat" data-booster aria-label="Crystal booster"><img src="assets/crystal-ball.png" alt=""><span class="sc-bubble"><span class="sc-text" data-text="1">1</span></span></button>
+    <button class="sc-icon-btn flat" data-booster aria-label="Clover booster"><img src="assets/clover.png" alt=""><span class="sc-bubble"><span class="sc-text" data-text="3">3</span></span></button>
+  </div>
+
+</div>
+<script>
+  // Fit the 400x870 design to any screen (full page, no scroll)
+  const screen = document.getElementById('screen');
+  let scale = 1;
+  function fit() {
+    const vw = innerWidth, vh = innerHeight; scale = Math.min(vw / 400, vh / 870);
+    screen.style.setProperty('--w', vw / scale + 'px');
+    screen.style.setProperty('--h', vh / scale + 'px');
+    screen.style.setProperty('--px', 1 / scale);
+    screen.style.transform = `scale(${scale})`;
+  }
+  addEventListener('resize', fit); fit();
+
+  const setText = (el, v) => { el.textContent = v; el.dataset.text = v; };
+  const bump = el => { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); };
+
+  // Demo game: each tap scores, floats "+50", fills the bar, lights stars, uses a move
+  const TARGET = 3000, STARS = [.33, .66, .97];
+  let score = 0, moves = 24, coins = 350;
+  const scoreEl = document.getElementById('score'), bar = document.getElementById('bar'),
+        markers = document.querySelectorAll('.marker'), movesEl = document.getElementById('moves'),
+        coinsBox = document.getElementById('coins'), coinsEl = coinsBox.querySelector('.value .sc-text');
+
+  document.getElementById('game').addEventListener('pointerdown', e => {
+    if (moves <= 0) return;
+    const rect = screen.getBoundingClientRect(), gain = 50 + Math.floor(Math.random() * 4) * 50;
+    const f = document.createElement('div');
+    f.className = 'sc-float';
+    f.style.left = (e.clientX - rect.left) / scale + 'px';
+    f.style.top = (e.clientY - rect.top) / scale + 'px';
+    f.innerHTML = `<span class="sc-text" data-text="+${gain}">+${gain}</span>`;
+    screen.appendChild(f); setTimeout(() => f.remove(), 800);
+
+    score += gain; setText(scoreEl, score);
+    const p = Math.min(score / TARGET, 1);
+    bar.style.setProperty('--value', p * 100 + '%');
+    markers.forEach((m, i) => { if (p >= STARS[i]) m.classList.add('lit'); });
+    setText(movesEl, --moves);
+    if (Math.random() < .3) { coins += 5; setText(coinsEl, coins); bump(coinsBox); }
+  });
+
+  // Boosters: tap uses one
+  document.querySelectorAll('[data-booster]').forEach(b => b.addEventListener('click', () => {
+    const t = b.querySelector('.sc-bubble .sc-text'), n = Number(t.textContent);
+    if (n <= 0) return;
+    setText(t, n - 1);
+    if (n - 1 === 0) b.classList.add('empty');
+  }));
+
+  // Press feedback on phones
+  document.querySelectorAll('.sc-surface, .sc-icon-btn').forEach(b => {
+    b.addEventListener('pointerdown', () => b.classList.add('pressed'));
+    ['pointerup','pointercancel','pointerleave'].forEach(e => b.addEventListener(e, () => b.classList.remove('pressed')));
+  });
+  document.addEventListener('touchstart', () => {}, { passive:true });
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+/*
+  Button — Super Casual UI Kit
+  Requires: core.css, sc.js
+
+  <button class="sc-button" data-color="green" data-size="md">Play</button>
+
+  data-color  sky | blue | dark | green | yellow | orange | red | purple | pink | mint   (default: sky)
+  data-size   sm | md | lg                                                               (default: md)
+  data-width  full                                                                       (optional: stretch to container)
+  disabled    native attribute → grey, not clickable
+  data-icon   optional leading icon by name from kit/assets (e.g. video, gem)
+*/
+.sc-button {
+  --h:64px; --fs:23px; --minw:150px; --padx:22px;
+  display:inline-flex; align-items:center; justify-content:center; gap:calc(var(--fs) * .3);
+  height:var(--h); min-width:var(--minw); padding:0 var(--padx) var(--lipH);
+  font-family:var(--sc-font); font-size:var(--fs); line-height:1; white-space:nowrap; vertical-align:middle;
+}
+.sc-button .sc-text { --fs:inherit; font-size:var(--fs); --ink:inherit; }
+.sc-button > img { height:calc(var(--fs) * 1.25); width:auto; flex:none; margin-bottom:calc(var(--fs) * .08); pointer-events:none; }
+
+/* Sizes */
+.sc-button[data-size="sm"] { --h:52px; --fs:18px; --minw:112px; --padx:16px; --r:11px; --lipH:5px; --shine:8px; }
+.sc-button[data-size="lg"] { --h:76px; --fs:29px; --minw:200px; --padx:30px; --r:17px; --lipH:7px; --shine:12px; }
+
+/* Full width */
+.sc-button[data-width="full"] { display:flex; width:100%; min-width:0; }
+
+/* Pressed (touch + mouse) */
+.sc-button:active, .sc-button.sc-pressed { transform:translateY(2px) scale(.96); }
+
+/* Disabled */
+.sc-button:disabled, .sc-button[aria-disabled="true"] {
+  --band:#adaaad; --base:#8d8b8e; --line:#979497; --lip:#605d60; --ink:#242424;
+  cursor:not-allowed; transform:none;
+}
+.sc-button:disabled > img { filter:grayscale(1); }

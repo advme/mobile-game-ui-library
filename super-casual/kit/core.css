@@ -1,0 +1,67 @@
+/*
+  Super Casual UI Kit — core
+  Required by every component. Contains: font, design tokens, color palette, outlined 3D text, glossy surface.
+*/
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@900&display=swap');
+
+:root {
+  --sc-font: 'M PLUS Rounded 1c', 'Arial Rounded MT Bold', sans-serif;
+  --sc-outline: #050308;
+
+  /* Outline thickness — change here to make the whole kit thicker or thinner */
+  --sc-line: 2.4px;
+  --sc-line-sm: 2px;
+  --sc-text-stroke: .16;   /* text outline, relative to font size */
+  --sc-text-drop: .08;     /* text 3D bottom edge, relative to font size */
+}
+
+/* ---------- Color palette ----------
+   Any component with data-color="…" gets these variables:
+   --band (light top), --base (main), --line (thin highlight), --lip (dark 3D edge), --ink (text outline) */
+[data-color="sky"]    { --band:#52dcff; --base:#01bcff; --line:#00d5f9; --lip:#007ff0; --ink:#1860a8; }
+[data-color="blue"]   { --band:#3094f8; --base:#197bf9; --line:#1c90ff; --lip:#0b3aac; --ink:#003090; }
+[data-color="dark"]   { --band:#867f9d; --base:#5b537a; --line:#6c638a; --lip:#383057; --ink:#15112a; }
+[data-color="green"]  { --band:#8bfb98; --base:#15f15c; --line:#47fe8a; --lip:#03a05b; --ink:#006048; }
+[data-color="yellow"] { --band:#f9e257; --base:#f5c02e; --line:#fed342; --lip:#d67425; --ink:#a84818; }
+[data-color="orange"] { --band:#ffd05a; --base:#ffae2e; --line:#ffc450; --lip:#d9761c; --ink:#8a3c0a; }
+[data-color="red"]    { --band:#fd7a82; --base:#f42e48; --line:#f9617d; --lip:#900222; --ink:#780024; }
+[data-color="purple"] { --band:#c886f7; --base:#a352f2; --line:#c26afe; --lip:#591c97; --ink:#541890; }
+[data-color="pink"]   { --band:#f38ef4; --base:#e95ee8; --line:#ef7def; --lip:#82298e; --ink:#780c6c; }
+[data-color="mint"]   { --band:#66e5d3; --base:#0fd0a8; --line:#20e6bf; --lip:#18675a; --ink:#006060; }
+
+/* ---------- Outlined 3D text ----------
+   <span class="sc-text" data-text="Play">Play</span>
+   (sc.js creates this automatically inside components — you rarely write it by hand) */
+.sc-text {
+  --fs:25px; --ink:var(--sc-outline);
+  position:relative; display:inline-block; font-family:var(--sc-font); font-weight:900; font-size:var(--fs); line-height:1;
+  color:#fff; -webkit-text-stroke:calc(var(--fs) * var(--sc-text-stroke)) var(--ink); paint-order:stroke fill; isolation:isolate;
+  letter-spacing:.3px; white-space:nowrap;
+}
+.sc-text::before {
+  content:attr(data-text); position:absolute; left:0; right:0; top:calc(var(--fs) * var(--sc-text-drop)); z-index:-1;
+  color:var(--ink); -webkit-text-stroke:calc(var(--fs) * var(--sc-text-stroke)) var(--ink);
+}
+
+/* ---------- Glossy surface (shared by Button, glossy Icon Button, Counter "+") ----------
+   Back layer = dark lip; face (::after) = light band + base, same rounded shape; ::before = shine dot */
+:where(.sc-button, .sc-icon-button:not([data-variant]), .sc-icon-button[data-variant="glossy"], .sc-counter-plus) {
+  --band:#52dcff; --base:#01bcff; --line:#00d5f9; --lip:#007ff0; --ink:#1860a8;
+  --r:15px; --lipH:6px; --bw:var(--sc-line); --shine:10px;
+  position:relative; box-sizing:border-box; isolation:isolate; cursor:pointer;
+  border:var(--bw) solid var(--sc-outline); border-radius:var(--r); background:var(--lip);
+  -webkit-tap-highlight-color:transparent; touch-action:manipulation; outline:none; user-select:none; -webkit-user-select:none;
+  transition:transform .06s;
+}
+:where(.sc-button, .sc-icon-button:not([data-variant]), .sc-icon-button[data-variant="glossy"], .sc-counter-plus)::after {
+  content:""; position:absolute; left:0; right:0; top:0; bottom:var(--lipH); z-index:-1;
+  border-radius:calc(var(--r) - var(--bw));
+  background:linear-gradient(var(--band) 0 48%, var(--base) 48%);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.35), inset 0 -2px 0 var(--line);
+}
+:where(.sc-button, .sc-icon-button:not([data-variant]), .sc-icon-button[data-variant="glossy"], .sc-counter-plus)::before {
+  content:""; position:absolute; left:calc(var(--shine) * .7); top:calc(var(--shine) * .55);
+  width:var(--shine); height:calc(var(--shine) * .8);
+  border-radius:50%; background:rgba(255,255,255,.85); transform:rotate(-20deg);
+}
+:where(.sc-button, .sc-icon-button):focus-visible { box-shadow:0 0 0 3px #fff; }

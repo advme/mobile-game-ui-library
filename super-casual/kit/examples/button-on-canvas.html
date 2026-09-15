@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Button on a game canvas — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<script src="../sc.js"></script>
+<style>
+  html, body { margin:0; height:100%; overflow:hidden; background:#1f2d4b; }
+
+  /* 1. The game draws on a full-screen canvas (any engine: Three.js, Babylon, Phaser, PixiJS…) */
+  #game { position:fixed; inset:0; width:100%; height:100%; display:block; }
+
+  /* 2. The UI is a layer of normal HTML on top. It lets taps through to the game except on UI elements. */
+  #ui { position:fixed; inset:0; pointer-events:none; }
+  #ui > * { pointer-events:auto; }
+
+  .start { position:absolute; left:0; right:0; bottom:calc(90px + env(safe-area-inset-bottom)); display:flex; flex-direction:column; align-items:center; gap:12px; pointer-events:none; }
+  .start > * { pointer-events:auto; }
+  .top-right { position:absolute; right:12px; top:calc(12px + env(safe-area-inset-top)); }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <div id="ui">
+    <div class="start" id="startMenu">
+      <button class="sc-button" data-color="yellow" data-size="lg" id="play">PLAY</button>
+      <button class="sc-button" data-color="dark" data-size="sm" id="docs">Docs</button>
+    </div>
+    <div class="top-right" id="stopWrap" hidden>
+      <button class="sc-button" data-color="red" data-size="sm" id="stop">Stop</button>
+    </div>
+  </div>
+
+<script>
+  // --- A tiny stand-in "game": bouncing balls on a canvas ---
+  const canvas = document.getElementById('game'), ctx = canvas.getContext('2d');
+  let W, H, running = false;
+  function resize() { const d = devicePixelRatio || 1; W = innerWidth; H = innerHeight; canvas.width = W * d; canvas.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
+  addEventListener('resize', resize); resize();
+  const colors = ['#01bcff', '#15f15c', '#f5c02e', '#f42e48', '#a352f2'];
+  const balls = Array.from({ length: 14 }, (_, i) => ({ x: Math.random() * W, y: Math.random() * H, r: 14 + Math.random() * 22, vx: (Math.random() - .5) * 2, vy: (Math.random() - .5) * 2, c: colors[i % 5] }));
+  (function loop() {
+    ctx.fillStyle = '#1f2d4b'; ctx.fillRect(0, 0, W, H);
+    const speed = running ? 3 : .6;
+    for (const b of balls) {
+      b.x += b.vx * speed; b.y += b.vy * speed;
+      if (b.x < b.r || b.x > W - b.r) b.vx *= -1;
+      if (b.y < b.r || b.y > H - b.r) b.vy *= -1;
+      ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fillStyle = b.c; ctx.fill();
+      ctx.lineWidth = 3; ctx.strokeStyle = '#050308'; ctx.stroke();
+    }
+    requestAnimationFrame(loop);
+  })();
+
+  // --- UI talks to the game with normal click events ---
+  const startMenu = document.getElementById('startMenu'), stopWrap = document.getElementById('stopWrap');
+  document.getElementById('play').onclick = () => { running = true; startMenu.hidden = true; stopWrap.hidden = false; };
+  document.getElementById('stop').onclick = () => { running = false; startMenu.hidden = false; stopWrap.hidden = true; SC.setLabel(document.getElementById('play'), 'AGAIN'); };
+  document.getElementById('docs').onclick = () => location.href = '../docs/button.html';
+</script>
+</body>
+</html>

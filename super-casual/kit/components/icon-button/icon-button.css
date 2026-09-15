@@ -1,0 +1,70 @@
+/*
+  Icon Button — Super Casual UI Kit
+  Requires: core.css, sc.js (and assets/offsets.css for optical icon centering)
+
+  <button class="sc-icon-button" data-icon="pause" data-color="sky" aria-label="Pause"></button>
+
+  data-icon     name of an icon in kit/assets (pause, close, settings, back, arrow-right, arrow-left, …)
+  data-variant  glossy | flat | ring                  (default: glossy)
+  data-shape    square | round                        (default: square)
+  data-color    sky | blue | dark | green | yellow | orange | red | purple | pink | mint   (glossy only, default: sky)
+  data-size     sm | md | lg                          (44 / 56 / 72 px, default: md)
+  disabled      native attribute
+  Label: plain text inside the button → icon on top, label underneath (use with data-variant="flat").
+*/
+.sc-icon-button {
+  --size:56px;
+  position:relative; box-sizing:border-box; width:var(--size); height:var(--size); padding:0; flex:none;
+  display:inline-grid; place-items:center; vertical-align:middle; cursor:pointer;
+  font-family:var(--sc-font);
+  -webkit-tap-highlight-color:transparent; touch-action:manipulation; outline:none; user-select:none; -webkit-user-select:none;
+  transition:transform .06s;
+}
+.sc-icon-button[data-size="sm"] { --size:44px; }
+.sc-icon-button[data-size="lg"] { --size:72px; }
+
+.sc-icon-button > img {
+  width:60%; height:60%; object-fit:contain; pointer-events:none;
+  translate:var(--ox, 0%) var(--oy, 0%);           /* optical centering from assets/offsets.css */
+}
+.sc-icon-button > img[data-flip] { transform:scaleX(-1); translate:calc(var(--ox, 0%) * -1) var(--oy, 0%); }
+
+.sc-icon-button:active, .sc-icon-button.sc-pressed { transform:translateY(2px) scale(.93); }
+.sc-icon-button:disabled { cursor:not-allowed; transform:none; filter:grayscale(1) brightness(.85); }
+
+/* ---------- Glossy (default) — uses the shared glossy surface from core.css ---------- */
+.sc-icon-button:not([data-variant]), .sc-icon-button[data-variant="glossy"] {
+  --r:calc(var(--size) * .22); --lipH:calc(var(--size) * .08); --shine:calc(var(--size) * .14);
+  padding-bottom:var(--lipH);
+}
+/* Round glossy: full circular face (no lip → never an oval), smooth blend, curved inner shade */
+.sc-icon-button:is(:not([data-variant]), [data-variant="glossy"])[data-shape="round"] { --r:50%; background:var(--base); padding-bottom:0; }
+.sc-icon-button:is(:not([data-variant]), [data-variant="glossy"])[data-shape="round"]::after {
+  bottom:0; border-radius:50%;
+  background:radial-gradient(circle at 50% 28%, var(--band) 0 32%, var(--base) 72%);
+  box-shadow:inset 0 calc(var(--size) * -.09) 0 var(--lip), inset 0 2px 0 rgba(255,255,255,.35);
+}
+.sc-icon-button:is(:not([data-variant]), [data-variant="glossy"])[data-shape="round"]::before { left:21%; top:15%; }
+.sc-icon-button[data-shape="round"] > img { width:52%; height:52%; margin-bottom:calc(var(--size) * .08); }
+
+/* ---------- Flat dark ---------- */
+.sc-icon-button[data-variant="flat"] {
+  border:var(--sc-line) solid var(--sc-outline); border-radius:calc(var(--size) * .2);
+  background:linear-gradient(#3a394f, #323146); padding-bottom:calc(var(--size) * .07);
+  box-shadow:inset 0 calc(var(--size) * -.07) 0 #232233, inset 0 2px 0 rgba(255,255,255,.08);
+}
+.sc-icon-button[data-variant="flat"][data-shape="round"] { border-radius:50%; }
+
+/* ---------- White ring ---------- */
+.sc-icon-button[data-variant="ring"] {
+  border:var(--sc-line) solid #fff; border-radius:calc(var(--size) * .22);
+  background:linear-gradient(#80859a 0 50%, #737a90 50%);
+  box-shadow:0 0 0 var(--sc-line-sm) var(--sc-outline), inset 0 0 0 var(--sc-line-sm) var(--sc-outline), inset 0 -5px 0 rgba(0,0,0,.18);
+}
+.sc-icon-button[data-variant="ring"][data-shape="round"] { border-radius:50%; background:linear-gradient(#4b5a73, #414e66); }
+.sc-icon-button[data-variant="ring"][data-shape="round"] > img { margin-bottom:0; }
+
+/* ---------- With label (icon on top, text underneath) ---------- */
+.sc-icon-button:has(.sc-text) { height:calc(var(--size) * 1.12); grid-template-rows:1fr auto; padding-top:calc(var(--size) * .06); padding-bottom:calc(var(--size) * .12); }
+.sc-icon-button:has(.sc-text) > img { width:66%; height:100%; align-self:end; }
+.sc-icon-button .sc-text { --fs:calc(var(--size) * .22); font-size:var(--fs); }

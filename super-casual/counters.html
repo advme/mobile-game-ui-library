@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Super Casual Resource Counters</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  body { margin:0; min-height:100vh; background:#1f2d4b; padding:40px 20px; box-sizing:border-box; display:flex; flex-direction:column; align-items:center; gap:40px; }
+  .row { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:18px 26px; }
+</style>
+</head>
+<body>
+
+  <!-- With plus buttons -->
+  <div class="row">
+    <div class="sc-counter" style="--min:52px">
+      <img class="icon" src="assets/energy.png" alt="">
+      <div class="pill">
+        <span class="value"><span class="sc-text" data-text="5/5">5/5</span></span>
+        <button class="sc-surface sc-plus blue" aria-label="Add energy"><svg viewBox="0 0 20 20"><path class="o" d="M10 4v12M4 10h12" transform="translate(0 1.6)"/><path class="o" d="M10 4v12M4 10h12"/><path class="f" d="M10 4v12M4 10h12"/></svg></button>
+      </div>
+    </div>
+
+    <div class="sc-counter" style="--min:84px">
+      <img class="icon" src="assets/coin.png" alt="">
+      <div class="pill">
+        <span class="value"><span class="sc-text" data-text="349810">349810</span></span>
+        <button class="sc-surface sc-plus orange" aria-label="Add coins"><svg viewBox="0 0 20 20"><path class="o" d="M10 4v12M4 10h12" transform="translate(0 1.6)"/><path class="o" d="M10 4v12M4 10h12"/><path class="f" d="M10 4v12M4 10h12"/></svg></button>
+      </div>
+    </div>
+
+    <div class="sc-counter" style="--min:52px">
+      <img class="icon" src="assets/gem.png" alt="">
+      <div class="pill">
+        <span class="value"><span class="sc-text" data-text="120">120</span></span>
+        <button class="sc-surface sc-plus purple" aria-label="Add gems"><svg viewBox="0 0 20 20"><path class="o" d="M10 4v12M4 10h12" transform="translate(0 1.6)"/><path class="o" d="M10 4v12M4 10h12"/><path class="f" d="M10 4v12M4 10h12"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Without plus buttons (read-only) -->
+  <div class="row">
+    <div class="sc-counter" style="--min:44px">
+      <img class="icon" src="assets/heart.png" alt="">
+      <div class="pill" style="padding-right:6px"><span class="value"><span class="sc-text" data-text="3">3</span></span></div>
+    </div>
+    <div class="sc-counter" style="--min:44px">
+      <img class="icon" src="assets/star.png" alt="">
+      <div class="pill" style="padding-right:6px"><span class="value"><span class="sc-text" data-text="24">24</span></span></div>
+    </div>
+  </div>
+
+<script>
+  // Demo: tapping "+" adds to the counter with a small bump
+  const add = { 'Add energy': 1, 'Add coins': 100, 'Add gems': 10 };
+  document.querySelectorAll('.sc-plus').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const counter = btn.closest('.sc-counter'), text = counter.querySelector('.value .sc-text');
+      let v = text.textContent;
+      if (v.includes('/')) { const [a, b] = v.split('/').map(Number); v = Math.min(a + 1, b) + '/' + b; }
+      else v = String(Number(v) + add[btn.getAttribute('aria-label')]);
+      text.textContent = v; text.dataset.text = v;
+      counter.classList.remove('bump'); void counter.offsetWidth; counter.classList.add('bump');
+    });
+  });
+
+  // Press feedback on phones
+  document.querySelectorAll('.sc-surface').forEach(b => {
+    b.addEventListener('pointerdown', () => b.classList.add('pressed'));
+    ['pointerup','pointercancel','pointerleave'].forEach(e => b.addEventListener(e, () => b.classList.remove('pressed')));
+  });
+  document.addEventListener('touchstart', () => {}, { passive:true });
+</script>
+</body>
+</html>

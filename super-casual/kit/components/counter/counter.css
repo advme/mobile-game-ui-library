@@ -1,0 +1,53 @@
+/*
+  Resource Counter — Super Casual UI Kit
+  Requires: core.css, sc.js
+
+  <div class="sc-counter" data-icon="coin" data-value="349810" data-plus="orange"></div>
+
+  data-icon    icon name from kit/assets (coin, gem, energy, heart, star, ticket…)   required
+  data-value   the number                                                             required
+  data-max     optional maximum → shows "value/max" (e.g. energy 5/5)
+  data-plus    optional color of a "+" button: sky | blue | green | yellow | orange | red | purple | pink | mint
+  data-format  full | short   (short: 12500 → 12.5K)                                   default: full
+  data-size    sm | md | lg                                                             default: md
+
+  Events: "plus" is dispatched on the counter when its "+" button is tapped.
+  JS:     SC.setValue(counter, 350000)   // animated count + bump
+*/
+.sc-counter {
+  --icon:46px; --pill:34px; --fs:20px; --plus:34px; --minv:56px;
+  position:relative; display:inline-flex; align-items:center; vertical-align:middle;
+  height:var(--icon); padding-left:calc(var(--icon) * .43); box-sizing:border-box;
+  font-family:var(--sc-font); user-select:none; -webkit-user-select:none;
+}
+.sc-counter[data-size="sm"] { --icon:36px; --pill:28px; --fs:16px; --plus:28px; --minv:44px; }
+.sc-counter[data-size="lg"] { --icon:58px; --pill:42px; --fs:25px; --plus:42px; --minv:70px; }
+
+.sc-counter > img {
+  position:absolute; left:0; top:50%; z-index:1; width:var(--icon); height:var(--icon); object-fit:contain;
+  transform:translateY(-50%); translate:var(--ox, 0%) var(--oy, 0%); pointer-events:none;
+}
+.sc-counter-pill {
+  display:flex; align-items:center; height:var(--pill); padding-left:calc(var(--icon) * .62);
+  padding-right:calc(var(--pill) * .18); border-radius:calc(var(--pill) * .27); background:rgba(20,19,26,.88);
+}
+.sc-counter:has(.sc-counter-plus) .sc-counter-pill { padding-right:0; }
+.sc-counter-value { min-width:var(--minv); padding:0 calc(var(--fs) * .4) 2px; text-align:center; }
+.sc-counter-value .sc-text { --fs:inherit; font-size:var(--fs); }
+.sc-counter-value .sc-text { font-variant-numeric:tabular-nums; }
+
+/* "+" button: small glossy square (uses the shared glossy surface) */
+.sc-counter-plus {
+  --r:calc(var(--plus) * .24); --lipH:calc(var(--plus) * .12); --bw:var(--sc-line-sm); --shine:calc(var(--plus) * .15);
+  width:var(--plus); height:var(--plus); margin-right:-2px; padding:0 0 var(--lipH); flex:none;
+  display:grid; place-items:center;
+}
+.sc-counter-plus svg { width:58%; height:58%; overflow:visible; }
+.sc-counter-plus path { fill:none; stroke-linecap:round; }
+.sc-counter-plus .o { stroke:var(--ink); stroke-width:8.5; }
+.sc-counter-plus .f { stroke:#fff; stroke-width:4.2; }
+.sc-counter-plus:active, .sc-counter-plus.sc-pressed { transform:translateY(1px) scale(.92); }
+
+/* Bump when the value changes */
+.sc-counter.sc-bump .sc-counter-value .sc-text { animation:sc-counter-bump .28s ease-out; }
+@keyframes sc-counter-bump { 40% { transform:scale(1.25); } }

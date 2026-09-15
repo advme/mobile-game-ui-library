@@ -1,0 +1,64 @@
+/*
+  Progress Bar — Super Casual UI Kit
+  Requires: core.css, sc.js
+
+  <div class="sc-progress" data-value="72" data-color="green" data-label="percent"></div>
+
+  data-value   current amount                                                   required
+  data-max     maximum                                                          default: 100
+  data-label   percent | value | any text                                       optional (percent → "72%", value → "723 / 1000")
+  data-color   blue | sky | green | yellow | orange | red | purple | pink | mint   default: blue
+  data-size    sm | md | lg   (14 / 24 / 32 px tall)                            default: md
+  data-icon    optional icon on the left end (heart, energy, star, shield-like…)
+  data-stars   optional star markers at percent positions, e.g. "33,66,100"
+
+  Events: "star" (detail.index) when a star marker lights up.
+  JS:     SC.setValue(bar, 850)   // animated fill + label
+*/
+:where(.sc-progress) { --band:#4a97ff; --base:#3586fd; }   /* default fill; data-color overrides */
+.sc-progress {
+  --h:24px;
+  position:relative; display:flex; align-items:center; width:100%; min-width:80px; box-sizing:border-box;
+  font-family:var(--sc-font); user-select:none; -webkit-user-select:none;
+}
+.sc-progress[data-size="sm"] { --h:14px; }
+.sc-progress[data-size="lg"] { --h:32px; }
+
+/* Bar area (track + markers) */
+.sc-progress-bar { position:relative; flex:1; height:var(--h); }
+.sc-progress-track {
+  position:absolute; inset:0; overflow:hidden; box-sizing:border-box;
+  background:#1f2029; border:var(--sc-line-sm) solid var(--sc-outline); border-radius:calc(var(--h) * .32);
+  box-shadow:inset 0 2px 0 rgba(0,0,0,.35);
+}
+.sc-progress-fill {
+  position:absolute; left:0; top:0; bottom:0; width:var(--pct, 0%);
+  border-radius:0 calc(var(--h) * .22) calc(var(--h) * .22) 0;
+  background:linear-gradient(var(--band) 0 45%, var(--base) 45%);
+  box-shadow:inset 0 calc(var(--h) * .12) 0 rgba(255,255,255,.25);
+  transition:width .45s cubic-bezier(.3,.9,.4,1);
+}
+.sc-progress[data-value="0"] .sc-progress-fill { visibility:hidden; }
+
+/* Label centered on the bar */
+.sc-progress-label { position:absolute; inset:0; z-index:1; display:grid; place-items:center; padding-bottom:1px; line-height:1; }
+.sc-progress-label .sc-text { --fs:calc(var(--h) * .56); font-size:var(--fs); font-variant-numeric:tabular-nums; }
+.sc-progress[data-size="sm"] .sc-progress-label { display:none; }
+
+/* Icon on the left end, overlapping the bar */
+.sc-progress > img[data-sc-icon] {
+  position:relative; z-index:2; flex:none; width:calc(var(--h) * 1.9); height:calc(var(--h) * 1.9);
+  margin-right:calc(var(--h) * -.75); object-fit:contain; pointer-events:none; translate:var(--ox, 0%) var(--oy, 0%);
+}
+.sc-progress:has(> img[data-sc-icon]) .sc-progress-label { padding-left:calc(var(--h) * .6); }
+
+/* Star markers */
+.sc-progress-marker {
+  position:absolute; top:50%; left:var(--at); z-index:2; width:calc(var(--h) * 1.35); height:calc(var(--h) * 1.35);
+  min-width:22px; min-height:22px; transform:translate(-50%, -50%); pointer-events:none;
+}
+.sc-progress-marker img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+.sc-progress-marker img:last-child { opacity:0; }
+.sc-progress-marker.sc-lit img:last-child { opacity:1; animation:sc-marker-pop .42s cubic-bezier(.3,1.8,.5,1); }
+@keyframes sc-marker-pop { from { transform:scale(.3); } 60% { transform:scale(1.35); } }
+.sc-progress:has(.sc-progress-marker) .sc-progress-label { display:none; }

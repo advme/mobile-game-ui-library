@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#1a1022">
+<title>Super Casual Fail Screen</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  html, body { margin:0; height:100%; overflow:hidden; overscroll-behavior:none; }
+  body { background:#140f20; -webkit-user-select:none; user-select:none; }
+
+  /* Full-page shell: 400x870 design, scaled to fit, stretched to the device shape */
+  .screen { position:absolute; left:0; top:0; width:var(--w,400px); height:var(--h,870px); transform-origin:0 0; overflow:hidden;
+            background:radial-gradient(ellipse 70% 30% at 50% 26%, rgba(255,70,90,.12), transparent 70%), linear-gradient(#1a1326, #0f1624); }
+  .content { position:absolute; left:50%; top:50%; width:400px; height:870px; margin:-435px 0 0 -200px; }
+
+  .title { position:absolute; left:0; right:0; top:80px; text-align:center; }
+  .title .sc-title { animation:drop .5s cubic-bezier(.3,1.5,.5,1) both; }
+  @keyframes drop { from { transform:translateY(-40px) scale(1.3); opacity:0; } }
+
+  .star { position:absolute; width:92px; height:92px; object-fit:contain; transform:rotate(var(--rot)); animation:fade-in .4s ease-out both; }
+  @keyframes fade-in { from { opacity:0; transform:rotate(var(--rot)) scale(.6); } }
+  .s1 { left:52px;  top:205px; --rot:-14deg; animation-delay:.2s; }
+  .s2 { left:154px; top:160px; --rot:0deg; width:96px; height:96px; animation-delay:.3s; }
+  .s3 { left:256px; top:205px; --rot:14deg; animation-delay:.4s; }
+
+  .close-call { position:absolute; left:0; right:0; top:350px; display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .close-call > .sc-text { --fs:22px; }
+  .close-call .sc-bar { width:230px; }
+
+  /* Continue offer */
+  .offer { position:absolute; left:40px; right:40px; top:465px; display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .offer .question { display:flex; align-items:center; gap:10px; }
+  .offer .question > .sc-text { --fs:20px; }
+  .timer { position:relative; width:46px; height:46px; display:grid; place-items:center; }
+  .timer svg { position:absolute; inset:0; transform:rotate(-90deg); }
+  .timer circle { fill:none; stroke-width:5; }
+  .timer .track { stroke:#2c2540; }
+  .timer .ring { stroke:#ffce25; stroke-linecap:round; stroke-dasharray:125.6; stroke-dashoffset:0; transition:stroke-dashoffset 1s linear; }
+  .timer .sc-text { --fs:19px; padding-bottom:2px; }
+  .offer .buttons { display:flex; gap:12px; width:100%; }
+  .offer .sc-btn { flex:1; width:auto; height:60px; --r:13px; --lipH:5px; --shine:8px; display:flex; align-items:center; justify-content:center; gap:6px; }
+  .offer .sc-btn img { width:30px; height:30px; object-fit:contain; margin-bottom:2px; }
+  .offer .sc-btn .sc-text { --fs:19px; }
+  .offer.expired { opacity:.35; pointer-events:none; filter:saturate(.4); transition:opacity .3s; }
+
+  .bottom { position:absolute; left:0; right:0; top:700px; display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .bottom .retry { width:220px; height:62px; --r:14px; }
+  .bottom .retry .sc-text { --fs:24px; }
+  .give-up { background:none; border:0; padding:6px 14px; cursor:pointer; font-family:var(--sc-font); font-size:15px; color:#9aa3c0; letter-spacing:.3px; }
+</style>
+</head>
+<body>
+<div class="screen" id="screen">
+  <div class="content">
+
+    <div class="title"><h1 class="sc-title red" data-text="FAILED"><span>FAILED</span></h1></div>
+
+    <img class="star s1" src="assets/star-empty.png" alt="">
+    <img class="star s2" src="assets/star-empty.png" alt="">
+    <img class="star s3" src="assets/star-empty.png" alt="">
+
+    <div class="close-call">
+      <span class="sc-text" data-text="So close!">So close!</span>
+      <div class="sc-bar orange" id="progress" style="--value:0%">
+        <div class="fill"></div>
+        <div class="label"><span class="sc-text" data-text="78%">78%</span></div>
+      </div>
+    </div>
+
+    <div class="offer" id="offer">
+      <div class="question">
+        <span class="sc-text" data-text="Continue?">Continue?</span>
+        <div class="timer">
+          <svg viewBox="0 0 46 46"><circle class="track" cx="23" cy="23" r="20"/><circle class="ring" id="ring" cx="23" cy="23" r="20"/></svg>
+          <span class="sc-text" id="count" data-text="5">5</span>
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="sc-surface sc-btn green" data-action="revive"><img src="assets/video.png" alt=""><span class="sc-text" data-text="Revive">Revive</span></button>
+        <button class="sc-surface sc-btn purple" data-action="revive"><img src="assets/gem.png" alt=""><span class="sc-text" data-text="20">20</span></button>
+      </div>
+    </div>
+
+    <div class="bottom">
+      <button class="sc-surface sc-btn yellow retry" data-action="retry"><span class="sc-text" data-text="Retry">Retry</span></button>
+      <button class="give-up" data-action="home">Give up</button>
+    </div>
+
+  </div>
+</div>
+<script>
+  // Fit the 400x870 design to any screen (full page, no scroll)
+  const screen = document.getElementById('screen');
+  function fit() {
+    const vw = innerWidth, vh = innerHeight, s = Math.min(vw / 400, vh / 870);
+    screen.style.setProperty('--w', vw / s + 'px');
+    screen.style.setProperty('--h', vh / s + 'px');
+    screen.style.transform = `scale(${s})`;
+  }
+  addEventListener('resize', fit); fit();
+
+  // Progress fills to how far the player got
+  requestAnimationFrame(() => setTimeout(() => document.getElementById('progress').style.setProperty('--value', '78%'), 500));
+
+  // Continue countdown: 5 → 0, then the revive offer expires
+  let left = 5;
+  const count = document.getElementById('count'), ring = document.getElementById('ring'), offer = document.getElementById('offer');
+  const tick = setInterval(() => {
+    left--;
+    count.textContent = count.dataset.text = left;
+    ring.style.strokeDashoffset = 125.6 * (1 - left / 5);
+    if (left <= 0) { clearInterval(tick); offer.classList.add('expired'); }
+  }, 1000);
+  // Hook game logic here: revive / retry / home
+  document.querySelectorAll('[data-action]').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.action === 'revive') { clearInterval(tick); offer.classList.add('expired'); }
+  }));
+
+  // Press feedback on phones
+  document.querySelectorAll('.sc-surface').forEach(b => {
+    b.addEventListener('pointerdown', () => b.classList.add('pressed'));
+    ['pointerup','pointercancel','pointerleave'].forEach(e => b.addEventListener(e, () => b.classList.remove('pressed')));
+  });
+  document.addEventListener('touchstart', () => {}, { passive:true });
+</script>
+</body>
+</html>

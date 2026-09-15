@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Super Casual Buttons</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+  body { margin:0; min-height:100vh; background:#1f2d4b; padding:32px 20px; box-sizing:border-box; }
+  .grid { display:grid; grid-template-columns:repeat(5, max-content); gap:14px 12px; justify-content:center; margin-bottom:36px; }
+  @media (max-width:1000px) { .grid { grid-template-columns:repeat(2, max-content); } }
+</style>
+</head>
+<body>
+  <div class="grid" id="big"></div>
+  <div class="grid" id="small"></div>
+<script>
+  const variants = ['Sky','Blue','Dark','Green','Yellow','Red','Purple','Pink','Mint','Disable'];
+  const make = (size) => variants.map(v =>
+    `<button class="sc-surface sc-btn ${v.toLowerCase()} ${size}"><span class="sc-text" data-text="${v}">${v}</span></button>`).join('');
+  document.getElementById('big').innerHTML = make('');
+  document.getElementById('small').innerHTML = make('small');
+
+  document.querySelectorAll('.sc-surface:not(.disable)').forEach(b => {
+    b.addEventListener('pointerdown', () => b.classList.add('pressed'));
+    ['pointerup','pointercancel','pointerleave'].forEach(e => b.addEventListener(e, () => b.classList.remove('pressed')));
+  });
+  document.addEventListener('touchstart', () => {}, { passive:true });
+</script>
+</body>
+</html>
