@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "items": [
     {
       "name": "core",
@@ -1343,6 +1343,96 @@
         {
           "title": "Listen and restore",
           "js": "music.addEventListener('change', e => save(e.detail.value)); SC.slider.set(music, saved);"
+        }
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox",
+      "description": "Chunky tick box with optional outlined label; glossy colored box with the kit check icon when checked.",
+      "whenToUse": "Choices listed together or confirmed later: don't show again, terms, mission checklists.",
+      "files": [
+        "components/checkbox/checkbox.css"
+      ],
+      "docs": "components/checkbox/checkbox.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<button class=\"sc-checkbox\" data-checked>Don't show again</button>",
+      "props": {
+        "data-checked": {
+          "type": "enum",
+          "values": [
+            "",
+            "true",
+            "false"
+          ],
+          "optional": true,
+          "description": "Bare or true = checked"
+        },
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "sky",
+            "blue",
+            "dark",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "default": "green"
+        },
+        "data-size": {
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        },
+        "disabled": {
+          "type": "boolean",
+          "optional": true
+        },
+        "children": {
+          "type": "text",
+          "optional": true,
+          "description": "Label; without it add aria-label"
+        }
+      },
+      "events": {
+        "change": "User toggled it (detail.checked)"
+      },
+      "js": {
+        "SC.checkbox.get(el)": "boolean",
+        "SC.checkbox.set(el, boolean, {emit?})": "Silent unless emit; throws on non-boolean",
+        "SC.checkbox.toggle(el, {emit?})": "Invert"
+      },
+      "rules": [
+        "Checkbox for listed/confirmed choices; Toggle for instant settings.",
+        "Native <button>; label as text inside or aria-label when empty.",
+        "Listen for change; never add a click handler that flips state.",
+        "Use real booleans with SC.checkbox.set; never hand-build the box or draw a check.",
+        "Keep labels 1-4 words."
+      ],
+      "examples": [
+        {
+          "title": "With label",
+          "html": "<button class=\"sc-checkbox\" data-checked>Don't show again</button>"
+        },
+        {
+          "title": "Icon only",
+          "html": "<button class=\"sc-checkbox\" data-color=\"sky\" aria-label=\"Mission 1 done\"></button>"
+        },
+        {
+          "title": "Listen",
+          "js": "box.addEventListener('change', e => save(e.detail.checked));"
         }
       ]
     }

@@ -1,0 +1,57 @@
+/*
+  Checkbox — Super Casual UI Kit
+  Requires: core.css, sc.js   (uses the kit "check" icon)
+
+  <button class="sc-checkbox" data-checked>Don't show again</button>
+  <button class="sc-checkbox" aria-label="Mission 1 done"></button>
+
+  data-checked  empty | true | false   (bare or "true" = checked; absent/false = unchecked)
+  data-color    sky | blue | dark | green | yellow | orange | red | purple | pink | mint   (checked box, default: green)
+  data-size     sm | md | lg   (box 28 / 36 / 46 px)                         default: md
+  disabled      native boolean attribute
+  Text inside   optional label on the right (outlined kit text). Without text, add aria-label.
+
+  Runtime owns type="button", role="checkbox", aria-checked, the box and the check icon.
+  Event: change (bubbles; detail.checked) once per user tap / Space / Enter.
+  JS:    SC.checkbox.get(el) · set(el, boolean, {emit:false}) · toggle(el, {emit:false})
+*/
+:where(.sc-checkbox) { --band:#8bfb98; --base:#15f15c; --line:#47fe8a; --lip:#03a05b; }
+.sc-checkbox {
+  --box:36px; --cb-fs:20px;
+  position:relative; display:inline-flex; align-items:center; gap:10px; min-height:44px; padding:0; margin:0;
+  border:0; background:none; font-family:var(--sc-font); color:inherit; cursor:pointer; appearance:none; vertical-align:middle;
+  user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; touch-action:manipulation; outline:none;
+}
+.sc-checkbox[data-size="sm"] { --box:28px; --cb-fs:16px; min-height:40px; }
+.sc-checkbox[data-size="lg"] { --box:46px; --cb-fs:24px; min-height:52px; }
+.sc-checkbox > .sc-text { --fs:var(--cb-fs); font-size:var(--fs); padding-bottom:2px; }
+
+/* Box: dark inset when unchecked */
+.sc-checkbox-box {
+  position:relative; flex:none; box-sizing:border-box; width:var(--box); height:var(--box);
+  border:var(--sc-line) solid var(--sc-outline); border-radius:calc(var(--box) * .28);
+  background:#1f2029; box-shadow:inset 0 3px 0 rgba(0,0,0,.4), inset 0 -2px 0 #34364a;
+  transition:transform .06s;
+}
+/* Checked: glossy colored face with a 3D lip */
+.sc-checkbox:is([data-checked=""], [data-checked="true"]) > .sc-checkbox-box {
+  background:var(--lip); box-shadow:none;
+}
+.sc-checkbox:is([data-checked=""], [data-checked="true"]) > .sc-checkbox-box::before {
+  content:""; position:absolute; left:0; right:0; top:0; bottom:calc(var(--box) * .12);
+  border-radius:calc(var(--box) * .28 - var(--sc-line));
+  background:linear-gradient(var(--band) 0 48%, var(--base) 48%);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.35), inset 0 -2px 0 var(--line);
+}
+.sc-checkbox-box > img {
+  position:absolute; left:50%; top:44%; width:104%; height:104%; object-fit:contain; pointer-events:none;
+  transform:translate(-50%, -50%) scale(0); opacity:0; translate:var(--ox, 0%) var(--oy, 0%);
+}
+.sc-checkbox:is([data-checked=""], [data-checked="true"]) > .sc-checkbox-box > img {
+  opacity:1; transform:translate(-50%, -50%) scale(1); transition:transform .22s cubic-bezier(.3,1.8,.5,1);
+}
+
+.sc-checkbox:active > .sc-checkbox-box, .sc-checkbox.sc-pressed > .sc-checkbox-box { transform:translateY(1px) scale(.92); }
+.sc-checkbox:focus-visible > .sc-checkbox-box { outline:3px solid #fff; outline-offset:3px; }
+.sc-checkbox:disabled { cursor:not-allowed; filter:grayscale(1) brightness(.85); }
+@media (prefers-reduced-motion:reduce) { .sc-checkbox-box, .sc-checkbox-box > img { transition:none !important; } }

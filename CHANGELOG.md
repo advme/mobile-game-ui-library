@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.15.0-A — Checkbox component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `.sc-checkbox`, a chunky tick box. Unchecked is a dark inset box. Checked is a glossy colored box with the kit `check` icon, which pops in. It has an optional outlined text label, 10 colors, 3 sizes and native disabled. Uses `role=checkbox` + `aria-checked` and one `change` event per tap/Space/Enter. API: `SC.checkbox.get/set/toggle` (silent unless `{emit:true}`, boolean-only like Toggle). Added the AI manual, registry item, docs page and `tools/tests/checkbox.html`.
+- Tested: `tools/tests/checkbox.html` 20/20 passed, covering states, click, disabled, no form submit, silent set/emit/throw, attribute re-sync, setLabel, dynamic insert and no observer loop. Real clicks checked in the docs. Slider 30/30, Toggle 39/39 and Bubble 60/60 still pass.
+- Notes for next agent: Never reuse a CSS variable name inside its own definition (`--fs:var(--fs)` breaks the label size). Checkbox uses `--cb-fs`. Checkbox patterns mirror Toggle.
+
 ## v0.14.0-A — Slider component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `.sc-slider`, a glossy track with a round white thumb (same thumb style as Toggle). It supports drag, tap-to-jump, arrows, Page Up/Down, Home and End. Options: `data-min/max/step` (decimals ok), `data-label` percent/value, 9 fill colors, 3 sizes (touch area ≥ 44px), an optional left icon, and `disabled` (also inside a disabled fieldset). Events: `input` while moving and `change` on release. API: `SC.slider.get/set` (silent unless `{emit:true}`, invalid values ignored). Added the AI manual, registry item, docs page and `tools/tests/slider.html`.

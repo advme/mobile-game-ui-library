@@ -25,11 +25,12 @@
   const TIMERS = '.sc-timer';
   const TOGGLES = 'button.sc-toggle';
   const SLIDERS = '.sc-slider';
+  const CHECKBOXES = 'button.sc-checkbox';
   const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot';
   const MESSAGES = '.sc-popup-message, .sc-popup-value';
   const SCREENS = '.sc-screen';
-  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}`;
-  const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, ${TOGGLES}`;
+  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}`;
+  const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, ${TOGGLES}, ${CHECKBOXES}`;
 
   const script = document.currentScript;
   const ASSETS = script && script.dataset.assets
@@ -129,6 +130,36 @@
     const el = e.target.closest && e.target.closest(TOGGLES);
     if (!el || el.matches(':disabled')) return;
     toggle.toggle(el, { emit: true });
+  });
+
+  /* ---------- Checkbox ---------- */
+  function upgradeCheckbox(el) {
+    const checked = checkbox.get(el);
+    if (el.type !== 'button') el.type = 'button';
+    if (el.getAttribute('role') !== 'checkbox') el.setAttribute('role', 'checkbox');
+    if (el.getAttribute('aria-checked') !== String(checked)) el.setAttribute('aria-checked', String(checked));
+    upgradeText(el);
+    let box = el.querySelector(':scope > .sc-checkbox-box');
+    if (!box) {
+      box = document.createElement('span'); box.className = 'sc-checkbox-box'; box.setAttribute('aria-hidden', 'true');
+      const img = document.createElement('img'); img.alt = ''; img.draggable = false; img.src = ASSETS + 'check.png';
+      box.append(img); el.prepend(box);
+    }
+  }
+  const checkbox = {
+    get(el) { return el.dataset.checked === '' || el.dataset.checked === 'true'; },
+    set(el, checked, { emit = false } = {}) {
+      if (typeof checked !== 'boolean') throw new TypeError('SC.checkbox.set expects a boolean');
+      const changed = checkbox.get(el) !== checked;
+      el.dataset.checked = String(checked); upgradeCheckbox(el);
+      if (changed && emit) el.dispatchEvent(new CustomEvent('change', { bubbles: true, detail: { checked } }));
+    },
+    toggle(el, options) { checkbox.set(el, !checkbox.get(el), options); },
+  };
+  document.addEventListener('click', e => {
+    const el = e.target.closest && e.target.closest(CHECKBOXES);
+    if (!el || el.matches(':disabled')) return;
+    checkbox.toggle(el, { emit: true });
   });
 
   /* ---------- Slider ---------- */
@@ -608,6 +639,7 @@
     if (el.matches(TIMERS)) return upgradeTimer(el);
     if (el.matches(TOGGLES)) return upgradeToggle(el);
     if (el.matches(SLIDERS)) return upgradeSlider(el);
+    if (el.matches(CHECKBOXES)) return upgradeCheckbox(el);
     if (el.matches(SCREENS)) return upgradeScreen(el);
     if (el.matches(MESSAGES)) return upgradeText(el);
     upgradeText(el);
@@ -638,12 +670,14 @@
         else if (r.target.matches(TIMERS)) { if (r.attributeName === 'data-seconds') timer.reset(r.target); else upgradeTimer(r.target); }
         else if (r.target.matches(TOGGLES)) upgradeToggle(r.target);
         else if (r.target.matches(SLIDERS)) upgradeSlider(r.target);
+        else if (r.target.matches(CHECKBOXES)) upgradeCheckbox(r.target);
         else if (r.target.matches(ICON_COMPONENTS)) upgradeIcon(r.target);
       } else {
         r.addedNodes.forEach(n => n.nodeType === Node.ELEMENT_NODE && upgrade(n));
         if (r.target.matches && r.target.matches(`${TEXT_COMPONENTS}, ${MESSAGES}`)) upgradeText(r.target);
         if (r.target.matches && r.target.matches(BADGE_HOSTS)) upgradeBubble(r.target);
         if (r.target.matches && r.target.matches(TOGGLES)) upgradeToggle(r.target);
+        if (r.target.matches && r.target.matches(CHECKBOXES)) upgradeCheckbox(r.target);
       }
     }
   }).observe(document.documentElement, {
@@ -665,7 +699,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.14.0',
+    version: '0.15.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */
@@ -709,6 +743,8 @@
     setChecked: toggle.set,
     /** Volume-style sliders: SC.slider.get(el) · SC.slider.set(el, 70, {emit?}) */
     slider,
+    /** Checkboxes: SC.checkbox.get(el) · set(el, boolean, {emit?}) · toggle(el, {emit?}) */
+    checkbox,
     /** Floating feedback text: SC.float('+50', event | element | {x, y}, { color, size, icon, style }) */
     float,
     /** URL of an icon in the kit: SC.icon('coin') */

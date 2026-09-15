@@ -1,0 +1,69 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkbox regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/checkbox/checkbox.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>body { margin:20px; font:14px system-ui; background:#243453; color:white; } li { margin:6px 0; } .fail { color:#ff9da7; }</style>
+<h1>Checkbox checks</h1>
+<p id="summary">Running…</p>
+<div id="fixtures">
+  <button id="a" class="sc-checkbox" data-checked>Don't show again</button>
+  <button id="b" class="sc-checkbox" aria-label="Icon only"></button>
+  <button id="c" class="sc-checkbox" data-checked="false" disabled>Locked</button>
+  <form id="f"><button id="d" class="sc-checkbox">In a form</button></form>
+</div>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const settle = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  const synced = (el, v) => SC.checkbox.get(el) === v && el.getAttribute('aria-checked') === String(v);
+  try {
+    const a = $('#a'), b = $('#b'), c = $('#c'), d = $('#d');
+    check('bare data-checked is checked', synced(a, true));
+    check('role, type and one box with check icon', a.getAttribute('role') === 'checkbox' && a.type === 'button' && a.querySelectorAll('.sc-checkbox-box').length === 1 && a.querySelector('.sc-checkbox-box img').src.endsWith('/check.png'));
+    check('text label wrapped as outlined text', a.querySelector(':scope > .sc-text')?.dataset.text === "Don't show again");
+    check('box is aria-hidden', a.querySelector('.sc-checkbox-box').getAttribute('aria-hidden') === 'true');
+    check('absent data-checked is unchecked; aria-label untouched', synced(b, false) && b.getAttribute('aria-label') === 'Icon only');
+    check('check icon visible only when checked', getComputedStyle(a.querySelector('img')).opacity === '1' && getComputedStyle(b.querySelector('img')).opacity === '0');
+    check('label font size is 20px (no self-referencing var)', getComputedStyle(a.querySelector('.sc-text')).fontSize === '20px');
+
+    let log = []; document.addEventListener('change', e => e.target.matches('.sc-checkbox') && log.push(e.target.id + ':' + e.detail.checked));
+    b.click(); await settle();
+    check('click toggles and fires one change', synced(b, true) && log.join() === 'b:true');
+    b.click(); await settle();
+    check('second click unchecks', synced(b, false) && log.join() === 'b:true,b:false');
+    log = []; c.click(); await settle();
+    check('disabled ignores clicks', synced(c, false) && log.length === 0);
+    let submitted = false; $('#f').addEventListener('submit', e => { submitted = true; e.preventDefault(); });
+    d.click(); await settle();
+    check('inside a form it does not submit', !submitted && synced(d, true));
+
+    log = []; SC.checkbox.set(a, false);
+    check('SC.checkbox.set is silent', synced(a, false) && log.length === 0);
+    SC.checkbox.set(a, true, { emit: true }); SC.checkbox.set(a, true, { emit: true });
+    check('emit fires only on real change', log.join() === 'a:true');
+    let threw = false; try { SC.checkbox.set(a, 'false'); } catch (_) { threw = true; }
+    check('non-boolean throws', threw && synced(a, true));
+    SC.checkbox.toggle(a);
+    check('toggle inverts silently', synced(a, false) && log.length === 1);
+    a.dataset.checked = 'true'; await settle();
+    check('attribute change re-syncs aria', synced(a, true));
+    SC.setLabel(a, 'Never again'); await settle();
+    check('SC.setLabel keeps the box', a.querySelector('.sc-text').dataset.text === 'Never again' && a.querySelectorAll('.sc-checkbox-box').length === 1);
+    SC.upgrade(a); SC.upgrade(a);
+    check('repeated upgrades do not duplicate', a.querySelectorAll('.sc-checkbox-box').length === 1 && a.querySelectorAll('.sc-text').length === 1);
+    const fresh = document.createElement('button'); fresh.className = 'sc-checkbox'; fresh.textContent = 'New'; $('#fixtures').append(fresh); await settle();
+    check('inserted checkbox upgrades', !!fresh.querySelector('.sc-checkbox-box') && fresh.getAttribute('role') === 'checkbox');
+    let records = 0; const mo = new MutationObserver(r => records += r.length); mo.observe($('#fixtures'), { attributes: true, subtree: true, childList: true });
+    await new Promise(r => setTimeout(r, 200)); mo.disconnect();
+    check('no endless updates', records === 0);
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Checkbox';
+});
+</script>
