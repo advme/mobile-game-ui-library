@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.38.3-A — Tabs: long labels no longer cut in half
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: The owner reported tab labels like "Chests"/"Inbox" showing "Ch…" with the dark outline copy still full, so the text looked broken. Removed `overflow:hidden; text-overflow:ellipsis` from `.sc-tab > .sc-text`. `markLong` in `sc.js` now fits tab labels: it measures the room and shrinks the label (`--fs`) so the whole word fits. If it would go below 60% it hides the tab icon (`.sc-tab-tight`) and refits, never below 50%. It runs when tabs build/change, on resize and after fonts load.
+- Tested: Docs at desktop width ("Chests" 19→14.8px, "Inbox" with badge full) and at 375×812 (all labels whole). New check in `tools/tests/tabs.html` (3 icon tabs in 240px: labels fit, no ellipsis) passes 25/25. All 17 test pages pass.
+- Notes for next agent: This was the last `text-overflow: ellipsis` on outlined text in the kit (the AGENTS.md rule already forbids it). For other long labels use the `.sc-long` fade pattern or this shrink-to-fit pattern.
+
 ## v0.38.2-A — Hint Bubble: continuous pointer outline
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: The owner reported that the Hint Bubble's pointer broke the outline where it meets the bubble (white wedges cut the border). The pointer is now two rotated rounded squares: a dark one half an outline below the bubble's inner border edge, and a same-size white one an outline width further in. The dark edges now flow straight out of the bubble border with the same thickness and no gaps or bumps, in all 4 directions. The bottom pointer continues the grey shade band via a diagonal gradient. The pointer is a bit bigger (17px, sm 13px).

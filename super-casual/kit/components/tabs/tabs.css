@@ -55,13 +55,14 @@
 .sc-tab[aria-selected="true"]::before {                       /* shine dot */
   content:""; position:absolute; left:7px; top:5px; width:7px; height:5px; border-radius:50%; background:rgba(255,255,255,.75);
 }
-.sc-tab > .sc-text { --fs:var(--tab-fs); font-size:var(--fs); overflow:hidden; text-overflow:ellipsis; }
+.sc-tab > .sc-text { --fs:var(--tab-fs); font-size:var(--fs); }   /* too-long labels shrink to fit (sc.js), never cut */
 .sc-tab:not([aria-selected="true"]) > .sc-text { opacity:.85; }
 .sc-tab > img[data-sc-icon] {
   flex:none; width:var(--tab-icon); height:var(--tab-icon); object-fit:contain; pointer-events:none;
   translate:var(--ox, 0%) var(--oy, 0%);
 }
 .sc-tab > img[data-flip] { transform:scaleX(-1); }
+.sc-tab.sc-tab-tight > img[data-sc-icon] { display:none; }   /* set by sc.js when the label can't fit next to the icon */
 
 .sc-tab:active, .sc-tab.sc-pressed { transform:translateY(1px) scale(.97); }
 .sc-tab:focus-visible { outline:3px solid #fff; outline-offset:2px; }

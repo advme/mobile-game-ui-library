@@ -1,6 +1,6 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.38.2-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.38.3-A**
 
 ## Next task
 **Final check: build a new screen with a fresh AI agent using only the kit.** Open a new AI session (Codex or Claude) with no history. Ask it to read `super-casual/kit/docs/introduction.html` + `registry.json` and build a small new screen (for example a "Level Select" map with locked levels and stars) in `kit/blocks/levels.html`. Write down everything that confused it, then fix the docs, manuals or registry. Also good next: a Level Select block and a Profile block.

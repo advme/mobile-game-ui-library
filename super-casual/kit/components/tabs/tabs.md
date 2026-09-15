@@ -74,7 +74,7 @@ tabs.dataset.value = 'weekly';               // attribute also works (silent)
 
 ## Rules for AI agents
 
-- Use 2–4 tabs with 1-word labels. For the main screens at the bottom of the phone, use Bottom Tab Bar.
+- Use 2–4 tabs with 1-word labels. If a label is too long, the runtime shrinks it to fit (down to 50%) and hides the tab's icon first if needed. Labels are never cut. For the main screens at the bottom of the phone, use Bottom Tab Bar.
 - Tabs are plain `<button data-value>` elements directly inside `.sc-tabs`. Do not add classes, roles or click handlers yourself.
 - Prefer `data-panel` for showing content. Otherwise listen for `change`.
 - Place tabs full width at the top of a popup body or screen middle.

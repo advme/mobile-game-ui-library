@@ -177,6 +177,7 @@
   const setAttr = (el, k, v) => { if (el.getAttribute(k) !== String(v)) el.setAttribute(k, v); };   // only real changes (no observer loops)
   const tabList = el => [...el.children].filter(c => c.tagName === 'BUTTON');
   function upgradeTabs(el) {
+    queueLong();
     const list = tabList(el);
     setAttr(el, 'role', 'tablist');
     let value = el.dataset.value;
@@ -535,6 +536,20 @@
   const LONG_TEXT = '.sc-topbar-name, .sc-row-title';
   function markLong(root = document) {
     root.querySelectorAll?.(LONG_TEXT).forEach(n => { const long = n.scrollWidth > n.clientWidth + 1; if (n.classList.contains('sc-long') !== long) n.classList.toggle('sc-long', long); });
+    // Tab labels: shrink the font until the whole word fits (min 60%) instead of cutting it
+    root.querySelectorAll?.('.sc-tab > .sc-text').forEach(span => {
+      const tab = span.parentElement, cs = getComputedStyle(tab);
+      if (!tab.clientWidth) return;
+      span.style.removeProperty('--fs'); tab.classList.remove('sc-tab-tight');
+      const icon = tab.querySelector(':scope > img[data-sc-icon]');
+      const inner = tab.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 2;
+      const withIcon = inner - (icon ? icon.offsetWidth + (parseFloat(cs.columnGap) || 0) : 0);
+      const natural = span.offsetWidth, size = parseFloat(getComputedStyle(span).fontSize);
+      if (natural <= withIcon) return;
+      let ratio = withIcon / natural;
+      if (ratio < .6 && icon) { tab.classList.add('sc-tab-tight'); ratio = inner / natural; }   // no room: drop the icon first
+      span.style.setProperty('--fs', (size * Math.max(.5, Math.min(1, ratio))).toFixed(1) + 'px');
+    });
   }
   let longQueued = false;
   const queueLong = () => { if (!longQueued) { longQueued = true; requestAnimationFrame(() => { longQueued = false; markLong(); }); } };
@@ -1123,7 +1138,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.38.2',
+    version: '0.38.3',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */

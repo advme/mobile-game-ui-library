@@ -70,6 +70,11 @@ addEventListener('load', async () => {
     $('#fixtures').append(fresh); await settle();
     check('inserted group upgrades', sel(fresh) === '1');
     check('equal widths', Math.abs(fresh.children[0].offsetWidth - fresh.children[1].offsetWidth) <= 1);
+    const narrow = document.createElement('div'); narrow.className = 'sc-tabs'; narrow.style.width = '240px';
+    narrow.innerHTML = '<button data-value="a" data-icon="coin">Coins</button><button data-value="b" data-icon="chest">Treasures</button><button data-value="c" data-icon="gem">Gems</button>';
+    $('#fixtures').append(narrow); await new Promise(r => setTimeout(r, 120));
+    check('long labels shrink to fit instead of being cut (no ellipsis)', [...narrow.children].every(t => { const sp = t.querySelector(':scope > .sc-text'), img = t.querySelector('img'); return getComputedStyle(sp).textOverflow !== 'ellipsis' && getComputedStyle(sp).overflow !== 'hidden' && sp.getBoundingClientRect().right <= t.getBoundingClientRect().right + 1; }) && parseFloat(getComputedStyle(narrow.children[1].querySelector('.sc-text')).fontSize) < 19);
+    narrow.remove(); await settle();
     let records = 0; const mo = new MutationObserver(r => records += r.length); mo.observe($('#fixtures'), { attributes: true, subtree: true, childList: true });
     await new Promise(r => setTimeout(r, 200)); mo.disconnect();
     check('no endless updates', records === 0);
