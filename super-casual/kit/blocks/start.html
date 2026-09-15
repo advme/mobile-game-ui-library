@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Block: Start — Super Casual UI Kit</title>
+<!-- BLOCK: Start / home screen. Built only from kit components. -->
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/screen/screen.css">
+<link rel="stylesheet" href="../components/topbar/topbar.css">
+<link rel="stylesheet" href="../components/level/level.css">
+<link rel="stylesheet" href="../components/counter/counter.css">
+<link rel="stylesheet" href="../components/title/title.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../components/alert/alert.css">
+<link rel="stylesheet" href="../components/tabbar/tabbar.css">
+<link rel="stylesheet" href="../components/bubble/bubble.css">
+<link rel="stylesheet" href="../components/tag/tag.css">
+<script src="../sc.js"></script>
+<style>
+  /* Layout glue only */
+  html, body { margin:0; height:100%; overflow:hidden; background:linear-gradient(#56b8ff, #7fdc6a 70%, #4aa845); }
+  #game { position:fixed; inset:0; width:100%; height:100%; display:block; }
+  .side { position:absolute; top:110px; display:flex; flex-direction:column; gap:14px; }
+  .side.left { left:0; } .side.right { right:0; }
+  .menu-middle { position:relative; width:100%; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:30px; }
+  .level-name { margin-top:-18px; }
+  .level-name > .sc-text { --fs:20px; font-size:var(--fs); }
+</style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- Content screens switched by the tab bar -->
+  <div class="sc-screen" id="homeScreen">
+    <div class="sc-screen-top">
+      <div class="sc-topbar" id="topbar" data-name="Player" data-level="12">
+        <div class="sc-counter" id="coins" data-icon="coin" data-value="349810" data-format="short" data-size="sm"></div>
+        <div class="sc-counter" data-icon="gem" data-value="120" data-plus="purple" data-size="sm"></div>
+      </div>
+    </div>
+    <div class="menu-middle">
+      <div class="side left">
+        <button class="sc-icon-button" data-icon="calendar" data-color="orange" data-alert data-variant="flat" aria-label="Daily reward, ready">Daily</button>
+        <button class="sc-icon-button" data-icon="mail" data-variant="flat" data-badge="3" data-badge-color="red" aria-label="Mail, 3 new">Mail</button>
+      </div>
+      <div class="side right">
+        <button class="sc-icon-button" data-icon="settings" data-variant="flat" aria-label="Settings">Settings</button>
+        <button class="sc-icon-button" data-icon="gift" data-variant="flat" data-tag="FREE" data-tag-color="green" aria-label="Free gift">Gift</button>
+      </div>
+      <h1 class="sc-title" data-color="gold" data-animate="drop">SKY RUN</h1>
+      <div class="level-name"><span class="sc-text" data-text="Level 12 · Sandy Beach">Level 12 · Sandy Beach</span></div>
+      <button class="sc-button" data-color="yellow" data-size="lg" id="play">PLAY</button>
+    </div>
+  </div>
+  <div class="sc-screen" id="shopScreen" data-backdrop="solid" hidden>
+    <div class="sc-screen-middle"><h1 class="sc-title" data-color="green">SHOP</h1><span class="sc-text" data-text="See blocks/shop.html">See blocks/shop.html</span></div>
+  </div>
+  <div class="sc-screen" id="rankScreen" data-backdrop="solid" hidden>
+    <div class="sc-screen-middle"><h1 class="sc-title" data-color="blue">RANK</h1></div>
+  </div>
+
+  <!-- Always-visible navigation layer -->
+  <div class="sc-screen" id="navLayer">
+    <div class="sc-screen-bottom">
+      <nav class="sc-tabbar" id="nav" data-value="home">
+        <button data-value="shop" data-icon="shop" data-panel="shopScreen" data-alert>Shop</button>
+        <button data-value="home" data-icon="home" data-panel="homeScreen">Home</button>
+        <button data-value="rank" data-icon="trophy" data-panel="rankScreen">Rank</button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Gameplay layer shown after PLAY -->
+  <div class="sc-screen" id="playHud" hidden>
+    <div class="sc-screen-top">
+      <button class="sc-icon-button" data-icon="home" data-color="sky" id="backHome" aria-label="Back to menu"></button>
+    </div>
+  </div>
+
+<script>
+  // --- Stand-in game (replace with your engine) ---
+  const canvas = document.getElementById('game'), ctx = canvas.getContext('2d');
+  let playing = false;
+  function resize() { const d = devicePixelRatio || 1; canvas.width = innerWidth * d; canvas.height = innerHeight * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
+  addEventListener('resize', resize); resize();
+  (function loop(t) { ctx.clearRect(0, 0, innerWidth, innerHeight);
+    if (playing) { ctx.beginPath(); ctx.arc(innerWidth / 2 + Math.cos(t / 300) * 120, innerHeight / 2 + Math.sin(t / 500) * 160, 30, 0, 7); ctx.fillStyle = '#f5c02e'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#050308'; ctx.stroke(); }
+    requestAnimationFrame(loop); })(0);
+
+  // --- UI wiring ---
+  const $ = id => document.getElementById(id);
+  $('play').onclick = () => { playing = true; SC.screen.hide('homeScreen'); SC.screen.hide('navLayer'); SC.screen.show('playHud'); };
+  $('backHome').onclick = () => { playing = false; SC.screen.hide('playHud'); SC.screen.show('homeScreen'); SC.screen.show('navLayer'); SC.tabbar.set($('nav'), 'home'); };
+  $('nav').addEventListener('change', e => { if (e.detail.value === 'shop') SC.setAlert($('nav').querySelector('[data-value="shop"]'), false); });
+  $('topbar').addEventListener('profile', () => console.log('open profile'));
+</script>
+</body>
+</html>

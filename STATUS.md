@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.32.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.33.0-A**
 
 ## Next task
-**Build the Start block** (`kit/blocks/start.html`, add a row to `blocks/README.md`). Home/start screen: Top Bar (avatar, level, coins, gems), game title (Screen Title gold) in the middle with a big PLAY button (yellow lg), side icon buttons (settings with Notification Dot, daily reward `calendar` with alert, shop), and a Bottom Tab Bar (Shop / Home / Rank) with `data-panel` switching to simple Shop and Rank placeholder screens. PLAY hides the menu and starts the stand-in game. Update registry `blocks[]`, STATUS "Done — blocks", docs NAV "Blocks" group and CHANGELOG.
+**Build the Reward Reveal block** (`kit/blocks/reward.html`, add a row to `blocks/README.md`). Chest-opening / new item reveal: solid dark Screen Shell, Title Banner (`NEW SKIN!` or `REWARD`, unfurl), a big item picture (kit icon, e.g. `helmet` or `chest`) that pops in with a glow, item name + rarity tag, reward slots row, and a "Tap to continue" hint; the first tap opens the chest (icon swaps chest → reward, `SC.float` of rewards), the second closes. Update registry `blocks[]`, STATUS "Done — blocks", docs NAV "Blocks" group and CHANGELOG.
 
 ## In progress
 _Nothing._
@@ -47,12 +47,13 @@ _Nothing._
 | 2 | Success | `blocks/success.html` | v0.30.0-A |
 | 3 | Fail | `blocks/fail.html` | v0.31.0-A |
 | 4 | Pause | `blocks/pause.html` | v0.32.0-A |
+| 5 | Start | `blocks/start.html` | v0.33.0-A |
 
 ## Left — components (in this order)
 _All components done._
 
 ## Left — blocks (full screens built ONLY from kit components)
-Start · Reward Reveal · Daily Reward · Settings · Shop · Loading
+Reward Reveal · Daily Reward · Settings · Shop · Loading
 (Old pre-kit versions of some screens: `super-casual/old-demos/`. Each block = one HTML file in `kit/blocks/` using only kit components + layout glue.)
 
 ## Left — other

@@ -16,3 +16,4 @@ Rules for every block:
 | Success | `success.html` | Level complete: CLEAR! title, stars, XP bar with level, rewards, Claim / x2 Claim, Home |
 | Fail | `fail.html` | Level failed: FAILED title, "So close" progress, timed continue offer (video / gems), Retry, Give up |
 | Pause | `pause.html` | Pause popup over the game: Sound / Music / Vibration toggles, Resume, Restart, Home |
+| Start | `start.html` | Home screen: Top Bar, side shortcuts (daily, mail, settings, gift), title + PLAY, Bottom Tab Bar switching screens |

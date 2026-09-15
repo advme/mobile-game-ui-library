@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.33.0-A — Start block
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `kit/blocks/start.html`, the home/start screen. It has a Top Bar (avatar + level 12 + name, coins short format, gems with +), side flat icon-button shortcuts (Daily with Notification Dot, Mail with a red count bubble, Settings, Gift with a FREE tag), a gold title with the level name, and a big yellow PLAY. An always-visible Bottom Tab Bar layer switches Home / Shop / Rank screens via `data-panel` (the Shop alert clears when opened). PLAY hides the menu layers and shows a gameplay layer with a back-home button.
+- Tested: Opened at 375×812. The title fits, and the side buttons, top bar and tab bar are inside the edges. Shop tab shows the shop screen and clears its alert, Home returns, PLAY hides menu + nav and shows the play layer, and back-home restores both.
+- Notes for next agent: Keep game titles short (about 8 characters at the default Screen Title size) or the title touches the edges.
+
 ## v0.32.0-A — Pause block
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `kit/blocks/pause.html`, a pause menu over a frozen stand-in game. A HUD pause button opens the `PAUSED` popup (LEVEL 12 sub-tag, static backdrop). It has quick settings in a panel (Sound/Music/Vibration Toggles with the new `sound`/`music` icons, right-aligned) and stacked Resume (lg green) / Restart (restart icon) / Home (home icon). Toggles fire `change` for the game to apply and save.

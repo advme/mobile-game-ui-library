@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.32.0",
+  "version": "0.33.0",
   "items": [
     {
       "name": "core",
@@ -2347,6 +2347,27 @@
         "button",
         "icon-button",
         "toggle"
+      ]
+    },
+    {
+      "name": "start",
+      "type": "registry:block",
+      "title": "Start",
+      "file": "blocks/start.html",
+      "description": "Home screen: top bar, side shortcuts with alerts/badges/tags, title + PLAY, bottom tab bar switching screens.",
+      "whenToUse": "Main menu of casual games with meta features.",
+      "components": [
+        "screen",
+        "topbar",
+        "level",
+        "counter",
+        "title",
+        "button",
+        "icon-button",
+        "alert",
+        "bubble",
+        "tag",
+        "tabbar"
       ]
     }
   ]
