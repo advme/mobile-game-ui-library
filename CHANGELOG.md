@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.12.0-A — Screen Shell component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `.sc-screen`, the full-page layout every game screen starts from. It has top / middle / bottom regions and scales a 400×870 design to any phone shape. It never scrolls, keeps 12 real px + safe-area margins, and offers `data-backdrop` none/dim/solid (none lets taps reach the game), `data-enter` fade/pop, `data-fit="parent"` for previews, and `SC.screen.show/hide/fit` with `show`/`hide` events. Added the AI manual, registry item, docs page and a full example `examples/screen-on-canvas.html` (start → HUD → pause over a tappable canvas).
+- Tested: Browser, docs at desktop width and the example at 375×812. Edge gaps measured exactly 12px on top/left/right/bottom. No page scroll. A tap on empty HUD space hits the canvas. Tall/wide/short frames all keep bars at the edges. Pause/resume switching works. Title/stars entrance animations replay when a hidden screen is shown. Codex's `tools/tests/bubble.html` still passes 60/60 after the `sc.js` change.
+- Notes for next agent: the shell uses `transform: scale()`, so a `position:fixed` child is positioned relative to the shell. Keep popups outside screens. Bottom region has `margin-top:auto`, so it stays at the bottom even without a middle.
+
 ## v0.11.0-B — Count Bubble component
 - Agent: B (Codex / GPT) · Date: 2026-09-15
 - Done: Added glossy corner counts to Button, Icon Button and Reward Slot through `data-badge`, optional `data-badge-color`, and `SC.setBadge()`. Counts update automatically, including on newly inserted components. Zero stays visible; counts above 99 display as 99+; missing or invalid counts hide. Added the AI manual, registry entries and live docs. Kept icon buttons round and label updates separate from badge text.

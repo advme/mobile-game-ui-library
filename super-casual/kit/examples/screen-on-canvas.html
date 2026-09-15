@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Screens on a game canvas — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/screen/screen.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../components/counter/counter.css">
+<link rel="stylesheet" href="../components/title/title.css">
+<script src="../sc.js"></script>
+<style>
+  html, body { margin:0; height:100%; overflow:hidden; background:#1f2d4b; }
+  #game { position:fixed; inset:0; width:100%; height:100%; display:block; }
+</style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- Start screen -->
+  <div class="sc-screen" data-backdrop="dim" id="start">
+    <div class="sc-screen-top" data-align="end">
+      <div class="sc-counter" data-icon="coin" data-value="0" id="coins"></div>
+    </div>
+    <div class="sc-screen-middle">
+      <h1 class="sc-title" data-color="gold" data-animate="drop">TAP BALLS</h1>
+    </div>
+    <div class="sc-screen-bottom">
+      <button class="sc-button" data-color="yellow" data-size="lg" id="play">PLAY</button>
+    </div>
+  </div>
+
+  <!-- Gameplay HUD: no backdrop, so taps on empty space reach the canvas -->
+  <div class="sc-screen" id="hud" hidden>
+    <div class="sc-screen-top">
+      <div class="sc-counter" data-icon="coin" data-value="0" id="hudCoins"></div>
+      <button class="sc-icon-button" data-icon="pause" aria-label="Pause" id="pause"></button>
+    </div>
+  </div>
+
+  <!-- Pause -->
+  <div class="sc-screen" data-backdrop="dim" data-enter="pop" id="paused" hidden>
+    <div class="sc-screen-middle">
+      <h1 class="sc-title" data-color="blue">PAUSED</h1>
+      <button class="sc-button" data-color="green" data-size="lg" id="resume">Resume</button>
+      <button class="sc-button" data-color="red" data-size="sm" id="quit">Quit</button>
+    </div>
+  </div>
+
+<script>
+  // --- Stand-in game: tap the balls to earn coins ---
+  const canvas = document.getElementById('game'), ctx = canvas.getContext('2d');
+  let W, H, running = false, coins = 0;
+  function resize() { const d = devicePixelRatio || 1; W = innerWidth; H = innerHeight; canvas.width = W * d; canvas.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
+  addEventListener('resize', resize); resize();
+  const colors = ['#01bcff', '#15f15c', '#f5c02e', '#f42e48', '#a352f2'];
+  const balls = Array.from({ length: 10 }, (_, i) => ({ x: Math.random() * W, y: Math.random() * H, r: 22 + Math.random() * 18, vx: Math.random() - .5, vy: Math.random() - .5, c: colors[i % 5] }));
+  (function loop() {
+    ctx.fillStyle = '#1f2d4b'; ctx.fillRect(0, 0, W, H);
+    for (const b of balls) {
+      if (running) { b.x += b.vx * 3; b.y += b.vy * 3; }
+      if (b.x < b.r || b.x > W - b.r) b.vx *= -1;
+      if (b.y < b.r || b.y > H - b.r) b.vy *= -1;
+      ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fillStyle = b.c; ctx.fill();
+      ctx.lineWidth = 3; ctx.strokeStyle = '#050308'; ctx.stroke();
+    }
+    requestAnimationFrame(loop);
+  })();
+  canvas.addEventListener('pointerdown', e => {
+    if (!running) return;
+    const hit = balls.find(b => Math.hypot(b.x - e.clientX, b.y - e.clientY) < b.r);
+    if (hit) { hit.x = Math.random() * W; hit.y = Math.random() * H; SC.setValue(document.getElementById('hudCoins'), coins += 10); }
+  });
+
+  // --- Screens ---
+  const go = (from, to) => { SC.screen.hide(from); SC.screen.show(to); };
+  document.getElementById('play').onclick   = () => { running = true;  go('start', 'hud'); };
+  document.getElementById('pause').onclick  = () => { running = false; go('hud', 'paused'); };
+  document.getElementById('resume').onclick = () => { running = true;  go('paused', 'hud'); };
+  document.getElementById('quit').onclick   = () => { running = false; SC.setValue(document.getElementById('coins'), coins); go('paused', 'start'); };
+</script>
+</body>
+</html>

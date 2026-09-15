@@ -54,7 +54,7 @@ Copy the pattern of an existing component (e.g. `progress`, `timer`):
 - **Icons are chosen by name** (`data-icon="coin"`). Only use names listed in `registry.json → icons`.
 - **Round glossy buttons** use a full circular face (no bottom lip) so they never look like ovals.
 - **Component default colors** must use `:where(...)` so `data-color` can override them.
-- **Mobile first:** full-page screens never scroll, edge margins are real pixels (12px), and taps must give press feedback on iOS (`sc.js` handles it).
+- **Mobile first:** every full-page UI is one `.sc-screen` (Screen Shell, no custom resize code); full-page screens never scroll, edge margins are real pixels (12px), and taps must give press feedback on iOS (`sc.js` handles it).
 - Reference screenshots from other games (`_archive/references/`) are **inspiration only**. Never copy their exact art, and never commit them.
 
 ## 6. Git workflow

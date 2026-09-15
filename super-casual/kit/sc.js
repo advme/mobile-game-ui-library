@@ -25,7 +25,8 @@
   const TIMERS = '.sc-timer';
   const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot';
   const MESSAGES = '.sc-popup-message, .sc-popup-value';
-  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}`;
+  const SCREENS = '.sc-screen';
+  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}`;
   const PRESSABLE = '.sc-button, .sc-icon-button, .sc-counter-plus';
 
   const script = document.currentScript;
@@ -431,6 +432,41 @@
     if (top && top.dataset.backdrop !== 'static') popup.close(top);
   });
 
+  /* ---------- Screen Shell ---------- */
+  // Scale the design (default 400×870) to fit, and stretch the shell to the real screen shape.
+  const parentWatch = typeof ResizeObserver === 'function' ? new ResizeObserver(() => screen.fit()) : null;
+  function upgradeScreen(el) {
+    const W = Number(el.dataset.width) || 400, H = Number(el.dataset.height) || 870;
+    const inParent = el.dataset.fit === 'parent' && el.parentElement;
+    let vw = innerWidth, vh = innerHeight;
+    if (inParent) {
+      const p = el.parentElement;
+      if (parentWatch && !p.__scWatched) { p.__scWatched = true; parentWatch.observe(p); }
+      vw = p.clientWidth; vh = p.clientHeight;
+    }
+    if (!vw || !vh) return;
+    const s = Math.min(vw / W, vh / H);
+    el.style.setProperty('--sc-s', s);
+    el.style.setProperty('--sc-w', vw / s + 'px');
+    el.style.setProperty('--sc-h', vh / s + 'px');
+  }
+  const screen = {
+    get(target) { return typeof target === 'string' ? document.getElementById(target) : target; },
+    show(target) {
+      const el = screen.get(target); if (!el) return;
+      el.classList.remove('sc-closing'); upgradeScreen(el); el.hidden = false;
+      el.dispatchEvent(new CustomEvent('show', { bubbles: true }));
+    },
+    hide(target) {
+      const el = screen.get(target); if (!el || el.hidden || el.classList.contains('sc-closing')) return;
+      el.classList.add('sc-closing');
+      setTimeout(() => { el.hidden = true; el.classList.remove('sc-closing'); el.dispatchEvent(new CustomEvent('hide', { bubbles: true })); }, 160);
+    },
+    fit() { document.querySelectorAll(SCREENS).forEach(upgradeScreen); },
+  };
+  addEventListener('resize', () => screen.fit());
+  addEventListener('orientationchange', () => setTimeout(screen.fit, 100));
+
   /* ---------- upgrade pipeline ---------- */
   function upgradeOne(el) {
     if (el.matches(BADGE_HOSTS)) upgradeBubble(el);
@@ -441,6 +477,7 @@
     if (el.matches(TITLES)) return upgradeTitle(el);
     if (el.matches(STARS)) return upgradeStars(el);
     if (el.matches(TIMERS)) return upgradeTimer(el);
+    if (el.matches(SCREENS)) return upgradeScreen(el);
     if (el.matches(MESSAGES)) return upgradeText(el);
     upgradeText(el);
     if (el.matches(ICON_COMPONENTS)) upgradeIcon(el);
@@ -466,6 +503,7 @@
         else if (r.target.matches(POPUPS)) upgradePopup(r.target);
         else if (r.target.matches(PROGRESS)) upgradeProgress(r.target);
         else if (r.target.matches(STARS)) upgradeStars(r.target);
+        else if (r.target.matches(SCREENS)) upgradeScreen(r.target);
         else if (r.target.matches(TIMERS)) { if (r.attributeName === 'data-seconds') timer.reset(r.target); else upgradeTimer(r.target); }
         else if (r.target.matches(ICON_COMPONENTS)) upgradeIcon(r.target);
       } else {
@@ -476,7 +514,7 @@
     }
   }).observe(document.documentElement, {
     childList: true, subtree: true, characterData: true,
-    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color'],
+    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-width', 'data-height', 'data-fit'],
   });
 
   // Press feedback (delegated, so it works for dynamically added components)
@@ -493,7 +531,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.11.0',
+    version: '0.12.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */
@@ -527,6 +565,8 @@
     format: formatNumber,
     /** Popups: SC.popup.open('id') · SC.popup.close('id') · SC.popup.toggle('id') */
     popup,
+    /** Full-page screens: SC.screen.show('win') · SC.screen.hide('win') · SC.screen.fit() */
+    screen,
     /** Timers: SC.timer.start(el) · pause(el) · reset(el, seconds?) · add(el, seconds) */
     timer,
     /** Floating feedback text: SC.float('+50', event | element | {x, y}, { color, size, icon, style }) */

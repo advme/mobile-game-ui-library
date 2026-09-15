@@ -1,0 +1,76 @@
+/*
+  Screen Shell — Super Casual UI Kit
+  Requires: core.css, sc.js
+
+  Full-page mobile layout that floats above the game canvas. Never scrolls.
+  Content is designed at 400×870 and scaled to fit any phone; the shell itself
+  stretches to the real screen shape, so bars stick to the real edges.
+
+  <div class="sc-screen" data-backdrop="dim" id="win" hidden>
+    <div class="sc-screen-top">…</div>
+    <div class="sc-screen-middle">…</div>
+    <div class="sc-screen-bottom">…</div>
+  </div>
+
+  data-width      design width in px                                      default: 400
+  data-height     design height in px                                     default: 870
+  data-backdrop   none (game visible, taps pass through empty space)
+                  | dim (dark see-through, blocks the game)
+                  | solid (opaque dark background)                         default: none
+  data-fit        screen (fixed, whole viewport) | parent (fills the parent box, for previews)   default: screen
+  data-enter      fade | pop | none   animation when shown                  default: fade
+  hidden          not shown; show with SC.screen.show(id)
+
+  Regions (all optional):
+  .sc-screen-top      bar at the top edge     (row; data-align between | start | center | end, default between)
+  .sc-screen-middle   fills the rest, content centered (column)
+  .sc-screen-bottom   bar at the bottom edge  (row; data-align, default center)
+  data-stack          on top/bottom → vertical column instead of a row
+
+  Edge margins are 12 real pixels + the phone's safe area (notch, home bar), at any scale.
+  Events: "show" · "hide"
+  JS:     SC.screen.show(el|id) · hide(el|id) · fit()
+*/
+.sc-screen {
+  --sc-s:1;                                        /* scale, set by sc.js */
+  --gap:14px;
+  position:fixed; left:0; top:0; z-index:900; box-sizing:border-box;
+  width:var(--sc-w, 100vw); height:var(--sc-h, 100vh); transform:scale(var(--sc-s)); transform-origin:0 0;
+  display:flex; flex-direction:column; overflow:hidden;
+  padding:
+    calc((12px + env(safe-area-inset-top, 0px)) / var(--sc-s))
+    calc((12px + env(safe-area-inset-right, 0px)) / var(--sc-s))
+    calc((12px + env(safe-area-inset-bottom, 0px)) / var(--sc-s))
+    calc((12px + env(safe-area-inset-left, 0px)) / var(--sc-s));
+  font-family:var(--sc-font); user-select:none; -webkit-user-select:none;
+  pointer-events:none;                             /* empty space lets taps reach the game */
+  animation:sc-screen-fade .2s ease-out;
+}
+.sc-screen[data-fit="parent"] { position:absolute; }
+.sc-screen[hidden] { display:none; }
+
+/* Backdrops */
+.sc-screen[data-backdrop="dim"]   { background:rgba(6,10,22,.7); pointer-events:auto; }
+.sc-screen[data-backdrop="solid"] { background:radial-gradient(ellipse 80% 35% at 50% 30%, rgba(255,214,80,.1), transparent 70%), linear-gradient(#131426, #0c1c29); pointer-events:auto; }
+
+/* Regions */
+.sc-screen-top, .sc-screen-bottom {
+  flex:none; display:flex; align-items:center; justify-content:space-between; gap:var(--gap); min-height:0;
+}
+.sc-screen-bottom { justify-content:center; margin-top:auto; }   /* stays at the bottom even without a middle */
+.sc-screen-top[data-align="start"],  .sc-screen-bottom[data-align="start"]   { justify-content:flex-start; }
+.sc-screen-top[data-align="center"], .sc-screen-bottom[data-align="center"]  { justify-content:center; }
+.sc-screen-top[data-align="end"],    .sc-screen-bottom[data-align="end"]     { justify-content:flex-end; }
+.sc-screen-top[data-align="between"], .sc-screen-bottom[data-align="between"] { justify-content:space-between; }
+.sc-screen-top[data-stack], .sc-screen-bottom[data-stack] { flex-direction:column; }
+.sc-screen-middle {
+  flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--gap);
+}
+.sc-screen-top > *, .sc-screen-middle > *, .sc-screen-bottom > * { pointer-events:auto; }
+
+/* Enter / leave */
+.sc-screen[data-enter="pop"] > * { animation:sc-screen-pop .28s cubic-bezier(.3,1.5,.6,1) backwards; }
+.sc-screen[data-enter="none"], .sc-screen[data-enter="none"] > * { animation:none; }
+.sc-screen.sc-closing { animation:sc-screen-fade .16s ease-in reverse forwards; }
+@keyframes sc-screen-fade { from { opacity:0; } }
+@keyframes sc-screen-pop  { from { opacity:0; transform:scale(.85); } }

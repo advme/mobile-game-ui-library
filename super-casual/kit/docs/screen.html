@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Screen Shell — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/screen/screen.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../components/counter/counter.css">
+<link rel="stylesheet" href="../components/progress/progress.css">
+<link rel="stylesheet" href="../components/title/title.css">
+<link rel="stylesheet" href="../components/stars/stars.css">
+<link rel="stylesheet" href="../components/timer/timer.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+  /* Docs only: a phone-shaped box standing in for the game canvas */
+  .phone { position:relative; overflow:hidden; width:260px; height:560px; border-radius:26px; border:3px solid #050308;
+           background:linear-gradient(#5ec8ff, #9be37a 62%, #5dbb4a); flex:none; }
+  .phone.wide { width:360px; height:560px; }
+  .phone.short { width:300px; height:420px; }
+  .phone .game { position:absolute; left:50%; top:58%; width:56px; height:56px; margin:-28px; border-radius:50%; background:#f5c02e; border:3px solid #050308; }
+  .phone-row { display:flex; gap:18px; flex-wrap:wrap; justify-content:center; align-items:flex-start; }
+  .phone-cap { font:600 12px system-ui; color:#b8c4e0; text-align:center; margin-top:8px; }
+</style>
+</head>
+<body>
+<script>
+  SCDocs.page({
+    title: 'Screen Shell',
+    lead: 'The full-page layout every game screen starts from — a top bar, a centered middle and a bottom bar. Fits any phone, never scrolls, keeps 12px from the edges.',
+    hero: `<div class="phone">
+  <div class="game"></div>
+  <div class="sc-screen" data-fit="parent">
+    <div class="sc-screen-top">
+      <div class="sc-counter" data-icon="coin" data-value="1250"></div>
+      <button class="sc-icon-button" data-icon="pause" aria-label="Pause"></button>
+    </div>
+    <div class="sc-screen-middle"></div>
+    <div class="sc-screen-bottom">
+      <button class="sc-button" data-color="yellow" data-size="lg">PLAY</button>
+    </div>
+  </div>
+</div>`,
+    css: ['components/screen/screen.css'],
+    usageNote: 'Put it above your game canvas. Add only the regions you need. The shell scales itself; you never write resize code.',
+    usage: `<canvas id="game"></canvas>
+
+<div class="sc-screen">
+  <div class="sc-screen-top">…</div>      <!-- sticks to the top edge -->
+  <div class="sc-screen-middle">…</div>   <!-- centered in the space left -->
+  <div class="sc-screen-bottom">…</div>   <!-- sticks to the bottom edge -->
+</div>`,
+    examples: [
+      { title:'Gameplay HUD', desc:'data-backdrop="none" (default): the game stays visible and taps on empty space reach the game.',
+        html:`<div class="phone">
+  <div class="game"></div>
+  <div class="sc-screen" data-fit="parent">
+    <div class="sc-screen-top">
+      <div class="sc-counter" data-icon="coin" data-value="1250"></div>
+      <div class="sc-timer" data-variant="pill" data-seconds="95"></div>
+      <button class="sc-icon-button" data-icon="pause" aria-label="Pause"></button>
+    </div>
+    <div class="sc-screen-bottom">
+      <div class="sc-progress" data-value="60" data-color="green" data-icon="heart" style="width:100%"></div>
+    </div>
+  </div>
+</div>` },
+      { title:'Result screen', desc:'data-backdrop="dim" darkens the game and blocks taps. data-stack puts the bottom buttons in a column.',
+        html:`<div class="phone">
+  <div class="game"></div>
+  <div class="sc-screen" data-fit="parent" data-backdrop="dim">
+    <div class="sc-screen-top" data-align="end">
+      <div class="sc-counter" data-icon="gem" data-value="85"></div>
+    </div>
+    <div class="sc-screen-middle">
+      <h1 class="sc-title" data-color="gold" data-animate="drop">CLEAR!</h1>
+      <div class="sc-stars" data-value="2" data-layout="arc" data-size="lg" data-animate></div>
+    </div>
+    <div class="sc-screen-bottom" data-stack>
+      <button class="sc-button" data-color="green" data-size="lg">Next</button>
+      <button class="sc-button" data-color="dark" data-size="sm">Home</button>
+    </div>
+  </div>
+</div>` },
+      { title:'Any phone shape', desc:'Same markup on a tall phone, a wide tablet and a short screen. Bars always hug the real edges; the middle stays centered.',
+        html:`<div class="phone-row">
+  <div><div class="phone">
+    <div class="sc-screen" data-fit="parent" data-backdrop="solid">
+      <div class="sc-screen-top"><div class="sc-counter" data-icon="coin" data-value="500"></div><button class="sc-icon-button" data-icon="settings" aria-label="Settings"></button></div>
+      <div class="sc-screen-middle"><h1 class="sc-title" data-color="gold">LEVEL 5</h1></div>
+      <div class="sc-screen-bottom"><button class="sc-button" data-color="yellow" data-size="lg">PLAY</button></div>
+    </div>
+  </div><div class="phone-cap">tall phone</div></div>
+  <div><div class="phone wide">
+    <div class="sc-screen" data-fit="parent" data-backdrop="solid">
+      <div class="sc-screen-top"><div class="sc-counter" data-icon="coin" data-value="500"></div><button class="sc-icon-button" data-icon="settings" aria-label="Settings"></button></div>
+      <div class="sc-screen-middle"><h1 class="sc-title" data-color="gold">LEVEL 5</h1></div>
+      <div class="sc-screen-bottom"><button class="sc-button" data-color="yellow" data-size="lg">PLAY</button></div>
+    </div>
+  </div><div class="phone-cap">tablet</div></div>
+  <div><div class="phone short">
+    <div class="sc-screen" data-fit="parent" data-backdrop="solid">
+      <div class="sc-screen-top"><div class="sc-counter" data-icon="coin" data-value="500"></div><button class="sc-icon-button" data-icon="settings" aria-label="Settings"></button></div>
+      <div class="sc-screen-middle"><h1 class="sc-title" data-color="gold">LEVEL 5</h1></div>
+      <div class="sc-screen-bottom"><button class="sc-button" data-color="yellow" data-size="lg">PLAY</button></div>
+    </div>
+  </div><div class="phone-cap">short screen</div></div>
+</div>` },
+      { title:'Live: switch screens', desc:'Tap Pause to show the pause screen, Resume to hide it. Screens start with hidden and use SC.screen.show / hide.',
+        html:`<div class="phone">
+  <div class="game"></div>
+  <div class="sc-screen" data-fit="parent" id="hud">
+    <div class="sc-screen-top">
+      <div class="sc-counter" data-icon="coin" data-value="320"></div>
+      <button class="sc-icon-button" data-icon="pause" aria-label="Pause" id="pauseBtn"></button>
+    </div>
+  </div>
+  <div class="sc-screen" data-fit="parent" data-backdrop="dim" data-enter="pop" id="pauseScreen" hidden>
+    <div class="sc-screen-middle">
+      <h1 class="sc-title" data-color="blue">PAUSED</h1>
+      <button class="sc-button" data-color="green" data-size="lg" id="resumeBtn">Resume</button>
+      <button class="sc-button" data-color="red" data-size="sm">Quit</button>
+    </div>
+  </div>
+</div>`,
+        setup(preview) {
+          const hud = preview.querySelector('#hud'), pause = preview.querySelector('#pauseScreen');
+          preview.querySelector('#pauseBtn').onclick = () => { SC.screen.hide(hud); SC.screen.show(pause); };
+          preview.querySelector('#resumeBtn').onclick = () => { SC.screen.hide(pause); SC.screen.show(hud); };
+        } },
+    ],
+    api: [
+      ['data-backdrop', 'none dim solid', 'none', 'none = game visible, taps on empty space reach the game. dim = dark see-through, blocks the game. solid = opaque dark background.'],
+      ['data-width', 'px', '400', 'Design width. Content is sized for this and scaled to fit.'],
+      ['data-height', 'px', '870', 'Design height.'],
+      ['data-fit', 'screen parent', 'screen', 'screen = the whole phone screen. parent = fills its parent box (previews only).'],
+      ['data-enter', 'fade pop none', 'fade', 'Animation when the screen is shown.'],
+      ['hidden', '', '', 'Not shown. Use SC.screen.show(id).'],
+      ['.sc-screen-top / -bottom', 'between start center end', 'between / center', 'data-align on the bar. Row of items at the edge; add data-stack for a column.'],
+      ['.sc-screen-middle', '', '', 'Takes the space left, content centered in a column.'],
+    ],
+    js: `SC.screen.show('pause');   // show a hidden screen (fires "show")
+SC.screen.hide('hud');     // hide with a short fade (fires "hide")
+SC.screen.fit();           // re-measure (only needed if you resize a parent box yourself)`,
+    rules: [
+      '<b>Every full-page UI</b> (HUD, start, pause, success, fail, shop) is one <code class="inline">.sc-screen</code>. Never write your own resize or scale code.',
+      '<b>Never scroll.</b> If content does not fit 400×870, remove or shrink content — do not add overflow.',
+      '<b>HUD</b>: <code class="inline">data-backdrop="none"</code> so taps reach the game. <b>Menus and results</b>: <code class="inline">dim</code> (over the game) or <code class="inline">solid</code> (game hidden).',
+      '<b>Resources and pause</b> go in the top bar. <b>Main actions</b> go in the bottom bar or low in the middle. Titles and stars go in the middle.',
+      '<b>Do not add edge margins</b> — the shell already keeps 12px plus the notch/home-bar safe area.',
+      '<b>One screen visible at a time</b> per layer; switch with <code class="inline">SC.screen.show / hide</code>. Put <code class="inline">.sc-popup</code> outside the screen, not inside it.',
+      'Add <code class="inline">viewport-fit=cover</code> to the page viewport meta so safe areas work on iPhone.',
+    ],
+  });
+</script>
+</body>
+</html>

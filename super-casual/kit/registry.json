@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "items": [
     {
       "name": "core",
@@ -203,7 +203,7 @@
         "label": {
           "type": "text",
           "optional": true,
-          "description": "Plain text inside \u2192 label under the icon (use with flat)"
+          "description": "Plain text inside → label under the icon (use with flat)"
         },
         "data-badge": {
           "type": "number",
@@ -262,7 +262,7 @@
       "type": "registry:ui",
       "title": "Resource Counter",
       "description": "Icon + dark pill + number, with optional \"+\" button. Builds itself from attributes.",
-      "whenToUse": "Showing coins, gems, energy, lives, tickets \u2014 usually top-right of the HUD or home screen.",
+      "whenToUse": "Showing coins, gems, energy, lives, tickets — usually top-right of the HUD or home screen.",
       "files": [
         "components/counter/counter.css"
       ],
@@ -895,7 +895,7 @@
       "type": "registry:ui",
       "title": "Floating Text",
       "description": "JavaScript-only feedback text that floats up and fades at a tap, element or screen position.",
-      "whenToUse": "Points, coins, damage, healing, XP, combos \u2014 anywhere the player needs instant feedback.",
+      "whenToUse": "Points, coins, damage, healing, XP, combos — anywhere the player needs instant feedback.",
       "files": [
         "components/float/float.css"
       ],
@@ -1026,6 +1026,103 @@
         {
           "title": "Update or remove",
           "js": "SC.setBadge(booster, 2); SC.setBadge(booster, null);"
+        }
+      ]
+    },
+    {
+      "name": "screen",
+      "type": "registry:layout",
+      "title": "Screen Shell",
+      "description": "Full-page mobile layout above the game canvas: top bar, centered middle, bottom bar. Scales a 400x870 design to any phone, never scrolls, keeps 12px + safe-area edge margins.",
+      "whenToUse": "The root of every full-page UI: gameplay HUD, start, pause, success, fail, shop, settings, loading.",
+      "files": [
+        "components/screen/screen.css"
+      ],
+      "docs": "components/screen/screen.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<div class=\"sc-screen\" data-backdrop=\"dim\" id=\"win\" hidden>\n  <div class=\"sc-screen-top\">…</div>\n  <div class=\"sc-screen-middle\">…</div>\n  <div class=\"sc-screen-bottom\">…</div>\n</div>",
+      "props": {
+        "data-backdrop": {
+          "type": "enum",
+          "values": [
+            "none",
+            "dim",
+            "solid"
+          ],
+          "default": "none",
+          "description": "none = game visible and tappable (HUD); dim = dark see-through, blocks game; solid = opaque dark"
+        },
+        "data-width": {
+          "type": "number",
+          "default": 400,
+          "description": "Design width in px"
+        },
+        "data-height": {
+          "type": "number",
+          "default": 870,
+          "description": "Design height in px"
+        },
+        "data-fit": {
+          "type": "enum",
+          "values": [
+            "screen",
+            "parent"
+          ],
+          "default": "screen",
+          "description": "parent = fill the parent box (previews only)"
+        },
+        "data-enter": {
+          "type": "enum",
+          "values": [
+            "fade",
+            "pop",
+            "none"
+          ],
+          "default": "fade"
+        },
+        "hidden": {
+          "type": "boolean",
+          "optional": true,
+          "description": "Start hidden; show with SC.screen.show"
+        }
+      },
+      "parts": {
+        ".sc-screen-top": "Row at the top edge. data-align between|start|center|end (default between); data-stack = column.",
+        ".sc-screen-middle": "Column filling the free space, content centered.",
+        ".sc-screen-bottom": "Row at the bottom edge. data-align (default center); data-stack = column."
+      },
+      "events": {
+        "show": "Screen was shown",
+        "hide": "Screen finished hiding"
+      },
+      "js": {
+        "SC.screen.show(el|id)": "Show a hidden screen",
+        "SC.screen.hide(el|id)": "Fade out and hide",
+        "SC.screen.fit()": "Re-measure all screens"
+      },
+      "rules": [
+        "Every full-page UI is one .sc-screen; never write custom scale/resize code or position:fixed layouts.",
+        "Never scroll; if content does not fit 400x870, remove or shrink it.",
+        "HUD: data-backdrop none. Menus/results over the game: dim. Screens replacing the game: solid.",
+        "Resources and pause in the top bar; main actions in the bottom bar; titles, stars, rewards in the middle.",
+        "Do not add edge margins or safe-area padding. Add viewport-fit=cover to the viewport meta.",
+        "One screen per layer at a time; switch with SC.screen.show/hide. Keep .sc-popup outside .sc-screen.",
+        "Size content for the 400px design width (width:100% inside a region, never 100vw)."
+      ],
+      "examples": [
+        {
+          "title": "Gameplay HUD",
+          "html": "<div class=\"sc-screen\" id=\"hud\">\n  <div class=\"sc-screen-top\">\n    <div class=\"sc-counter\" data-icon=\"coin\" data-value=\"1250\"></div>\n    <button class=\"sc-icon-button\" data-icon=\"pause\" aria-label=\"Pause\"></button>\n  </div>\n</div>"
+        },
+        {
+          "title": "Result screen",
+          "html": "<div class=\"sc-screen\" data-backdrop=\"dim\" id=\"win\" hidden>\n  <div class=\"sc-screen-middle\">\n    <h1 class=\"sc-title\" data-color=\"gold\" data-animate=\"drop\">CLEAR!</h1>\n    <div class=\"sc-stars\" data-value=\"3\" data-layout=\"arc\" data-size=\"lg\" data-animate></div>\n  </div>\n  <div class=\"sc-screen-bottom\" data-stack>\n    <button class=\"sc-button\" data-color=\"green\" data-size=\"lg\">Next</button>\n  </div>\n</div>"
+        },
+        {
+          "title": "Switch screens",
+          "js": "SC.screen.hide('hud'); SC.screen.show('win');"
         }
       ]
     }
