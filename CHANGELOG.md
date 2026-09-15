@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.38.4-A — Hint Bubble: flat (no 3D shade)
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: At the owner's request, removed the grey bottom shade band (`inset 0 -3px #d9dff0`) from the Hint Bubble and its matching gradient in the bottom pointer. Bubbles are now flat white with the dark outline. Pointer geometry (continuous outline) is unchanged.
+- Tested: All 4 pointer directions + small size at 2.2× zoom. `tools/tests/hint.html` 15/15.
+- Notes for next agent: The owner prefers hint bubbles flat. Don't add 3D shading back to them.
+
 ## v0.38.3-A — Tabs: long labels no longer cut in half
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: The owner reported tab labels like "Chests"/"Inbox" showing "Ch…" with the dark outline copy still full, so the text looked broken. Removed `overflow:hidden; text-overflow:ellipsis` from `.sc-tab > .sc-text`. `markLong` in `sc.js` now fits tab labels: it measures the room and shrinks the label (`--fs`) so the whole word fits. If it would go below 60% it hides the tab icon (`.sc-tab-tight`) and refits, never below 50%. It runs when tabs build/change, on resize and after fonts load.

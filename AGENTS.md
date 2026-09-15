@@ -55,6 +55,7 @@ Copy the pattern of an existing component (e.g. `progress`, `timer`):
 - **No sharp corners.** Every free corner is slightly rounded. Corners where a shape attaches to another element (e.g. a tag hanging from a header) stay sharp. Never use `clip-path: polygon()`.
 - **Never draw image assets with code** (icons, items, characters, badges with pictures). Put a grey placeholder, write an image-generation prompt for the owner, then crop the sheet they return (`tools/crop_sheet.py`) and run `tools/icon_offsets.py`.
 - **Icons are chosen by name** (`data-icon="coin"`). Only use names listed in `registry.json → icons`.
+- **Hint bubbles are flat white** with the outline only (no 3D shade band).
 - **Round glossy buttons** use a full circular face (no bottom lip) so they never look like ovals.
 - **Component default colors** must use `:where(...)` so `data-color` can override them.
 - **Never use `text-overflow: ellipsis` on outlined `.sc-text`** (its outline copy isn't cut and leaves a black smudge). Clip and fade instead (`.sc-long` pattern).

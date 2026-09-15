@@ -21,7 +21,7 @@
   position:relative; display:inline-block; box-sizing:border-box; max-width:230px; width:max-content;
   padding:calc(var(--h-fs) * .45) calc(var(--h-fs) * .85) calc(var(--h-fs) * .55);
   border:var(--sc-line) solid var(--sc-outline); border-radius:calc(var(--h-fs) * .8);
-  background:#fff; box-shadow:inset 0 -3px 0 #d9dff0;
+  background:#fff;   /* flat: no 3D shade */
   font:900 var(--h-fs)/1.2 var(--sc-font); color:#1d1a2e; text-align:center; white-space:normal; overflow-wrap:break-word;
   user-select:none; -webkit-user-select:none; pointer-events:none;
 }
@@ -38,10 +38,9 @@
 }
 .sc-hint::before { background:var(--sc-outline); }
 .sc-hint::after  { background:#fff; }
-/* Bubble above the target → pointer at the bottom (continues the bottom shade band) */
+/* Bubble above the target → pointer at the bottom */
 .sc-hint:is(:not([data-pos]), [data-pos="top"])::before { left:calc(var(--ax) - var(--arrow) / 2); bottom:calc(var(--arrow) / -2 - var(--ad) / 2); }
-.sc-hint:is(:not([data-pos]), [data-pos="top"])::after  { left:calc(var(--ax) - var(--arrow) / 2); bottom:calc(var(--arrow) / -2 + var(--ad) / 2);
-  background:linear-gradient(to bottom right, #fff calc(var(--ah) + var(--ad) / 2 - 3px), #d9dff0 0 calc(var(--ah) + var(--ad) / 2), #fff 0); }
+.sc-hint:is(:not([data-pos]), [data-pos="top"])::after  { left:calc(var(--ax) - var(--arrow) / 2); bottom:calc(var(--arrow) / -2 + var(--ad) / 2); }
 /* Bubble below the target → pointer on top */
 .sc-hint[data-pos="bottom"]::before { left:calc(var(--ax) - var(--arrow) / 2); top:calc(var(--arrow) / -2 - var(--ad) / 2); }
 .sc-hint[data-pos="bottom"]::after  { left:calc(var(--ax) - var(--arrow) / 2); top:calc(var(--arrow) / -2 + var(--ad) / 2); }
