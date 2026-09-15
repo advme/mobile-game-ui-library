@@ -1,0 +1,116 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slider regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/screen/screen.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/slider/slider.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>
+body { margin:20px; font:14px system-ui; background:#243453; color:white; }
+#fixtures { width:320px; display:flex; flex-direction:column; gap:12px; padding:12px; }
+#shellBox { position:relative; width:200px; height:435px; overflow:hidden; margin:12px; }
+li { margin:6px 0; } .fail { color:#ff9da7; }
+</style>
+<h1>Slider checks</h1>
+<p id="summary">Running…</p>
+<div id="fixtures">
+  <div id="basic" class="sc-slider" data-value="40" aria-label="Basic"></div>
+  <div id="range" class="sc-slider" data-min="1" data-max="5" data-value="9" data-label="value" aria-label="Range"></div>
+  <div id="stepped" class="sc-slider" data-step="0.5" data-max="2" data-value="1.3" aria-label="Stepped"></div>
+  <div id="off" class="sc-slider" data-value="50" disabled aria-label="Disabled"></div>
+  <fieldset disabled style="border:0;padding:0;margin:0"><div id="fs" class="sc-slider" data-value="20" aria-label="Fieldset"></div></fieldset>
+</div>
+<div id="shellBox">
+  <div class="sc-screen" data-fit="parent"><div class="sc-screen-middle" style="width:100%">
+    <div id="scaled" class="sc-slider" data-value="0" aria-label="Scaled"></div>
+  </div></div>
+</div>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const settle = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  const events = el => { const log = []; el.addEventListener('input', e => log.push('i' + e.detail.value)); el.addEventListener('change', e => log.push('c' + e.detail.value)); return log; };
+  const key = (el, k) => el.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
+  const pointer = (el, type, x, id = 1) => el.dispatchEvent(new PointerEvent(type, { clientX: x, clientY: el.getBoundingClientRect().top + 10, pointerId: id, bubbles: true, cancelable: true, button: 0 }));
+  const barX = (el, p) => { const r = el.querySelector('.sc-slider-bar').getBoundingClientRect(); return r.left + r.width * p; };
+  try {
+    const basic = $('#basic');
+    check('builds bar, track, fill, thumb', !!basic.querySelector('.sc-slider-bar .sc-slider-track .sc-slider-fill') && !!basic.querySelector('.sc-slider-thumb'));
+    check('role and aria values', basic.getAttribute('role') === 'slider' && basic.tabIndex === 0 && basic.getAttribute('aria-valuenow') === '40' && basic.getAttribute('aria-valuemin') === '0' && basic.getAttribute('aria-valuemax') === '100');
+    check('--p matches value', basic.style.getPropertyValue('--p') === '0.4');
+    check('no label unless data-label', !basic.querySelector('.sc-slider-value') && !basic.hasAttribute('aria-valuetext'));
+    check('aria-label untouched', basic.getAttribute('aria-label') === 'Basic');
+
+    const range = $('#range');
+    check('value above max clamps to max', range.dataset.value === '5' && SC.slider.get(range) === 5);
+    check('data-label="value" shows number + valuetext', range.querySelector('.sc-slider-value').textContent === '5' && range.getAttribute('aria-valuetext') === '5');
+    check('decimal step snaps (1.3 → 1.5)', $('#stepped').dataset.value === '1.5');
+
+    // keyboard
+    let log = events(basic);
+    key(basic, 'ArrowRight'); key(basic, 'ArrowUp');
+    check('arrows step + fire input and change', basic.dataset.value === '42' && log.join() === 'i41,c41,i42,c42');
+    key(basic, 'PageDown'); check('PageDown moves 10%', basic.dataset.value === '32');
+    key(basic, 'End'); check('End → max', basic.dataset.value === '100');
+    log.length = 0; key(basic, 'End'); check('no events when value does not change', log.length === 0);
+    key(basic, 'Home'); check('Home → min', basic.dataset.value === '0');
+
+    // pointer
+    log.length = 0;
+    pointer(basic, 'pointerdown', barX(basic, .5)); await settle();
+    check('tap jumps to position, fires input, adds dragging class', basic.dataset.value === '50' && log.join() === 'i50' && basic.classList.contains('sc-dragging'));
+    pointer(basic, 'pointermove', barX(basic, .75));
+    pointer(basic, 'pointermove', barX(basic, 3));
+    check('drag follows pointer and clamps past the end', basic.dataset.value === '100');
+    pointer(basic, 'pointerup', barX(basic, 3));
+    check('one change on release', log.filter(x => x[0] === 'c').join() === 'c100' && !basic.classList.contains('sc-dragging'));
+    log.length = 0; pointer(basic, 'pointermove', barX(basic, .1));
+    check('moves after release are ignored', basic.dataset.value === '100' && log.length === 0);
+
+    // API
+    log.length = 0; SC.slider.set(basic, 30);
+    check('SC.slider.set is silent by default', basic.dataset.value === '30' && log.length === 0);
+    SC.slider.set(basic, 60, { emit: true });
+    check('SC.slider.set emit fires input + change', log.join() === 'i60,c60');
+    SC.slider.set(basic, 'abc'); SC.slider.set(basic, null); SC.slider.set(basic, '');
+    check('invalid API values are ignored', basic.dataset.value === '60');
+    basic.dataset.value = '12'; await settle();
+    check('attribute change re-renders', basic.getAttribute('aria-valuenow') === '12' && basic.style.getPropertyValue('--p') === '0.12');
+    basic.dataset.label = 'percent'; await settle();
+    check('adding data-label shows percent', basic.querySelector('.sc-slider-value')?.textContent === '12%');
+    basic.removeAttribute('data-label'); await settle();
+    check('removing data-label removes it', !basic.querySelector('.sc-slider-value'));
+    SC.upgrade(basic); SC.upgrade(basic);
+    check('repeated upgrades do not duplicate parts', basic.querySelectorAll('.sc-slider-bar').length === 1);
+
+    // disabled
+    for (const el of [$('#off'), $('#fs')]) {
+      const l = events(el), before = el.dataset.value;
+      key(el, 'End'); pointer(el, 'pointerdown', barX(el, 1)); pointer(el, 'pointerup', barX(el, 1));
+      check(`${el.id}: disabled ignores keys and pointer`, el.dataset.value === before && l.length === 0 && el.getAttribute('aria-disabled') === 'true');
+    }
+    const off = $('#off'); off.removeAttribute('disabled'); await settle();
+    key(off, 'End');
+    check('removing disabled re-enables', off.dataset.value === '100' && off.getAttribute('aria-disabled') === 'false');
+
+    // dynamic + inside a scaled Screen Shell
+    const fresh = document.createElement('div'); fresh.className = 'sc-slider'; fresh.dataset.value = '7'; fresh.setAttribute('aria-label', 'Fresh');
+    $('#fixtures').append(fresh); await settle();
+    check('inserted slider upgrades automatically', !!fresh.querySelector('.sc-slider-thumb') && fresh.getAttribute('aria-valuenow') === '7');
+    const scaled = $('#scaled');
+    pointer(scaled, 'pointerdown', barX(scaled, .5)); pointer(scaled, 'pointerup', barX(scaled, .5));
+    check('pointer math is correct inside a scaled .sc-screen', scaled.dataset.value === '50');
+
+    // no observer loop: attribute churn should stop
+    let records = 0; const mo = new MutationObserver(r => records += r.length); mo.observe($('#fixtures'), { attributes: true, subtree: true });
+    await new Promise(r => setTimeout(r, 200)); mo.disconnect();
+    check('no endless attribute updates', records === 0);
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Slider';
+});
+</script>

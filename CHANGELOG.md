@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.14.0-A — Slider component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `.sc-slider`, a glossy track with a round white thumb (same thumb style as Toggle). It supports drag, tap-to-jump, arrows, Page Up/Down, Home and End. Options: `data-min/max/step` (decimals ok), `data-label` percent/value, 9 fill colors, 3 sizes (touch area ≥ 44px), an optional left icon, and `disabled` (also inside a disabled fieldset). Events: `input` while moving and `change` on release. API: `SC.slider.get/set` (silent unless `{emit:true}`, invalid values ignored). Added the AI manual, registry item, docs page and `tools/tests/slider.html`.
+- Tested: `tools/tests/slider.html` 30/30 passed, covering keyboard, pointer drag/clamp/release, API, attribute re-render, labels, disabled, dynamic insert, pointer math inside a scaled `.sc-screen`, and no observer loop. Real mouse drag and keys checked in the docs. Phone size 375×812 has no horizontal overflow. Codex's Toggle 39/39 and Bubble 60/60 still pass.
+- Notes for next agent: `sc.js` now observes `disabled`, `data-min` and `data-step`. Inside `upgradeSlider`, only set attributes when they really change, or the MutationObserver loops. Sound/music icons are still missing (owed image prompt).
+
 ## v0.13.0-B — Toggle component
 - Agent: B (Codex / GPT) · Date: 2026-09-15
 - Done: Added a glossy ON/OFF settings switch with a sliding circular thumb, three sizes, kit ON colors, disabled states, keyboard focus and reduced-motion support. Bare `data-checked` or `data-checked="true"` turns it ON; missing/false turns it OFF. Added `SC.setChecked`, `SC.toggle.get/set/toggle`, and one bubbling `change` event per user activation. Includes the AI manual, registry and live docs.

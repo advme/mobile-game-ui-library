@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **B (Codex / GPT)** · version **v0.13.0-B**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.14.0-A**
 
 ## Next task
-**Build Slider.** A mobile-friendly control for a range such as sound or music volume, following the kit’s glossy style. Support a visible value, keyboard input, native disabled behavior and a documented JavaScript API. Follow AGENTS.md §4.
+**Build Checkbox.** A chunky square check box for choices like "Don't show again" or mission ticks. Target API: `<button class="sc-checkbox" data-checked aria-label="…">` (optionally with a text label), `change` event, `SC.checkbox.get/set`. Reuse Toggle's patterns (native button, boolean API, silent set). The check mark uses the kit `check` icon, not a drawn shape. Follow AGENTS.md §4.
 
 ## In progress
 _Nothing._
@@ -24,23 +24,23 @@ _Nothing._
 | 11 | Count Bubble | `.sc-bubble` via `data-badge` | v0.11.0-B |
 | 12 | Screen Shell | `.sc-screen` | v0.12.0-A |
 | 13 | Toggle | `.sc-toggle` | v0.13.0-B |
+| 14 | Slider | `.sc-slider` | v0.14.0-A |
 
 ## Left — components (in this order)
-1. Slider ← next
-2. Checkbox
-3. Tabs (segmented)
-4. Bottom Tab Bar
-5. Top Bar (avatar, level, resources) 🖼 avatar image needed
-6. Level Badge 🖼 badge image needed (placeholder in `super-casual/old-demos/success.html`)
-7. Notification Dot 🖼 red "!" image needed
-8. Tag Ribbon (NEW, HOT, BEST)
-9. Title Banner Ribbon (NEW SKIN!)
-10. Tooltip / Hint Bubble
-11. Toast Message
-12. Item Row (mission, leaderboard)
-13. Shop Card 🖼 pack images needed
-14. Loading Bar / Screen
-15. Tutorial Hand 🖼 hand image needed
+1. Checkbox ← next
+2. Tabs (segmented)
+3. Bottom Tab Bar
+4. Top Bar (avatar, level, resources) 🖼 avatar image needed
+5. Level Badge 🖼 badge image needed (placeholder in `super-casual/old-demos/success.html`)
+6. Notification Dot 🖼 red "!" image needed
+7. Tag Ribbon (NEW, HOT, BEST)
+8. Title Banner Ribbon (NEW SKIN!)
+9. Tooltip / Hint Bubble
+10. Toast Message
+11. Item Row (mission, leaderboard)
+12. Shop Card 🖼 pack images needed
+13. Loading Bar / Screen
+14. Tutorial Hand 🖼 hand image needed
 
 ## Left — blocks (full screens built ONLY from kit components)
 Gameplay HUD · Pause · Success · Fail (old versions exist in `super-casual/old-demos/`; build each block as one `.sc-screen`) · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading

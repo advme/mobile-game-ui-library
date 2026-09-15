@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slider — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/slider/slider.css">
+<link rel="stylesheet" href="../components/toggle/toggle.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+.stack { display:flex; flex-direction:column; gap:18px; width:100%; max-width:320px; }
+.setting { display:flex; flex-direction:column; gap:2px; }
+.setting > .sc-text { --fs:20px; }
+.log { margin:0; color:#dce6ff; font:14px/1.5 system-ui; text-align:center; }
+.row { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; }
+</style>
+</head>
+<body>
+<script>
+SCDocs.page({
+  title: 'Slider',
+  lead: 'Drag to pick an amount: sound and music volume, sensitivity, brightness. Tap anywhere on it to jump; arrow keys work too.',
+  hero: `<div class="stack">
+  <div class="setting">
+    <span class="sc-text" data-text="Sound" aria-hidden="true">Sound</span>
+    <div class="sc-slider" data-value="80" data-label="percent" aria-label="Sound"></div>
+  </div>
+  <div class="setting">
+    <span class="sc-text" data-text="Music" aria-hidden="true">Music</span>
+    <div class="sc-slider" data-value="40" data-label="percent" data-color="purple" aria-label="Music"></div>
+  </div>
+</div>`,
+  css: ['components/slider/slider.css'],
+  usageNote: 'The slider builds its track, fill and thumb. Always give it a setting name with aria-label.',
+  usage: `<div class="sc-slider" data-value="70" aria-label="Music"></div>`,
+  examples: [
+    { title:'Sizes', desc:'sm, md (default) and lg. The touch area is always at least 44px tall.',
+      html:`<div class="stack">
+  <div class="sc-slider" data-size="sm" data-value="30" aria-label="Small"></div>
+  <div class="sc-slider" data-value="55" aria-label="Medium"></div>
+  <div class="sc-slider" data-size="lg" data-value="80" aria-label="Large"></div>
+</div>` },
+    { title:'Colors', desc:'data-color sets the fill. Sky is the default.',
+      html:`<div class="stack">
+  <div class="sc-slider" data-value="70" data-color="green" aria-label="Green"></div>
+  <div class="sc-slider" data-value="50" data-color="yellow" aria-label="Yellow"></div>
+  <div class="sc-slider" data-value="35" data-color="red" aria-label="Red"></div>
+  <div class="sc-slider" data-value="85" data-color="pink" aria-label="Pink"></div>
+</div>` },
+    { title:'Value label, range and step', desc:'data-label="value" shows the number. data-min, data-max and data-step set the range, e.g. difficulty 1–5.',
+      html:`<div class="stack">
+  <div class="sc-slider" data-min="1" data-max="5" data-value="3" data-label="value" data-color="orange" aria-label="Difficulty"></div>
+  <div class="sc-slider" data-value="60" data-step="10" data-label="percent" aria-label="Brightness"></div>
+</div>` },
+    { title:'With an icon', desc:'data-icon puts a kit icon on the left.',
+      html:`<div class="stack">
+  <div class="sc-slider" data-icon="energy" data-value="65" data-color="yellow" aria-label="Energy"></div>
+  <div class="sc-slider" data-icon="heart" data-value="40" data-color="red" data-label="percent" aria-label="Health"></div>
+</div>` },
+    { title:'Disabled', desc:'Add disabled. It greys out and ignores taps and keys.',
+      html:`<div class="stack">
+  <div class="sc-slider" data-value="50" data-label="percent" disabled aria-label="Voice chat"></div>
+</div>` },
+    { title:'Live: settings panel', desc:'"input" fires while dragging, "change" when you let go. Mute sets music to 0 silently with SC.slider.set.',
+      html:`<div class="stack">
+  <div class="setting">
+    <span class="sc-text" data-text="Music" aria-hidden="true">Music</span>
+    <div class="sc-slider" id="music" data-value="60" data-label="percent" data-color="purple" aria-label="Music"></div>
+  </div>
+  <p class="log" id="sliderLog">events: —</p>
+  <div class="row">
+    <button class="sc-button" data-color="red" data-size="sm" id="mute">Mute</button>
+    <button class="sc-button" data-color="green" data-size="sm" id="max">Max</button>
+  </div>
+</div>`,
+      setup(preview) {
+        const music = preview.querySelector('#music'), log = preview.querySelector('#sliderLog');
+        music.addEventListener('input', e => log.textContent = 'events: input ' + e.detail.value);
+        music.addEventListener('change', e => log.textContent = 'events: change ' + e.detail.value + ' (save the setting now)');
+        preview.querySelector('#mute').onclick = () => { SC.slider.set(music, 0); log.textContent = 'events: — (set silently to 0)'; };
+        preview.querySelector('#max').onclick = () => SC.slider.set(music, 100, { emit: true });
+      } },
+  ],
+  api: [
+    ['data-value', 'number', 'data-min', 'Current value. Snapped to the step and kept inside the range.'],
+    ['data-min', 'number', '0', 'Lowest value.'],
+    ['data-max', 'number', '100', 'Highest value.'],
+    ['data-step', 'number', '1', 'Step size.'],
+    ['data-label', 'percent value', '', 'Text on the right: 70% or 70.'],
+    ['data-color', 'sky blue green yellow orange red purple pink mint', 'sky', 'Fill color.'],
+    ['data-size', 'sm md lg', 'md', 'Track 12 / 18 / 24 px, thumb 28 / 36 / 44 px.'],
+    ['data-icon', 'icon-name', '', 'Kit icon on the left.'],
+    ['disabled', '', '', 'Blocks taps, drags and keys. Also works inside a disabled fieldset.'],
+    ['aria-label', 'text', '', 'Required. The setting name, e.g. "Music".'],
+  ],
+  js: `music.addEventListener('input',  e => setVolume(e.detail.value));   // while dragging
+music.addEventListener('change', e => saveSetting(e.detail.value)); // when the user lets go
+
+SC.slider.get(music);                      // → 60
+SC.slider.set(music, 0);                   // silent (restore saved settings)
+SC.slider.set(music, 100, { emit: true }); // also fires input + change`,
+  rules: [
+    '<b>Use for amounts</b> (volume, sensitivity). For ON/OFF use Toggle instead.',
+    '<b>Always add</b> <code class="inline">aria-label</code> with the setting name, and a visible label next to it.',
+    '<b>Apply on input</b> (e.g. change volume live), <b>save on change</b>.',
+    '<b>Restore saved settings</b> with <code class="inline">SC.slider.set(el, value)</code>; it is silent, so it will not trigger saves.',
+    '<b>Width</b>: let it fill its row inside a popup or settings screen; do not make it narrower than 160px.',
+    '<b>Sound/music icons</b> are not in the kit yet — use text labels until they are added.',
+  ],
+});
+</script>
+</body>
+</html>

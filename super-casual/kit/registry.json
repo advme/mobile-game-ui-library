@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "items": [
     {
       "name": "core",
@@ -203,7 +203,7 @@
         "label": {
           "type": "text",
           "optional": true,
-          "description": "Plain text inside \u2192 label under the icon (use with flat)"
+          "description": "Plain text inside → label under the icon (use with flat)"
         },
         "data-badge": {
           "type": "number",
@@ -262,7 +262,7 @@
       "type": "registry:ui",
       "title": "Resource Counter",
       "description": "Icon + dark pill + number, with optional \"+\" button. Builds itself from attributes.",
-      "whenToUse": "Showing coins, gems, energy, lives, tickets \u2014 usually top-right of the HUD or home screen.",
+      "whenToUse": "Showing coins, gems, energy, lives, tickets — usually top-right of the HUD or home screen.",
       "files": [
         "components/counter/counter.css"
       ],
@@ -895,7 +895,7 @@
       "type": "registry:ui",
       "title": "Floating Text",
       "description": "JavaScript-only feedback text that floats up and fades at a tap, element or screen position.",
-      "whenToUse": "Points, coins, damage, healing, XP, combos \u2014 anywhere the player needs instant feedback.",
+      "whenToUse": "Points, coins, damage, healing, XP, combos — anywhere the player needs instant feedback.",
       "files": [
         "components/float/float.css"
       ],
@@ -1042,7 +1042,7 @@
       "dependencies": [
         "core"
       ],
-      "html": "<div class=\"sc-screen\" data-backdrop=\"dim\" id=\"win\" hidden>\n  <div class=\"sc-screen-top\">\u2026</div>\n  <div class=\"sc-screen-middle\">\u2026</div>\n  <div class=\"sc-screen-bottom\">\u2026</div>\n</div>",
+      "html": "<div class=\"sc-screen\" data-backdrop=\"dim\" id=\"win\" hidden>\n  <div class=\"sc-screen-top\">…</div>\n  <div class=\"sc-screen-middle\">…</div>\n  <div class=\"sc-screen-bottom\">…</div>\n</div>",
       "props": {
         "data-backdrop": {
           "type": "enum",
@@ -1176,7 +1176,7 @@
             "lg"
           ],
           "default": "md",
-          "description": "96\u00d744, 104\u00d748 or 120\u00d756 px."
+          "description": "96×44, 104×48 or 120×56 px."
         },
         "disabled": {
           "type": "boolean",
@@ -1234,6 +1234,115 @@
         {
           "title": "Restore silently",
           "js": "SC.setChecked(soundToggle, true);"
+        }
+      ]
+    },
+    {
+      "name": "slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "description": "Glossy track with a round thumb for picking an amount. Drag, tap-to-jump and keyboard.",
+      "whenToUse": "Sound/music volume, sensitivity, brightness, difficulty levels.",
+      "files": [
+        "components/slider/slider.css"
+      ],
+      "docs": "components/slider/slider.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<div class=\"sc-slider\" data-value=\"70\" data-label=\"percent\" aria-label=\"Music\"></div>",
+      "props": {
+        "data-value": {
+          "type": "number",
+          "default": "data-min",
+          "description": "Snapped to step, clamped to range"
+        },
+        "data-min": {
+          "type": "number",
+          "default": 0
+        },
+        "data-max": {
+          "type": "number",
+          "default": 100
+        },
+        "data-step": {
+          "type": "number",
+          "default": 1
+        },
+        "data-label": {
+          "type": "enum",
+          "values": [
+            "percent",
+            "value"
+          ],
+          "optional": true
+        },
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "sky",
+            "blue",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "default": "sky"
+        },
+        "data-size": {
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        },
+        "data-icon": {
+          "type": "icon",
+          "optional": true
+        },
+        "disabled": {
+          "type": "boolean",
+          "optional": true,
+          "description": "Also disabled inside fieldset[disabled]"
+        },
+        "aria-label": {
+          "type": "string",
+          "required": true,
+          "description": "Setting name"
+        }
+      },
+      "events": {
+        "input": "Value changed while dragging or by key (detail.value)",
+        "change": "User finished changing the value (detail.value)"
+      },
+      "js": {
+        "SC.slider.get(el)": "Current number",
+        "SC.slider.set(el, value, {emit?})": "Set value; silent unless emit:true; invalid values ignored"
+      },
+      "rules": [
+        "Use for amounts; use Toggle for ON/OFF.",
+        "Always set aria-label and show a visible text label next to it.",
+        "Apply on input, save on change; restore saved values silently with SC.slider.set.",
+        "Fill the row; keep at least 160px wide.",
+        "Sound/music icons are not in the kit yet; use text labels."
+      ],
+      "examples": [
+        {
+          "title": "Volume",
+          "html": "<div class=\"sc-slider\" data-value=\"80\" data-label=\"percent\" aria-label=\"Sound\"></div>"
+        },
+        {
+          "title": "Difficulty 1-5",
+          "html": "<div class=\"sc-slider\" data-min=\"1\" data-max=\"5\" data-value=\"3\" data-label=\"value\" data-color=\"orange\" aria-label=\"Difficulty\"></div>"
+        },
+        {
+          "title": "Listen and restore",
+          "js": "music.addEventListener('change', e => save(e.detail.value)); SC.slider.set(music, saved);"
         }
       ]
     }

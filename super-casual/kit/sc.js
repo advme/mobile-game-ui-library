@@ -24,10 +24,11 @@
   const STARS = '.sc-stars';
   const TIMERS = '.sc-timer';
   const TOGGLES = 'button.sc-toggle';
+  const SLIDERS = '.sc-slider';
   const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot';
   const MESSAGES = '.sc-popup-message, .sc-popup-value';
   const SCREENS = '.sc-screen';
-  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}`;
+  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}`;
   const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, ${TOGGLES}`;
 
   const script = document.currentScript;
@@ -128,6 +129,98 @@
     const el = e.target.closest && e.target.closest(TOGGLES);
     if (!el || el.matches(':disabled')) return;
     toggle.toggle(el, { emit: true });
+  });
+
+  /* ---------- Slider ---------- */
+  const num = (v, d) => (v == null || v === '' || !Number.isFinite(Number(v)) ? d : Number(v));
+  function sliderRange(el) {
+    const min = num(el.dataset.min, 0), max = Math.max(num(el.dataset.max, 100), min), step = Math.abs(num(el.dataset.step, 1)) || 1;
+    return { min, max, step };
+  }
+  function sliderClamp(el, v) {
+    const { min, max, step } = sliderRange(el);
+    v = Math.min(max, Math.max(min, num(v, min)));
+    v = min + Math.round((v - min) / step) * step;
+    const decimals = (String(step).split('.')[1] || '').length;
+    return Number(Math.min(max, v).toFixed(decimals));
+  }
+  const sliderDisabled = el => el.hasAttribute('disabled') || !!el.closest('fieldset:disabled');
+  function upgradeSlider(el) {
+    const { min, max } = sliderRange(el);
+    const value = sliderClamp(el, el.dataset.value);
+    if (el.dataset.value !== String(value)) el.dataset.value = String(value);   // re-enters via observer once, then stable
+    const attr = (k, v) => { if (el.getAttribute(k) !== String(v)) el.setAttribute(k, v); };   // only real changes (avoids observer loops)
+    attr('role', 'slider');
+    if (!el.hasAttribute('tabindex')) el.tabIndex = 0;
+    attr('aria-valuemin', min); attr('aria-valuemax', max); attr('aria-valuenow', value); attr('aria-disabled', sliderDisabled(el));
+    upgradeIcon(el);
+    let bar = el.querySelector(':scope > .sc-slider-bar');
+    if (!bar) {
+      bar = document.createElement('span'); bar.className = 'sc-slider-bar'; bar.setAttribute('aria-hidden', 'true');
+      bar.innerHTML = '<span class="sc-slider-track"><span class="sc-slider-fill"></span></span><span class="sc-slider-thumb"></span>';
+      el.append(bar);
+    }
+    el.style.setProperty('--p', max > min ? (value - min) / (max - min) : 0);
+    const mode = el.dataset.label;
+    let label = el.querySelector(':scope > .sc-slider-value');
+    if (mode === 'percent' || mode === 'value') {
+      if (!label) { label = document.createElement('span'); label.className = 'sc-slider-value'; label.setAttribute('aria-hidden', 'true'); label.append(textSpan('')); el.append(label); }
+      const text = mode === 'percent' ? Math.round(max > min ? (value - min) / (max - min) * 100 : 0) + '%' : String(value);
+      setSpan(label.firstElementChild, text);
+      attr('aria-valuetext', text);
+    } else { label?.remove(); if (el.hasAttribute('aria-valuetext')) el.removeAttribute('aria-valuetext'); }
+  }
+  const slider = {
+    get(el) { return sliderClamp(el, el.dataset.value); },
+    set(el, value, { emit = false } = {}) {
+      if (value === null || value === '' || !Number.isFinite(Number(value))) return;   // ignore invalid values instead of jumping to min
+      const before = slider.get(el), next = sliderClamp(el, value);
+      el.dataset.value = String(next); upgradeSlider(el);
+      if (emit && next !== before) {
+        el.dispatchEvent(new CustomEvent('input', { bubbles: true, detail: { value: next } }));
+        el.dispatchEvent(new CustomEvent('change', { bubbles: true, detail: { value: next } }));
+      }
+    },
+  };
+  function sliderFromPointer(el, e) {
+    const r = el.querySelector(':scope > .sc-slider-bar').getBoundingClientRect();
+    const { min, max } = sliderRange(el);
+    const p = r.width ? Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)) : 0;
+    return sliderClamp(el, min + p * (max - min));
+  }
+  function sliderMove(el, value) {
+    if (value === slider.get(el)) return false;
+    el.dataset.value = String(value); upgradeSlider(el);
+    el.dispatchEvent(new CustomEvent('input', { bubbles: true, detail: { value } }));
+    return true;
+  }
+  document.addEventListener('pointerdown', e => {
+    const el = e.target.closest && e.target.closest(SLIDERS);
+    if (!el || sliderDisabled(el) || e.button > 0) return;
+    e.preventDefault(); el.focus({ preventScroll: true });
+    const start = slider.get(el);
+    el.classList.add('sc-dragging');
+    try { el.setPointerCapture(e.pointerId); } catch (_) {}
+    sliderMove(el, sliderFromPointer(el, e));
+    const move = ev => { if (ev.pointerId === e.pointerId) sliderMove(el, sliderFromPointer(el, ev)); };
+    const end = ev => {
+      if (ev.pointerId !== e.pointerId) return;
+      el.classList.remove('sc-dragging');
+      el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', end); el.removeEventListener('pointercancel', end);
+      const value = slider.get(el);
+      if (value !== start) el.dispatchEvent(new CustomEvent('change', { bubbles: true, detail: { value } }));
+    };
+    el.addEventListener('pointermove', move); el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+  });
+  document.addEventListener('keydown', e => {
+    const el = e.target.closest && e.target.closest(SLIDERS);
+    if (!el || sliderDisabled(el)) return;
+    const { min, max, step } = sliderRange(el), v = slider.get(el), big = Math.max(step, (max - min) / 10);
+    const next = { ArrowRight: v + step, ArrowUp: v + step, ArrowLeft: v - step, ArrowDown: v - step,
+                   PageUp: v + big, PageDown: v - big, Home: min, End: max }[e.key];
+    if (next == null) return;
+    e.preventDefault();
+    if (sliderMove(el, sliderClamp(el, next))) el.dispatchEvent(new CustomEvent('change', { bubbles: true, detail: { value: slider.get(el) } }));
   });
 
   /* ---------- Counter ---------- */
@@ -514,6 +607,7 @@
     if (el.matches(STARS)) return upgradeStars(el);
     if (el.matches(TIMERS)) return upgradeTimer(el);
     if (el.matches(TOGGLES)) return upgradeToggle(el);
+    if (el.matches(SLIDERS)) return upgradeSlider(el);
     if (el.matches(SCREENS)) return upgradeScreen(el);
     if (el.matches(MESSAGES)) return upgradeText(el);
     upgradeText(el);
@@ -543,6 +637,7 @@
         else if (r.target.matches(SCREENS)) upgradeScreen(r.target);
         else if (r.target.matches(TIMERS)) { if (r.attributeName === 'data-seconds') timer.reset(r.target); else upgradeTimer(r.target); }
         else if (r.target.matches(TOGGLES)) upgradeToggle(r.target);
+        else if (r.target.matches(SLIDERS)) upgradeSlider(r.target);
         else if (r.target.matches(ICON_COMPONENTS)) upgradeIcon(r.target);
       } else {
         r.addedNodes.forEach(n => n.nodeType === Node.ELEMENT_NODE && upgrade(n));
@@ -553,7 +648,7 @@
     }
   }).observe(document.documentElement, {
     childList: true, subtree: true, characterData: true,
-    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-checked', 'data-width', 'data-height', 'data-fit'],
+    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-checked', 'data-min', 'data-step', 'disabled', 'data-width', 'data-height', 'data-fit'],
   });
 
   // Press feedback (delegated, so it works for dynamically added components)
@@ -570,7 +665,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.13.0',
+    version: '0.14.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */
@@ -612,6 +707,8 @@
     toggle,
     /** Set a settings switch; alias of SC.toggle.set. */
     setChecked: toggle.set,
+    /** Volume-style sliders: SC.slider.get(el) · SC.slider.set(el, 70, {emit?}) */
+    slider,
     /** Floating feedback text: SC.float('+50', event | element | {x, y}, { color, size, icon, style }) */
     float,
     /** URL of an icon in the kit: SC.icon('coin') */
