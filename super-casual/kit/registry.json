@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "items": [
     {
       "name": "core",
@@ -1643,6 +1643,74 @@
         {
           "title": "Standalone",
           "html": "<span class=\"sc-tag\" data-color=\"green\">NEW</span>"
+        }
+      ]
+    },
+    {
+      "name": "banner",
+      "type": "registry:ui",
+      "title": "Title Banner Ribbon",
+      "description": "Ribbon banner with folded tails for short announcements above a character/reward.",
+      "whenToUse": "NEW SKIN!, SEASON RESULT, LEVEL UP, BIG WIN above a reveal or result.",
+      "files": [
+        "components/banner/banner.css"
+      ],
+      "docs": "components/banner/banner.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<div class=\"sc-banner\" data-color=\"pink\" data-animate=\"unfurl\">NEW SKIN!</div>",
+      "props": {
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "sky",
+            "blue",
+            "dark",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "default": "orange"
+        },
+        "data-size": {
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        },
+        "data-animate": {
+          "type": "enum",
+          "values": [
+            "unfurl",
+            "drop"
+          ],
+          "optional": true
+        }
+      },
+      "events": [],
+      "js": {
+        "SC.setLabel(el, text)": "Change text",
+        "SC.replay(el)": "Replay entrance"
+      },
+      "rules": [
+        "1-3 capital words; use Screen Title for CLEAR!/FAILED.",
+        "Centered above what it announces.",
+        "Leave ~1 banner-height of space on each side for tails.",
+        "pink new skin, orange season/results, purple rare, green level up.",
+        "data-animate=unfurl on reward reveals."
+      ],
+      "examples": [
+        {
+          "title": "New skin",
+          "html": "<div class=\"sc-banner\" data-color=\"pink\" data-animate=\"unfurl\">NEW SKIN!</div>"
         }
       ]
     }

@@ -29,11 +29,12 @@
   const TABS = '.sc-tabs, .sc-tabbar';
   const TAG_HOSTS = '.sc-button, .sc-icon-button, .sc-tab';
   const TAGS = '.sc-tag:not(.sc-tag-attached)';
+  const BANNERS = '.sc-banner';
   const TAB_ITEMS = '.sc-tabs > button, .sc-tabbar > button';
   const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot, .sc-tab, .sc-tabbar-item';
   const MESSAGES = '.sc-popup-message, .sc-popup-value';
   const SCREENS = '.sc-screen';
-  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}, ${TAGS}`;
+  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}, ${TAGS}, ${BANNERS}`;
   const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, ${TOGGLES}, ${CHECKBOXES}, ${TAB_ITEMS}`;
 
   const script = document.currentScript;
@@ -319,6 +320,16 @@
     setSpan(tag.firstElementChild, text);
     setAttr(tag, 'data-color', el.dataset.tagColor || 'red');
     setAttr(tag, 'data-pos', ['top-left', 'top-right', 'top'].includes(el.dataset.tagPos) ? el.dataset.tagPos : 'top-left');
+  }
+
+  /* ---------- Title Banner Ribbon ---------- */
+  function upgradeBanner(el) {
+    let band = el.querySelector(':scope > .sc-banner-band');
+    if (!band) { band = document.createElement('span'); band.className = 'sc-banner-band'; el.append(band); }
+    const loose = [...el.childNodes].filter(n => n !== band && (n.nodeType === Node.ELEMENT_NODE || n.textContent.trim()));
+    if (loose.length) band.append(...loose);   // move author text into the band
+    [...el.childNodes].forEach(n => { if (n !== band) n.remove(); });
+    upgradeText(band);
   }
 
   /* ---------- Counter ---------- */
@@ -699,6 +710,7 @@
     if (el.matches(BADGE_HOSTS)) upgradeBubble(el);
     if (el.matches(TAG_HOSTS)) upgradeTag(el);
     if (el.matches(TAGS)) return upgradeText(el);
+    if (el.matches(BANNERS)) return upgradeBanner(el);
     if (el.matches(COUNTERS)) return upgradeCounter(el);
     if (el.matches(SLOTS)) return upgradeSlot(el);
     if (el.matches(POPUPS)) return upgradePopup(el);
@@ -751,6 +763,7 @@
         if (r.target.matches && r.target.matches(BADGE_HOSTS)) upgradeBubble(r.target);
         if (r.target.matches && r.target.matches(TOGGLES)) upgradeToggle(r.target);
         if (r.target.matches && r.target.matches(CHECKBOXES)) upgradeCheckbox(r.target);
+        if (r.target.matches && r.target.matches(`${BANNERS}, .sc-banner-band`)) upgradeBanner(r.target.closest(BANNERS));
         if (r.target.matches && r.target.matches(TABS)) upgradeTabs(r.target);
         if (r.target.matches && r.target.matches(TAB_ITEMS)) upgradeTabs(r.target.parentElement);
       }
@@ -774,7 +787,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.18.0',
+    version: '0.19.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */

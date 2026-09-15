@@ -1,0 +1,41 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Banner regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/banner/banner.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>body { margin:30px; font:14px system-ui; background:#243453; color:white; } #fixtures { display:grid; gap:24px; justify-items:start; } li { margin:6px 0; } .fail { color:#ff9da7; }</style>
+<h1>Banner checks</h1>
+<p id="summary">Running…</p>
+<div id="fixtures">
+  <div id="a" class="sc-banner" data-color="pink">NEW SKIN!</div>
+  <div id="b" class="sc-banner" data-size="lg">  LEVEL UP  </div>
+</div>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const settle = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  try {
+    const a = $('#a'), b = $('#b');
+    check('builds one band with outlined text', a.children.length === 1 && a.firstElementChild.className === 'sc-banner-band' && a.querySelector('.sc-text').dataset.text === 'NEW SKIN!');
+    check('trims text', b.querySelector('.sc-text').dataset.text === 'LEVEL UP');
+    check('lg text is 28px', getComputedStyle(b.querySelector('.sc-text')).fontSize === '28px');
+    check('tails exist on both sides', getComputedStyle(a, '::before').content !== 'none' && getComputedStyle(a, '::after').content !== 'none');
+    check('band has glossy background', getComputedStyle(a.firstElementChild).backgroundImage.includes('gradient'));
+    SC.setLabel(a, 'LEVEL UP'); await settle();
+    check('setLabel updates text, keeps one band', a.querySelector('.sc-text').dataset.text === 'LEVEL UP' && a.querySelectorAll('.sc-banner-band').length === 1);
+    SC.upgrade(a); SC.upgrade(a);
+    check('repeated upgrades do not duplicate', a.querySelectorAll('.sc-banner-band').length === 1 && a.querySelectorAll('.sc-text').length === 1);
+    const fresh = document.createElement('div'); fresh.className = 'sc-banner'; fresh.textContent = 'BIG WIN'; $('#fixtures').append(fresh); await settle();
+    check('inserted banner upgrades', fresh.querySelector('.sc-banner-band .sc-text')?.dataset.text === 'BIG WIN');
+    let records = 0; const mo = new MutationObserver(x => records += x.length); mo.observe($('#fixtures'), { attributes: true, subtree: true, childList: true, characterData: true });
+    await new Promise(r => setTimeout(r, 200)); mo.disconnect();
+    check('no endless updates', records === 0);
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Banner';
+});
+</script>

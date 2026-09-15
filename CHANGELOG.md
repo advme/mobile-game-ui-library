@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.19.0-A — Title Banner Ribbon component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `.sc-banner`, a ribbon banner with a glossy band (outlined kit text) and darker folded tails behind both ends, built from skewed rounded pseudo-elements (no polygons). It has 10 colors, 3 sizes and `unfurl`/`drop` entrance animations. The runtime wraps the text in `.sc-banner-band` so the tails render behind the band. Works with `SC.setLabel` and `SC.replay`. Added the AI manual, registry item, docs page and `tools/tests/banner.html`.
+- Tested: `tools/tests/index.html`: 8 pages pass (adds banner 9/9). Visual check of hero, sizes, colors and the live rename/replay demo.
+- Notes for next agent: Tails use z-index:-1 inside an isolated `.sc-banner`, so the band must be its own element (z-index 1). Otherwise the tails paint over the band background.
+
 ## v0.18.0-A — Tag Ribbon component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `.sc-tag`, small glossy sticker labels (NEW, HOT, BEST, SALE, -50%, x2) in all 10 kit colors, 3 sizes, with optional tilt. Buttons, icon buttons and tabs accept `data-tag` + `data-tag-color` + `data-tag-pos` (top-left/top-right tilted, or top centered). The runtime builds and updates the sticker, and it pops in. Reward Slot keeps its own tag. Added the AI manual, registry item, docs page and `tools/tests/tag.html`.

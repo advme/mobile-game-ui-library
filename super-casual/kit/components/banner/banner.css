@@ -1,0 +1,50 @@
+/*
+  Title Banner Ribbon — Super Casual UI Kit
+  Requires: core.css, sc.js
+
+  <div class="sc-banner" data-color="pink">NEW SKIN!</div>
+
+  data-color    sky | blue | dark | green | yellow | orange | red | purple | pink | mint   default: orange
+  data-size     sm | md | lg   (text 14 / 20 / 28 px)                                    default: md
+  data-animate  unfurl | drop   entrance animation when shown                          optional
+  text inside   short title (1–3 words)
+
+  A glossy band with darker folded tails tucked behind both ends.
+  sc.js wraps the text in .sc-banner-band; do not write inner markup.
+  JS: SC.setLabel(banner, 'LEVEL UP!') · SC.replay(banner)
+*/
+:where(.sc-banner) { --band:#ffd05a; --base:#ffae2e; --line:#ffc450; --lip:#d9761c; --ink:#8a3c0a; }
+.sc-banner {
+  --b-fs:20px; --b-h:calc(var(--b-fs) * 1.9); --tail:calc(var(--b-h) * .78);
+  position:relative; isolation:isolate; display:inline-flex; box-sizing:border-box; height:var(--b-h); margin:0 var(--tail);
+  font-family:var(--sc-font); white-space:nowrap; user-select:none; -webkit-user-select:none; vertical-align:middle;
+}
+.sc-banner[data-size="sm"] { --b-fs:14px; }
+.sc-banner[data-size="lg"] { --b-fs:28px; }
+/* Band (built by sc.js around the text) sits above the tails */
+.sc-banner-band {
+  position:relative; z-index:1; display:flex; align-items:center; justify-content:center; box-sizing:border-box; width:100%; height:100%;
+  min-width:calc(var(--b-h) * 3.2); padding:0 calc(var(--b-fs) * .9) calc(var(--b-h) * .08);
+  border:var(--sc-line) solid var(--sc-outline); border-radius:calc(var(--b-h) * .16);
+  background:linear-gradient(var(--band) 0 50%, var(--base) 50%);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.4), inset 0 calc(var(--b-h) * -.1) 0 var(--lip);
+}
+.sc-banner-band > .sc-text { --fs:var(--b-fs); --ink:var(--sc-outline); font-size:var(--fs); }
+
+/* Folded tails: darker rounded pieces behind, a bit lower, bent back */
+.sc-banner::before, .sc-banner::after {
+  content:""; position:absolute; z-index:-1; top:calc(var(--b-h) * .26); width:calc(var(--tail) + var(--b-h) * .3); height:calc(var(--b-h) * .88);
+  box-sizing:border-box; border:var(--sc-line) solid var(--sc-outline); border-radius:calc(var(--b-h) * .14);
+  background:linear-gradient(color-mix(in srgb, var(--base) 78%, #000) 0 50%, var(--lip) 50%);
+}
+.sc-banner::before { left:calc(var(--tail) * -1); transform:skewY(-14deg); transform-origin:right center;
+  border-radius:calc(var(--b-h) * .34) calc(var(--b-h) * .14) calc(var(--b-h) * .14) calc(var(--b-h) * .34); }
+.sc-banner::after  { right:calc(var(--tail) * -1); transform:skewY(14deg); transform-origin:left center;
+  border-radius:calc(var(--b-h) * .14) calc(var(--b-h) * .34) calc(var(--b-h) * .34) calc(var(--b-h) * .14); }
+
+/* Entrance */
+.sc-banner[data-animate="unfurl"] { animation:sc-banner-unfurl .45s cubic-bezier(.3,1.5,.6,1) backwards; }
+.sc-banner[data-animate="drop"]   { animation:sc-banner-drop .45s cubic-bezier(.3,1.6,.6,1) backwards; }
+@keyframes sc-banner-unfurl { from { transform:scaleX(.2); opacity:0; } }
+@keyframes sc-banner-drop   { from { transform:translateY(-60%) scale(.8); opacity:0; } }
+@media (prefers-reduced-motion:reduce) { .sc-banner { animation:none !important; } }

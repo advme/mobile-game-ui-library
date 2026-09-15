@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Title Banner Ribbon — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/banner/banner.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+.col { display:flex; flex-direction:column; align-items:center; gap:22px; }
+.row { display:flex; flex-wrap:wrap; justify-content:center; gap:22px 10px; }
+</style>
+</head>
+<body>
+<script>
+SCDocs.page({
+  title: 'Title Banner Ribbon',
+  lead: 'A ribbon banner with folded tails for announcements above a character or reward — NEW SKIN!, SEASON RESULT, LEVEL UP.',
+  hero: `<div class="col">
+  <div class="sc-banner" data-color="pink" data-animate="unfurl">NEW SKIN!</div>
+  <div class="sc-banner" data-size="lg" data-animate="drop">LEVEL UP</div>
+</div>`,
+  css: ['components/banner/banner.css'],
+  usageNote: 'Write the text inside. The runtime builds the band; the tails come from CSS.',
+  usage: `<div class="sc-banner" data-color="pink">NEW SKIN!</div>`,
+  examples: [
+    { title: 'Sizes', desc: 'sm, md (default) and lg. The tails stick out on both sides, so leave room.',
+      html: `<div class="col">
+  <div class="sc-banner" data-size="sm">DAILY</div>
+  <div class="sc-banner">SEASON RESULT</div>
+  <div class="sc-banner" data-size="lg">VICTORY</div>
+</div>` },
+    { title: 'Colors', desc: 'Any kit color. Orange is the default.',
+      html: `<div class="row">${['orange','pink','sky','green','purple','red','yellow','blue','mint','dark'].map(c => `
+  <div class="sc-banner" data-size="sm" data-color="${c}">${c.toUpperCase()}</div>`).join('')}
+</div>` },
+    { title: 'Live: replay and change', desc: 'SC.setLabel changes the text; SC.replay plays the entrance again.',
+      html: `<div class="col">
+  <div class="sc-banner" id="liveBanner" data-color="purple" data-animate="unfurl">NEW PET!</div>
+  <div class="row">
+    <button class="sc-button" data-size="sm" data-color="sky" id="bReplay">Replay</button>
+    <button class="sc-button" data-size="sm" data-color="green" id="bText">Rename</button>
+  </div>
+</div>`,
+      setup(p) {
+        const b = p.querySelector('#liveBanner'); let n = 0;
+        p.querySelector('#bReplay').onclick = () => SC.replay(b);
+        p.querySelector('#bText').onclick = () => { SC.setLabel(b, ['NEW PET!', 'LEVEL UP', 'BIG WIN!'][++n % 3]); SC.replay(b); };
+      } },
+  ],
+  api: [
+    ['data-color', 'sky blue dark green yellow orange red purple pink mint', 'orange', 'Banner color.'],
+    ['data-size', 'sm md lg', 'md', 'Text 14 / 20 / 28 px.'],
+    ['data-animate', 'unfurl drop', '', 'Entrance animation.'],
+  ],
+  js: `SC.setLabel(banner, 'LEVEL UP'); // change text
+SC.replay(banner);               // play the entrance again`,
+  rules: [
+    '<b>1–3 words</b>, capitals, often with "!". It is an announcement, not a screen title (use Screen Title for CLEAR! / FAILED).',
+    'Place it <b>above</b> the thing it announces (a character, a reward, a result panel), centered.',
+    'Leave space for the tails: about one banner-height on each side.',
+    '<b>pink</b> = new skins/characters, <b>orange</b> = season/results, <b>purple</b> = rare/epic, <b>green</b> = level up.',
+    'Add <code class="inline">data-animate="unfurl"</code> when it appears on a reward reveal.',
+  ],
+});
+</script>
+</body>
+</html>
