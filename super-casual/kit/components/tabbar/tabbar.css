@@ -3,8 +3,8 @@
   Requires: core.css, sc.js   (+ components/bubble/bubble.css for data-badge)
 
   <nav class="sc-tabbar" data-value="play">
-    <button data-value="shop" data-icon="cash">Shop</button>
-    <button data-value="play" data-icon="star">Play</button>
+    <button data-value="shop" data-icon="shop">Shop</button>
+    <button data-value="play" data-icon="home">Play</button>
     <button data-value="rank" data-icon="trophy">Rank</button>
   </nav>
 

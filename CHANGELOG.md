@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.21.1-A — 16 new icons (icons4 sheet)
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Cropped the owner's `icons/icons4.png` into `kit/assets`: home, shop, helmet, play, sound, sound-off, music, music-off, menu, restart, alert, level-badge, hand, avatar, gem-pile, coin-pile. Regenerated `offsets.css`, added the names to `registry.json → icons`, and switched the Tab Bar docs to the real home/shop icons. The prompt is saved in `icons/PROMPT-icons4.md`.
+- Tested: Visual contact sheet of all 16 crops (each one clean, single icon). All test pages still pass.
+- Notes for next agent: Top Bar, Level Badge (`level-badge`), Notification Dot (`alert`), Shop Card (`gem-pile`, `coin-pile`) and Tutorial Hand (`hand`) are no longer blocked. Use sound/music icons in settings examples.
+
 ## v0.21.0-A — Toast Message component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `SC.toast(text, {kind, icon, duration, pos})`: a glossy pill message (info dark / success green / error red / reward gold) with outlined kit text and an optional kit icon. It slides in at the top or bottom (12px + safe area) and removes itself. Separate queues for top and bottom show one at a time, with at most 3 waiting and repeated text dropped. It never blocks taps and uses an aria-live polite layer. Added the AI manual, registry item, docs page and `tools/tests/toast.html`.

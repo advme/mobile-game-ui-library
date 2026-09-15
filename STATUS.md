@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.21.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.21.1-A**
 
 ## Next task
-**Add the icons4 sheet, then build Item Row.** The owner delivered `icons/icons4.png` (prompt in `icons/PROMPT-icons4.md`). Crop it with `tools/crop_sheet.py` into `super-casual/kit/assets` using the 16 names listed in the prompt file, run `tools/icon_offsets.py`, add the names to `registry.json → icons`, and swap the Tab Bar docs to home/shop icons. Then build Item Row (mission row with icon slot + progress + Claim/Go button, and leaderboard row with rank + avatar + trophy score) matching the reference.
+**Build Item Row.** Mission row (icon slot + title + progress bar + Claim/Go button, yellow when claimable) and leaderboard row (rank + `avatar` icon + name + trophy score, highlighted for the player) matching the reference sheet. Target API: `<div class="sc-row" data-variant="mission|leader" …>`. Follow AGENTS.md §4.
 
 ## In progress
 _Nothing._
@@ -36,18 +36,18 @@ _Nothing._
 ## Left — components (in this order)
 1. Item Row (mission, leaderboard) ← next
 2. Loading Bar / Screen
-3. Top Bar (avatar, level, resources) 🖼 avatar image needed — waiting for `icons/icons4.png`
-4. Level Badge 🖼 badge image needed (placeholder in `super-casual/old-demos/success.html`) — waiting for `icons/icons4.png`
-5. Notification Dot 🖼 red "!" image needed — waiting for `icons/icons4.png`
-6. Shop Card 🖼 pack images needed — waiting for `icons/icons4.png`
-7. Tutorial Hand 🖼 hand image needed — waiting for `icons/icons4.png`
+3. Top Bar (avatar, level, resources) 🖼 avatar image needed
+4. Level Badge 🖼 badge image needed (placeholder in `super-casual/old-demos/success.html`)
+5. Notification Dot 🖼 red "!" image needed
+6. Shop Card 🖼 pack images needed
+7. Tutorial Hand 🖼 hand image needed
 
 ## Left — blocks (full screens built ONLY from kit components)
 Gameplay HUD · Pause · Success · Fail (old versions exist in `super-casual/old-demos/`; build each block as one `.sc-screen`) · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading
 
 ## Left — other
 - Docs pages: Introduction, Installation
-- Image prompts still owed to the owner: level badge, red "!" dot, tutorial hand, avatar, shop packs, sound/music/home/restart/menu icons
+- Image prompts: icons4 delivered (home, shop, helmet, play, sound, sound-off, music, music-off, menu, restart, alert, level-badge, hand, avatar, gem-pile, coin-pile). Nothing owed right now.
 - Final: let a fresh AI agent build a screen using only the kit, then fix what confuses it
 
 ## Links

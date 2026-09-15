@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.21.0",
+  "version": "0.21.1",
   "items": [
     {
       "name": "core",
@@ -1838,7 +1838,23 @@
       "ticket",
       "trophy",
       "video",
-      "arrow-left"
+      "arrow-left",
+      "home",
+      "shop",
+      "helmet",
+      "play",
+      "sound",
+      "sound-off",
+      "music",
+      "music-off",
+      "menu",
+      "restart",
+      "alert",
+      "level-badge",
+      "hand",
+      "avatar",
+      "gem-pile",
+      "coin-pile"
     ],
     "note": "Use by name with data-icon. arrow-left is arrow-right mirrored."
   }

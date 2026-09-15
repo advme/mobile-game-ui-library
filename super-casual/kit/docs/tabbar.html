@@ -24,9 +24,9 @@
 <body>
 <script>
 const bar = (value, extra = '') => `<nav class="sc-tabbar" data-value="${value}"${extra}>
-      <button data-value="shop" data-icon="cash">Shop</button>
+      <button data-value="shop" data-icon="shop">Shop</button>
       <button data-value="chests" data-icon="chest" data-badge="7" data-badge-color="red">Chests</button>
-      <button data-value="play" data-icon="star">Play</button>
+      <button data-value="play" data-icon="home">Play</button>
       <button data-value="rank" data-icon="trophy" data-badge="2" data-badge-color="green">Rank</button>
       <button data-value="settings" data-icon="settings">Settings</button>
     </nav>`;
@@ -46,22 +46,22 @@ SCDocs.page({
   usageNote: 'Put it in the bottom region of a Screen Shell. It stretches to the phone edges and leaves room for the iPhone home bar by itself.',
   usage: `<div class="sc-screen-bottom">
   <nav class="sc-tabbar" data-value="play">
-    <button data-value="shop" data-icon="cash">Shop</button>
-    <button data-value="play" data-icon="star">Play</button>
+    <button data-value="shop" data-icon="shop">Shop</button>
+    <button data-value="play" data-icon="home">Play</button>
     <button data-value="rank" data-icon="trophy">Rank</button>
   </nav>
 </div>`,
   examples: [
     { title: 'Three items', desc: 'Works with 3–5 items. The label only shows under the selected one.',
       html: `<div class="wide"><nav class="sc-tabbar" data-value="play">
-  <button data-value="shop" data-icon="cash">Shop</button>
-  <button data-value="play" data-icon="star">Play</button>
+  <button data-value="shop" data-icon="shop">Shop</button>
+  <button data-value="play" data-icon="home">Play</button>
   <button data-value="rank" data-icon="trophy">Rank</button>
 </nav></div>` },
     { title: 'Colors', desc: 'data-color changes the raised block. Indigo is the default.',
       html: `<div class="col wide">
-  <nav class="sc-tabbar" data-color="sky" data-value="b"><button data-value="a" data-icon="gift">Gifts</button><button data-value="b" data-icon="star">Play</button><button data-value="c" data-icon="mail">Mail</button></nav>
-  <nav class="sc-tabbar" data-color="orange" data-value="b"><button data-value="a" data-icon="gift">Gifts</button><button data-value="b" data-icon="star">Play</button><button data-value="c" data-icon="mail">Mail</button></nav>
+  <nav class="sc-tabbar" data-color="sky" data-value="b"><button data-value="a" data-icon="gift">Gifts</button><button data-value="b" data-icon="home">Home</button><button data-value="c" data-icon="mail">Mail</button></nav>
+  <nav class="sc-tabbar" data-color="orange" data-value="b"><button data-value="a" data-icon="gift">Gifts</button><button data-value="b" data-icon="home">Home</button><button data-value="c" data-icon="mail">Mail</button></nav>
 </div>` },
     { title: 'Live: switch screens', desc: 'data-panel points at each screen; the bar shows the selected one and hides the rest. Badges clear when you open Chests.',
       html: `<div class="phone">
@@ -72,9 +72,9 @@ SCDocs.page({
   <div class="sc-screen" data-fit="parent">
     <div class="sc-screen-bottom">
       <nav class="sc-tabbar" id="mainBar" data-value="play">
-        <button data-value="shop" data-icon="cash" data-panel="sShop">Shop</button>
+        <button data-value="shop" data-icon="shop" data-panel="sShop">Shop</button>
         <button data-value="chests" data-icon="chest" data-panel="sChests" data-badge="7" data-badge-color="red">Chests</button>
-        <button data-value="play" data-icon="star" data-panel="sPlay">Play</button>
+        <button data-value="play" data-icon="home" data-panel="sPlay">Play</button>
         <button data-value="rank" data-icon="trophy" data-panel="sRank">Rank</button>
       </nav>
     </div>

@@ -18,8 +18,8 @@ The main navigation bar at the bottom of a home/menu screen: Shop, Chests, Play,
 <div class="sc-screen" id="menuBar">
   <div class="sc-screen-bottom">
     <nav class="sc-tabbar" data-value="play">
-      <button data-value="shop" data-icon="cash" data-panel="shopScreen">Shop</button>
-      <button data-value="play" data-icon="star" data-panel="playScreen">Play</button>
+      <button data-value="shop" data-icon="shop" data-panel="shopScreen">Shop</button>
+      <button data-value="play" data-icon="home" data-panel="playScreen">Play</button>
       <button data-value="rank" data-icon="trophy" data-panel="rankScreen">Rank</button>
     </nav>
   </div>
