@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.36.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.37.0-A**
 
 ## Next task
-**Build the Shop block** (`kit/blocks/shop.html`, add a row to `blocks/README.md`). Full shop screen (solid Screen Shell): Top Bar with coins + gems, `SHOP` Screen Title, Tabs (Gems / Coins / Offers) with `data-panel`, each panel a 3-column grid of Shop Cards (gem-pile/coin-pile packs with real prices, offers with coin/gem prices and tags), a special offer Item Row with a Countdown Timer pill, and a back icon button. Buying with currency checks the balance (toast if short) and updates counters; real-money prices call a stub. Update registry `blocks[]`, STATUS "Done — blocks", docs NAV "Blocks" group and CHANGELOG.
+**Build the Loading block** (`kit/blocks/loading.html`, add a row to `blocks/README.md`), the last block. A full start-up flow: solid Screen Shell with game title + `.sc-loading` (bouncing icon, tips), simulated asset loading with `SC.loading.set`, `done` reveals a "Tap to start" state, then hands over to the game. After that, write the docs Introduction + Installation pages (`docs/introduction.html`, `docs/installation.html`, enable them in NAV) and do the final check from STATUS "Left — other".
 
 ## In progress
 _Nothing._
@@ -51,12 +51,13 @@ _Nothing._
 | 6 | Reward Reveal | `blocks/reward.html` | v0.34.0-A |
 | 7 | Daily Reward | `blocks/daily.html` | v0.35.0-A |
 | 8 | Settings | `blocks/settings.html` | v0.36.0-A |
+| 9 | Shop | `blocks/shop.html` | v0.37.0-A |
 
 ## Left — components (in this order)
 _All components done._
 
 ## Left — blocks (full screens built ONLY from kit components)
-Shop · Loading
+Loading
 (Old pre-kit versions of some screens: `super-casual/old-demos/`. Each block = one HTML file in `kit/blocks/` using only kit components + layout glue.)
 
 ## Left — other

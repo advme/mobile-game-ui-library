@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.36.0",
+  "version": "0.37.0",
   "items": [
     {
       "name": "core",
@@ -2423,6 +2423,30 @@
         "tabs",
         "checkbox",
         "toast"
+      ]
+    },
+    {
+      "name": "shop",
+      "type": "registry:block",
+      "title": "Shop",
+      "file": "blocks/shop.html",
+      "description": "Shop screen: wallet counters, timed offer row, tabbed shop card grids, buy handling with balance checks.",
+      "whenToUse": "In-game store for currency packs and items.",
+      "components": [
+        "screen",
+        "counter",
+        "title",
+        "tabs",
+        "alert",
+        "shopcard",
+        "button",
+        "icon-button",
+        "tag",
+        "row",
+        "slot",
+        "timer",
+        "toast",
+        "float"
       ]
     }
   ]

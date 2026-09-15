@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.37.0-A — Shop block
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `kit/blocks/shop.html`, a solid shop screen. It has a back button + coin/gem counters, a `SHOP` title (md), a purple Item Row starter offer (chest slot with -50% tag, name, 23h countdown pill, $1.99), and sm Tabs Gems / Coins / Items (Items with a Notification Dot that clears) switching 3-column Shop Card grids via `data-panel`. Gems cost real money, coins cost gems, and items cost coins. One `buy` listener handles store stubs, balance checks (error toast), counter updates and floats. Kit fix: `core.css` also makes `[role="tabpanel"][hidden]` always hide, so custom grid panels switch correctly.
+- Tested: Opened at 375×812. Only the selected panel shows. Buying 1000 coins for 10 gems gives 85→75 gems and 2400→3400 coins. The Items tab clears its alert, and buying clover for 3000 coins works. Everything fits with no scroll.
+- Notes for next agent: Three tabs with icons need `data-size="sm"` at 400px width. Remember to load `alert.css` when using `data-alert`, or the `!` image renders huge.
+
 ## v0.36.0-A — Settings block
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `kit/blocks/settings.html`, a SETTINGS popup opened from a settings icon button. First panel: Sound and Music Toggles (with icons), each with a full-width sm volume Slider showing a percent, and a Vibration Toggle. Second panel: language Tabs (EN/ES/DE/TR) and a Notifications Checkbox. Also Support (mail icon), Privacy and Restore purchases buttons, plus version text. One `change` listener saves every control via `data-setting`; `input` is ready for live volume.

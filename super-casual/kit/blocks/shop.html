@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Block: Shop — Super Casual UI Kit</title>
+<!-- BLOCK: Shop screen. Built only from kit components. -->
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/screen/screen.css">
+<link rel="stylesheet" href="../components/counter/counter.css">
+<link rel="stylesheet" href="../components/title/title.css">
+<link rel="stylesheet" href="../components/tabs/tabs.css">
+<link rel="stylesheet" href="../components/shopcard/shopcard.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../components/tag/tag.css">
+<link rel="stylesheet" href="../components/alert/alert.css">
+<link rel="stylesheet" href="../components/row/row.css">
+<link rel="stylesheet" href="../components/slot/slot.css">
+<link rel="stylesheet" href="../components/timer/timer.css">
+<link rel="stylesheet" href="../components/toast/toast.css">
+<link rel="stylesheet" href="../components/float/float.css">
+<script src="../sc.js"></script>
+<style>
+  /* Layout glue only */
+  html, body { margin:0; height:100%; overflow:hidden; background:#1f2d4b; }
+  .shop { display:flex; flex-direction:column; align-items:center; gap:12px; width:100%; }
+  .grid { display:grid; grid-template-columns:repeat(3, 116px); gap:14px 10px; justify-content:center; padding-top:10px; }
+  .grid .sc-shopcard { width:116px; }
+  .offer-body { gap:4px; align-items:flex-start; }
+  .shop > .sc-row .sc-button { min-width:84px; }
+</style>
+</head>
+<body>
+  <div class="sc-screen" id="shop" data-backdrop="solid">
+    <div class="sc-screen-top">
+      <button class="sc-icon-button" data-icon="back" data-color="dark" data-size="sm" id="back" aria-label="Back"></button>
+      <div style="display:flex; gap:6px">
+        <div class="sc-counter" id="coins" data-icon="coin" data-value="2400" data-size="sm"></div>
+        <div class="sc-counter" id="gems" data-icon="gem" data-value="85" data-size="sm"></div>
+      </div>
+    </div>
+
+    <div class="sc-screen-middle">
+      <div class="shop">
+        <h1 class="sc-title" data-color="green" data-size="md">SHOP</h1>
+
+        <div class="sc-row" data-color="purple">
+          <div class="sc-slot" data-icon="chest" data-size="sm" data-color="yellow" data-tag="-50%"></div>
+          <div class="sc-row-body offer-body">
+            <span class="sc-row-title">Starter Pack</span>
+            <div class="sc-timer" data-variant="pill" data-format="long" data-seconds="86399"></div>
+          </div>
+          <button class="sc-button" data-color="green" data-size="sm" id="offer">$1.99</button>
+        </div>
+
+        <div class="sc-tabs" data-size="sm" data-value="gems">
+          <button data-value="gems" data-icon="gem" data-panel="pGems">Gems</button>
+          <button data-value="coins" data-icon="coin" data-panel="pCoins">Coins</button>
+          <button data-value="items" data-icon="gift" data-panel="pItems" data-alert>Items</button>
+        </div>
+
+        <div class="grid" id="pGems">
+          <div class="sc-shopcard" data-icon="gem" data-amount="80" data-price="$0.99" data-color="purple"></div>
+          <div class="sc-shopcard" data-icon="gem-pile" data-amount="500" data-price="$4.99" data-color="purple" data-tag="BEST" data-bonus="+20% bonus"></div>
+          <div class="sc-shopcard" data-icon="gem-pile" data-amount="1200" data-price="$9.99" data-color="purple" data-tag="HOT" data-tag-color="orange"></div>
+        </div>
+        <div class="grid" id="pCoins" hidden>
+          <div class="sc-shopcard" data-icon="coin" data-amount="1000" data-price="10" data-price-icon="gem" data-color="yellow"></div>
+          <div class="sc-shopcard" data-icon="coin-pile" data-amount="5000" data-price="45" data-price-icon="gem" data-color="yellow" data-tag="-10%" data-tag-color="purple"></div>
+          <div class="sc-shopcard" data-icon="coin-pile" data-amount="12000" data-price="99" data-price-icon="gem" data-color="yellow"></div>
+        </div>
+        <div class="grid" id="pItems" hidden>
+          <div class="sc-shopcard" data-icon="heart" data-amount="5" data-price="500" data-price-icon="coin" data-color="red"></div>
+          <div class="sc-shopcard" data-icon="key" data-amount="3" data-price="900" data-price-icon="coin" data-color="sky"></div>
+          <div class="sc-shopcard" data-icon="clover" data-amount="2" data-price="3000" data-price-icon="coin" data-color="green" data-tag="NEW" data-tag-color="green"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const wallet = { coin: $('coins'), gem: $('gems') };
+  const give = (card) => {
+    const amount = Number(card.dataset.amount || 1), icon = card.dataset.icon;
+    SC.float('+' + amount, card.querySelector('.sc-shopcard-art'), { icon, color: 'gold' });
+    if (icon.startsWith('coin')) SC.setValue(wallet.coin, Number(wallet.coin.dataset.value) + amount);
+    if (icon.startsWith('gem')) SC.setValue(wallet.gem, Number(wallet.gem.dataset.value) + amount);
+  };
+  document.addEventListener('buy', e => {
+    const card = e.target, { price, currency } = e.detail;
+    if (!currency) {                                             // real money → game store SDK
+      SC.toast('Opening store…'); setTimeout(() => give(card), 600); return;
+    }
+    const counter = wallet[currency], have = Number(counter.dataset.value), cost = Number(price);
+    if (have < cost) return SC.toast(`Not enough ${currency}s!`, { kind: 'error', icon: currency });
+    SC.setValue(counter, have - cost); give(card);
+  });
+  $('offer').onclick = () => { SC.toast('Opening store…'); };
+  document.querySelector('.sc-tabs').addEventListener('change', e => {
+    if (e.detail.value === 'items') SC.setAlert(document.querySelector('.sc-tabs [data-value="items"]'), false);
+  });
+  $('back').onclick = () => SC.screen.hide('shop');           // game: back to menu
+</script>
+</body>
+</html>

@@ -20,3 +20,4 @@ Rules for every block:
 | Reward Reveal | `reward.html` | Chest opening: banner, shaking chest → new item pop with glow, rarity tag, reward slots, Collect |
 | Daily Reward | `daily.html` | 7-day reward popup: claimed / TODAY / future days, big day-7 chest, Claim, next-reward countdown |
 | Settings | `settings.html` | Settings popup: sound/music toggles + volume sliders, vibration, language tabs, notifications checkbox, support/privacy/restore |
+| Shop | `shop.html` | Shop screen: wallet, timed starter offer row, Gems / Coins / Items tabs with Shop Card grids, buy handling |
