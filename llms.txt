@@ -1,0 +1,8 @@
+# Super Casual UI Kit
+> Mobile game UI kit (HTML/CSS/JS) for AI-generated web games. No install: 2 lines + HTML tags.
+
+- AI guide (start here): https://advme.github.io/mobile-game-ui-library/AI-GUIDE.md
+- Add to a game: <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/advme/mobile-game-ui-library@v0.41.1-A/super-casual/dist/kit.css"> <script src="https://cdn.jsdelivr.net/gh/advme/mobile-game-ui-library@v0.41.1-A/super-casual/dist/kit.js"></script>
+- Registry (all components, props, events, blocks, icons): https://cdn.jsdelivr.net/gh/advme/mobile-game-ui-library@v0.41.1-A/super-casual/dist/registry.json
+- Minimal working game: https://advme.github.io/mobile-game-ui-library/templates/cdn-game.html
+- Docs: https://advme.github.io/mobile-game-ui-library/super-casual/kit/docs/introduction.html

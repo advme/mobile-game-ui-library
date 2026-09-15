@@ -1,6 +1,6 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.41.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.41.1-A**
 
 ## Next task
 **Final check with a fresh AI.** Open a new AI session with no history. Ask it to follow `templates/pixelfork-game/AI.md` and turn the template into a small real game (e.g. "tap the falling fruit" with a fruit-themed coin via `CONFIG.images` and a Shop screen copied from `kit/blocks/shop.html`). Write down everything that confused it, then fix AI.md, the docs or the registry. Also: test the template on a real iPhone and Android phone.
@@ -66,4 +66,5 @@ _All blocks done._
 - Ideas after that: Level Select block (map of levels with stars/locks), Profile block, Leaderboard block, Settings inside Pause
 
 ## Links
-- Repo is **private** (since v0.10.2-A), so GitHub Pages is off. Preview locally: `python3 tools/serve.py 8765` → http://localhost:8765/super-casual/kit/docs/button.html
+- Repo is **public** again (since v0.41.1-A); GitHub Pages is on: https://advme.github.io/mobile-game-ui-library/
+- No-install use: jsDelivr CDN of `super-casual/dist` pinned to a tag (see `AI-GUIDE.md`). **When you publish a new version, update the tag in `AI-GUIDE.md`, `llms.txt`, `README.md`, `templates/cdn-game.html` and `registry.json → cdn` (search for the old tag).**

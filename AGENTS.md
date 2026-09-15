@@ -73,7 +73,7 @@ Copy the pattern of an existing component (e.g. `progress`, `timer`):
 ## 6. Git workflow
 - Work on `main` in small commits. Don't rewrite history.
 - Never commit reference images from other games (see `.gitignore`).
-- The repo is **private**; GitHub Pages is off. Preview with `tools/serve.py`.
+- The repo is **public**; GitHub Pages serves the root (https://advme.github.io/mobile-game-ui-library/). Games load the kit from jsDelivr pinned to a release tag. After publishing, update the pinned tag in `AI-GUIDE.md`, `llms.txt`, `README.md`, `templates/cdn-game.html`, `registry.json → cdn`.
 
 ## 7. Handoff protocol (REQUIRED after every task)
 When you finish a task (or are about to run out of budget), **before stopping**:

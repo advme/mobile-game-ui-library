@@ -2,6 +2,16 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.41.1-A — Public repo + no-install AI guide
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: At the owner's request, the repo is public again and GitHub Pages is re-enabled (`.nojekyll` added). Games can use the kit with zero install via jsDelivr: `…/gh/advme/mobile-game-ui-library@v0.41.1-A/super-casual/dist/kit.css` + `kit.js` (icons resolve next to kit.js automatically). Added:
+  - `AI-GUIDE.md`: one page for Pixelfork or any AI, with the 2 lines, page pattern, SC API, component table generated from the registry, blocks with live links, icons, and rules.
+  - `llms.txt`: short pointer file.
+  - `templates/cdn-game.html`: the full mini game loading the kit from the CDN.
+  - README rewritten for users; `registry.json → cdn`; index links; STATUS/AGENTS note to update the pinned tag on each release.
+- Tested: Checked the repo for secrets before going public (none; history contains only the owner's commit name/email). After push: CDN kit.css/kit.js/icons and the Pages example game loaded (see next check).
+- Notes for next agent: The CDN is pinned to a tag on purpose (stable for games). `@main` also works, but jsDelivr caches it for up to 12 h.
+
 ## v0.41.0-A — Device preview for blocks (desktop) + simulated safe areas
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: At the owner's request, opening a block on a desktop now shows it in `kit/blocks/preview.html`:
