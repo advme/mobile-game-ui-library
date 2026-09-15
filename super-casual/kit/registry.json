@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "items": [
     {
       "name": "core",
@@ -1989,6 +1989,57 @@
         {
           "title": "Tab bar",
           "html": "<button data-value=\"shop\" data-icon=\"shop\" data-alert>Shop</button>"
+        }
+      ]
+    },
+    {
+      "name": "level",
+      "type": "registry:ui",
+      "title": "Level Badge",
+      "description": "Shield badge with the level number; standalone or on a Progress Bar's left end (XP bar).",
+      "whenToUse": "Player level, hero/item level, XP bars.",
+      "files": [
+        "components/level/level.css"
+      ],
+      "docs": "components/level/level.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<span class=\"sc-level\" data-value=\"5\"></span>",
+      "props": {
+        "data-value": {
+          "type": "number",
+          "required": true
+        },
+        "data-size": {
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        },
+        "data-level (on .sc-progress)": {
+          "type": "number",
+          "optional": true,
+          "description": "Badge on the bar's left end"
+        }
+      },
+      "events": [],
+      "js": {
+        "SC.setValue(level, n)": "Update with pop"
+      },
+      "rules": [
+        "Player/hero/item levels and XP bars.",
+        "No data-icon together with data-level on a bar.",
+        "Pop only on real level-ups.",
+        "Max 3 digits."
+      ],
+      "examples": [
+        {
+          "title": "XP bar",
+          "html": "<div class=\"sc-progress\" data-value=\"723\" data-max=\"1000\" data-label=\"value\" data-level=\"5\"></div>"
         }
       ]
     }

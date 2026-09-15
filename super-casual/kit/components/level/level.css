@@ -1,0 +1,32 @@
+/*
+  Level Badge — Super Casual UI Kit
+  Requires: core.css, sc.js   (uses the kit "level-badge" icon)
+
+  <span class="sc-level" data-value="5"></span>
+  <div class="sc-progress" data-value="723" data-max="1000" data-label="value" data-level="5"></div>   ← XP bar with badge
+
+  data-value   level number (on .sc-level)                    required
+  data-size    sm | md | lg   (32 / 46 / 64 px)                default: md
+  data-level   on .sc-progress → badge on the bar's left end (needs progress.css)
+
+  JS: SC.setValue(level, 6)   // pops the badge (level up)
+      progress.dataset.level = '6'
+*/
+.sc-level {
+  --lv:46px;
+  position:relative; display:inline-grid; place-items:center; flex:none; vertical-align:middle;
+  width:var(--lv); height:var(--lv); font-family:var(--sc-font); user-select:none; -webkit-user-select:none;
+}
+.sc-level[data-size="sm"] { --lv:32px; }
+.sc-level[data-size="lg"] { --lv:64px; }
+.sc-level > img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; pointer-events:none; }
+.sc-level > .sc-text { --fs:calc(var(--lv) * .42); font-size:var(--fs); position:relative; margin-top:calc(var(--lv) * -.06); font-variant-numeric:tabular-nums; letter-spacing:-.5px; }
+.sc-level.sc-pop { animation:sc-level-pop .5s cubic-bezier(.3,1.8,.5,1); }
+@keyframes sc-level-pop { 0% { scale:1; } 35% { scale:1.35; rotate:-8deg; } 100% { scale:1; rotate:0deg; } }
+
+/* On a progress bar's left end (like an XP bar) */
+.sc-progress > .sc-level {
+  --lv:max(30px, calc(var(--h) * 1.9)); position:relative; z-index:2; margin-right:calc(var(--lv) * -.35);
+}
+.sc-progress:has(> .sc-level) .sc-progress-label { padding-left:calc(var(--h) * .6); }
+@media (prefers-reduced-motion:reduce) { .sc-level.sc-pop { animation:none; } }

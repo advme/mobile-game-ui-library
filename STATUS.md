@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.24.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.25.0-A**
 
 ## Next task
-**Build Level Badge.** The `level-badge` shield icon with an outlined level number centered on it ("5", "12"), in sizes sm/md/lg, optionally overlapping the left end of a Progress Bar (XP bar) like the reference. Target API: `<span class="sc-level" data-value="5"></span>`, `SC.setValue(level, 6)` with a pop, and a `data-level` attribute on `.sc-progress` that puts the badge on the bar's left end. Follow AGENTS.md §4.
+**Build Top Bar.** The home-screen top bar: player avatar (framed `avatar` icon) with a Level Badge, player name, and resource counters (coins, gems, energy) on the right, fitting 400px width with 12px margins. Target API: `<div class="sc-topbar" data-name="Player" data-level="12" data-avatar="avatar">` + Resource Counters as children (the runtime builds the avatar block). Sits in `.sc-screen-top`. Follow AGENTS.md §4.
 
 ## In progress
 _Nothing._
@@ -35,12 +35,12 @@ _Nothing._
 | 22 | Item Row | `.sc-row` | v0.22.0-A |
 | 23 | Loading Bar | `.sc-loading` | v0.23.0-A |
 | 24 | Notification Dot | `data-alert / .sc-alert` | v0.24.0-A |
+| 25 | Level Badge | `.sc-level / data-level` | v0.25.0-A |
 
 ## Left — components (in this order)
-1. Level Badge (use `level-badge` icon + number) ← next
-2. Top Bar (avatar, level, resources) (use `avatar`, `level-badge` icons)
-3. Shop Card (use `gem-pile`, `coin-pile` icons)
-4. Tutorial Hand (use `hand` icon)
+1. Top Bar (avatar, level, resources) (use `avatar`, `level-badge` icons) ← next
+2. Shop Card (use `gem-pile`, `coin-pile` icons)
+3. Tutorial Hand (use `hand` icon)
 
 ## Left — blocks (full screens built ONLY from kit components)
 Gameplay HUD · Pause · Success · Fail (old versions exist in `super-casual/old-demos/`; build each block as one `.sc-screen`) · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading

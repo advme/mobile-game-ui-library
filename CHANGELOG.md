@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.25.0-A — Level Badge component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `.sc-level`: the `level-badge` shield with an outlined number, 3 sizes, and `aria-label` "Level N". `SC.setValue(level, n)` pops on change. Progress Bar now accepts `data-level` to put the badge on its left end (XP bar, min 30px on thin bars). Added the AI manual, registry item, docs page (sizes, XP bars, live gain-XP level-up) and `tools/tests/level.html`.
+- Tested: `tools/tests/level.html` 13/13 (image/number/aria, size and centering, badge on bar + overlap + minimum size, setValue pop only on change, data-level change/removal, progress setValue keeps badge, inserted badge, no duplicates/churn). Visual check of docs.
+- Notes for next agent: `upgradeProgress` now builds `.sc-level` from `data-level`. Don't combine it with the progress `data-icon`.
+
 ## v0.24.0-A — Notification Dot component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added the Notification Dot, a "something new" marker. `data-alert` on buttons, icon buttons, slots, tabs and tab bar items shows the red `alert` icon (bare) or a small plain dot (`dot`) on the top-right corner, with pop-in + gentle pulse; on tab bar items it sits on the icon corner. Standalone `.sc-alert` works inline. `SC.setAlert(el, true|false|'dot')`. Coexists with tags and badges. Added the AI manual, registry item, docs page (hosts, tab bar, live clear-on-open) and `tools/tests/alert.html`.

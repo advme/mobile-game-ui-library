@@ -33,11 +33,12 @@
   const LOADINGS = '.sc-loading';
   const ALERT_HOSTS = '.sc-button, .sc-icon-button, .sc-slot, .sc-tab, .sc-tabbar-item';
   const ALERTS = '.sc-alert:not(.sc-alert-attached)';
+  const LEVELS = '.sc-level';
   const TAB_ITEMS = '.sc-tabs > button, .sc-tabbar > button';
   const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot, .sc-tab, .sc-tabbar-item';
   const MESSAGES = '.sc-popup-message, .sc-popup-value';
   const SCREENS = '.sc-screen';
-  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}, ${TAGS}, ${BANNERS}, .sc-row-avatar, ${LOADINGS}, ${ALERTS}`;
+  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}, ${TAGS}, ${BANNERS}, .sc-row-avatar, ${LOADINGS}, ${ALERTS}, ${LEVELS}`;
   const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, ${TOGGLES}, ${CHECKBOXES}, ${TAB_ITEMS}`;
 
   const script = document.currentScript;
@@ -492,6 +493,17 @@
     upgradeAlert(el);
   }
 
+  /* ---------- Level Badge ---------- */
+  function upgradeLevel(el) {
+    let img = el.querySelector(':scope > img');
+    if (!img) { img = document.createElement('img'); img.alt = ''; img.draggable = false; img.src = ASSETS + 'level-badge.png'; el.prepend(img); }
+    let span = el.querySelector(':scope > .sc-text');
+    if (!span) { span = textSpan(''); el.append(span); }
+    const v = String(el.dataset.value ?? '').trim();
+    setSpan(span, v);
+    if (v) setAttr(el, 'aria-label', 'Level ' + v);
+  }
+
   /* ---------- Counter ---------- */
   function formatNumber(n, format) {
     n = Math.round(Number(n) || 0);
@@ -533,6 +545,12 @@
 
   function setValue(el, value, { animate = true, duration = 450 } = {}) {
     if (el.matches(STARS)) { el.dataset.value = value; upgradeStars(el); return; }
+    if (el.matches(LEVELS)) {
+      const changed = el.dataset.value !== String(value);
+      el.dataset.value = value; upgradeLevel(el);
+      if (changed && animate) { el.classList.remove('sc-pop'); void el.offsetWidth; el.classList.add('sc-pop'); }
+      return;
+    }
     const kind = el.matches(SLOTS) ? 'slot' : el.matches(PROGRESS) ? 'progress' : 'counter';
     const key = kind === 'slot' ? 'count' : 'value';
     const render = { slot: v => formatNumber(v, el.dataset.format), progress: v => progressLabel(el, v), counter: v => counterText(el, v) }[kind];
@@ -588,6 +606,11 @@
   }
   function upgradeProgress(el) {
     upgradeIcon(el);
+    let lvl = el.querySelector(':scope > .sc-level');
+    if (el.dataset.level) {
+      if (!lvl) { lvl = document.createElement('span'); lvl.className = 'sc-level'; el.prepend(lvl); }
+      setAttr(lvl, 'data-value', el.dataset.level); upgradeLevel(lvl);
+    } else lvl?.remove();
     let bar = el.querySelector(':scope > .sc-progress-bar');
     if (!bar) {
       bar = document.createElement('div'); bar.className = 'sc-progress-bar';
@@ -870,6 +893,7 @@
     if (el.matches(BADGE_HOSTS)) upgradeBubble(el);
     if (el.matches(TAG_HOSTS)) upgradeTag(el);
     if (el.matches(ALERT_HOSTS)) upgradeAlert(el);
+    if (el.matches(LEVELS)) return upgradeLevel(el);
     if (el.matches(ALERTS)) return buildAlert(el, el.dataset.alert === 'dot' ? 'dot' : 'icon');
     if (el.matches(TAGS)) return upgradeText(el);
     if (el.matches(BANNERS)) return upgradeBanner(el);
@@ -920,6 +944,7 @@
         else if (r.target.matches(CHECKBOXES)) upgradeCheckbox(r.target);
         else if (r.target.matches(TABS)) upgradeTabs(r.target);
         else if (r.target.matches(LOADINGS)) upgradeLoading(r.target);
+        else if (r.target.matches(LEVELS)) upgradeLevel(r.target);
         else if (r.target.matches(TAB_ITEMS)) upgradeTabs(r.target.parentElement);
         else if (r.target.matches(ICON_COMPONENTS)) upgradeIcon(r.target);
       } else {
@@ -935,7 +960,7 @@
     }
   }).observe(document.documentElement, {
     childList: true, subtree: true, characterData: true,
-    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-tag-color', 'data-tag-pos', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-checked', 'data-min', 'data-step', 'disabled', 'data-panel', 'data-tips', 'data-alert', 'data-width', 'data-height', 'data-fit'],
+    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-tag-color', 'data-tag-pos', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-checked', 'data-min', 'data-step', 'disabled', 'data-panel', 'data-tips', 'data-alert', 'data-level', 'data-width', 'data-height', 'data-fit'],
   });
 
   // Press feedback (delegated, so it works for dynamically added components)
@@ -952,7 +977,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.24.0',
+    version: '0.25.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */

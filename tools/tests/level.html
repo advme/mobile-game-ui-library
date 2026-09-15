@@ -1,0 +1,53 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Level regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/level/level.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/progress/progress.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>body { margin:30px; font:14px system-ui; background:#243453; color:white; } #fixtures { display:grid; gap:20px; width:320px; } li { margin:6px 0; } .fail { color:#ff9da7; }</style>
+<h1>Level checks</h1>
+<p id="summary">Running…</p>
+<div id="fixtures">
+  <span class="sc-level" id="l" data-value="5"></span>
+  <div class="sc-progress" id="p" data-value="50" data-label="value" data-level="3"></div>
+  <div class="sc-progress" id="q" data-value="50" data-size="sm" data-level="9"></div>
+</div>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const settle = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  const num = el => el.querySelector(':scope > .sc-text')?.dataset.text;
+  try {
+    const l = $('#l'), p = $('#p');
+    check('badge image + number + aria-label', l.querySelector('img')?.src.endsWith('/level-badge.png') && num(l) === '5' && l.getAttribute('aria-label') === 'Level 5');
+    check('md size 46px, text centered on badge', l.offsetWidth === 46 && Math.abs(l.querySelector('.sc-text').getBoundingClientRect().left + l.querySelector('.sc-text').offsetWidth / 2 - (l.getBoundingClientRect().left + 23)) < 3);
+    const b = p.querySelector(':scope > .sc-level');
+    check('progress data-level adds badge first', p.firstElementChild === b && num(b) === '3');
+    check('badge overlaps the bar start', b.getBoundingClientRect().right > p.querySelector('.sc-progress-bar').getBoundingClientRect().left);
+    check('small bar badge at least 30px', $('#q').querySelector('.sc-level').offsetWidth >= 30);
+    SC.setValue(l, 6); await settle();
+    check('setValue updates + pops', num(l) === '6' && l.classList.contains('sc-pop'));
+    l.classList.remove('sc-pop'); SC.setValue(l, 6);
+    check('same value does not pop', !l.classList.contains('sc-pop'));
+    p.dataset.level = '4'; await settle();
+    check('changing data-level updates badge', num(p.querySelector('.sc-level')) === '4');
+    SC.setValue(p, 80); await new Promise(r => setTimeout(r, 600));
+    check('progress setValue keeps badge', p.querySelectorAll(':scope > .sc-level').length === 1 && p.dataset.value === '80');
+    p.removeAttribute('data-level'); await settle();
+    check('removing data-level removes badge', !p.querySelector('.sc-level'));
+    const fresh = document.createElement('span'); fresh.className = 'sc-level'; fresh.dataset.value = '77'; $('#fixtures').append(fresh); await settle();
+    check('inserted badge upgrades', num(fresh) === '77');
+    SC.upgrade(fresh); SC.upgrade(fresh);
+    check('no duplicates', fresh.querySelectorAll('img').length === 1 && fresh.querySelectorAll('.sc-text').length === 1);
+    let records = 0; const mo = new MutationObserver(x => records += x.length); mo.observe($('#fixtures'), { attributes: true, subtree: true, childList: true, attributeFilter: ['data-value', 'data-level', 'aria-label', 'data-text'] });
+    await new Promise(r => setTimeout(r, 300)); mo.disconnect();
+    check('no endless updates', records === 0);
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Level';
+});
+</script>
