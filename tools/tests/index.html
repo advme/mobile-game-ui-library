@@ -1,0 +1,34 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>All kit tests</title>
+<style>body { margin:20px; font:15px system-ui; background:#243453; color:white; } li { margin:6px 0; } .fail { color:#ff9da7; } .pass { color:#9dffb4; } iframe { position:absolute; left:-9999px; width:420px; height:900px; }</style>
+<h1>All kit tests</h1>
+<p id="summary">Running…</p>
+<ul id="list"></ul>
+<script>
+// Add every new tools/tests/<name>.html page here.
+const PAGES = ['bubble', 'toggle', 'slider', 'checkbox', 'tabs', 'tabbar'];
+(async () => {
+  let pass = 0, fail = 0;
+  for (const name of PAGES) {
+    const li = document.createElement('li'); li.textContent = name + ': running…'; document.querySelector('#list').append(li);
+    const frame = document.createElement('iframe'); frame.src = name + '.html'; document.body.append(frame);
+    const started = Date.now();
+    const result = await new Promise(resolve => {
+      const poll = setInterval(() => {
+        let t = ''; try { t = frame.contentDocument.title; } catch (_) {}
+        if (/^(PASS|FAIL)/.test(t) || Date.now() - started > 15000) { clearInterval(poll); resolve(t || 'TIMEOUT'); }
+      }, 100);
+    });
+    const summary = frame.contentDocument?.querySelector('#summary')?.textContent || '';
+    const ok = result.startsWith('PASS');
+    ok ? pass++ : fail++;
+    li.className = ok ? 'pass' : 'fail';
+    li.textContent = `${name}: ${ok ? 'PASS' : 'FAIL'} — ${summary}`;
+    if (!ok) li.textContent += ' · ' + [...(frame.contentDocument?.querySelectorAll('.fail') || [])].map(x => x.textContent).join(' | ');
+    frame.remove();
+  }
+  document.querySelector('#summary').textContent = `${pass} pages passed; ${fail} failed`;
+  document.title = (fail ? 'FAIL' : 'PASS') + ' — All kit tests';
+})();
+</script>

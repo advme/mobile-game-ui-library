@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "items": [
     {
       "name": "core",
@@ -1510,6 +1510,68 @@
         {
           "title": "Listen",
           "js": "tabs.addEventListener('change', e => showList(e.detail.value));"
+        }
+      ]
+    },
+    {
+      "name": "tabbar",
+      "type": "registry:ui",
+      "title": "Bottom Tab Bar",
+      "description": "Bottom navigation bar for home/menu screens; selected item rises on a glossy block with its label. Badges and auto screen switching.",
+      "whenToUse": "Main navigation between home-level screens (Shop, Chests, Play, Rank, Settings). Never during gameplay.",
+      "files": [
+        "components/tabbar/tabbar.css"
+      ],
+      "docs": "components/tabbar/tabbar.md",
+      "dependencies": [
+        "core",
+        "screen",
+        "bubble"
+      ],
+      "html": "<div class=\"sc-screen-bottom\">\n  <nav class=\"sc-tabbar\" data-value=\"play\">\n    <button data-value=\"shop\" data-icon=\"cash\">Shop</button>\n    <button data-value=\"play\" data-icon=\"star\">Play</button>\n    <button data-value=\"rank\" data-icon=\"trophy\">Rank</button>\n  </nav>\n</div>",
+      "props": {
+        "data-value": {
+          "type": "string",
+          "optional": true,
+          "description": "Selected item value"
+        },
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "sky",
+            "blue",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "default": "indigo"
+        }
+      },
+      "parts": {
+        "button[data-value][data-icon]": "Item; text = 1-word label; optional data-panel (screen id), data-badge, disabled"
+      },
+      "events": {
+        "change": "User picked another item (detail.value)"
+      },
+      "js": {
+        "SC.tabbar.get(el)": "Selected value",
+        "SC.tabbar.set(el, value, {emit?})": "Select (same as SC.tabs.set)"
+      },
+      "rules": [
+        "Home/menu screens only; 3-5 items; main action in the middle.",
+        "Place in .sc-screen-bottom of its own always-visible .sc-screen layer; no margins (bleeds to edges).",
+        "Each item needs data-icon from the kit list and a 1-word label.",
+        "Switch screens with data-panel or listen for change.",
+        "Red badges for collectables, green for good news; clear when opened."
+      ],
+      "examples": [
+        {
+          "title": "Home navigation",
+          "html": "<nav class=\"sc-tabbar\" data-value=\"play\"><button data-value=\"shop\" data-icon=\"cash\" data-panel=\"shopScreen\">Shop</button><button data-value=\"play\" data-icon=\"star\" data-panel=\"playScreen\">Play</button><button data-value=\"rank\" data-icon=\"trophy\" data-badge=\"2\" data-badge-color=\"green\" data-panel=\"rankScreen\">Rank</button></nav>"
         }
       ]
     }

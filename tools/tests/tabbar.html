@@ -1,0 +1,58 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tab Bar regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/screen/screen.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/tabbar/tabbar.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/bubble/bubble.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>body { margin:20px; font:14px system-ui; background:#243453; color:white; } #box { position:relative; width:300px; height:600px; overflow:hidden; } li { margin:6px 0; } .fail { color:#ff9da7; }</style>
+<h1>Tab Bar checks</h1>
+<p id="summary">Running…</p>
+<div id="box">
+  <div class="sc-screen" data-fit="parent" id="pA"></div>
+  <div class="sc-screen" data-fit="parent" id="pB"></div>
+  <div class="sc-screen" data-fit="parent" id="shell"><div class="sc-screen-bottom">
+    <nav class="sc-tabbar" id="bar" data-value="b">
+      <button data-value="a" data-icon="cash" data-panel="pA">Shop</button>
+      <button data-value="b" data-icon="star" data-panel="pB" data-badge="3">Play</button>
+      <button data-value="c" data-icon="trophy" disabled>Rank</button>
+    </nav>
+  </div></div>
+</div>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const settle = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  try {
+    await settle();
+    const bar = $('#bar'), [a, b, c] = bar.children;
+    check('items get sc-tabbar-item (not sc-tab)', a.classList.contains('sc-tabbar-item') && !a.classList.contains('sc-tab'));
+    check('selected from data-value, roles', b.getAttribute('aria-selected') === 'true' && bar.getAttribute('role') === 'tablist' && SC.tabbar.get(bar) === 'b');
+    check('icons and labels built', a.querySelector(':scope > img[data-sc-icon]')?.src.endsWith('/cash.png') && a.querySelector(':scope > .sc-text')?.dataset.text === 'Shop');
+    check('label visible only when selected', getComputedStyle(b.querySelector('.sc-text')).display === 'block' && getComputedStyle(a.querySelector('.sc-text')).display === 'none');
+    check('badge bubble on item', b.querySelector('.sc-bubble')?.textContent === '3');
+    check('panels follow selection', $('#pA').hidden && !$('#pB').hidden);
+    check('selected item is wider', b.offsetWidth > a.offsetWidth);
+    const box = $('#box').getBoundingClientRect(), r = bar.getBoundingClientRect();
+    check('bleeds to left, right and bottom edges of the shell', Math.abs(r.left - box.left) < 1 && Math.abs(r.right - box.right) < 1 && Math.abs(r.bottom - box.bottom) < 1);
+    let log = []; bar.addEventListener('change', e => log.push(e.detail.value));
+    a.click(); await settle();
+    check('click selects + change + panel', SC.tabbar.get(bar) === 'a' && log.join() === 'a' && !$('#pA').hidden && $('#pB').hidden);
+    c.click(); await settle();
+    check('disabled ignored', SC.tabbar.get(bar) === 'a' && log.length === 1);
+    a.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    check('arrow keys work', SC.tabbar.get(bar) === 'b');
+    check('SC.tabbar is SC.tabs', SC.tabbar === SC.tabs && SC.tabbar.set(bar, 'a') && log.length === 2);
+    let records = 0, names = []; const mo = new MutationObserver(x => { records += x.length; x.forEach(r => names.push((r.target.id || r.target.className) + ':' + r.attributeName)); }); mo.observe($('#box'), { attributes: true, subtree: true, childList: true });
+    await new Promise(r => setTimeout(r, 200)); mo.disconnect();
+    check('no endless updates' + (records ? ' ' + [...new Set(names)].join(' ') : ''), records === 0);
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Tab Bar';
+});
+</script>

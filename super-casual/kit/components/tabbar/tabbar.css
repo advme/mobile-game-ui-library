@@ -1,0 +1,81 @@
+/*
+  Bottom Tab Bar — Super Casual UI Kit
+  Requires: core.css, sc.js   (+ components/bubble/bubble.css for data-badge)
+
+  <nav class="sc-tabbar" data-value="play">
+    <button data-value="shop" data-icon="cash">Shop</button>
+    <button data-value="play" data-icon="star">Play</button>
+    <button data-value="rank" data-icon="trophy">Rank</button>
+  </nav>
+
+  On .sc-tabbar:
+  data-value    selected item                                   default: first enabled item
+  data-color    sky | blue | green | yellow | orange | red | purple | pink | mint   (selected block)   default: indigo
+  On each <button>:
+  data-value    required, unique
+  data-icon     kit icon (required)
+  text          label, shown only under the selected item (keep 1 word)
+  data-panel    optional id of a screen/element shown only while selected
+  data-badge    optional count bubble · disabled   can't be selected
+
+  Inside .sc-screen-bottom it bleeds to the phone's left, right and bottom edges
+  and pads the home-bar safe area itself.
+  Same runtime as Tabs: roles, aria-selected, arrow keys.
+  Event: change (detail.value) · JS: SC.tabbar.get(el) · SC.tabbar.set(el, value, {emit:false})
+*/
+:where(.sc-tabbar) { --band:#7176ee; --base:#5b5fd6; --line:#6a6fe6; --lip:#3b3ea8; }
+.sc-tabbar {
+  --bar-h:64px; --icon:40px; --icon-on:50px; --lift:12px;
+  position:relative; display:flex; align-items:flex-end; box-sizing:border-box; width:100%; height:var(--bar-h);
+  background:#262b40; border-top:var(--sc-line) solid var(--sc-outline);
+  box-shadow:inset 0 2px 0 #3a4060;
+  font-family:var(--sc-font);
+}
+/* Full bleed when placed in a Screen Shell (undo the shell's 12px + safe-area padding) */
+.sc-screen .sc-tabbar {
+  flex:1 1 100%; align-self:flex-end;
+  margin-left:calc((12px + env(safe-area-inset-left, 0px)) / var(--sc-s) * -1);
+  margin-right:calc((12px + env(safe-area-inset-right, 0px)) / var(--sc-s) * -1);
+  margin-bottom:calc((12px + env(safe-area-inset-bottom, 0px)) / var(--sc-s) * -1);
+  height:calc(var(--bar-h) + env(safe-area-inset-bottom, 0px) / var(--sc-s));
+  padding-bottom:calc(env(safe-area-inset-bottom, 0px) / var(--sc-s));
+}
+
+.sc-tabbar-item {
+  position:relative; isolation:isolate; flex:1 1 0; min-width:0; height:100%; margin:0; padding:0; box-sizing:border-box;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  border:0; background:none; color:#fff; font:inherit; cursor:pointer; appearance:none; outline:none;
+  user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+  transition:flex-grow .18s ease-out;
+}
+.sc-tabbar-item > img[data-sc-icon] {
+  width:var(--icon); height:var(--icon); object-fit:contain; pointer-events:none;
+  translate:var(--ox, 0%) var(--oy, 0%); filter:saturate(.75) brightness(.9);
+  transition:width .18s ease-out, height .18s ease-out, margin .18s ease-out;
+}
+.sc-tabbar-item > img[data-flip] { transform:scaleX(-1); }
+.sc-tabbar-item > .sc-text { --fs:13px; font-size:var(--fs); text-transform:uppercase; display:none; margin-top:1px; }
+
+/* Selected: raised glossy block, rounded free top corners, sharp bottom corners (attached to the bar) */
+.sc-tabbar-item[aria-selected="true"] { flex-grow:1.45; }
+.sc-tabbar-item[aria-selected="true"]::before {
+  content:""; position:absolute; z-index:-1; left:2px; right:2px; bottom:0; top:calc(var(--lift) * -1 - var(--sc-line));
+  border:var(--sc-line) solid var(--sc-outline); border-bottom:0; border-radius:14px 14px 0 0;
+  background:linear-gradient(var(--band) 0 46%, var(--base) 46%);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.3);
+  animation:sc-tabbar-rise .2s cubic-bezier(.3,1.4,.6,1);
+}
+.sc-tabbar-item[aria-selected="true"] > img[data-sc-icon] {
+  width:var(--icon-on); height:var(--icon-on); margin-top:calc(var(--lift) * -1 - 6px); filter:none;
+}
+.sc-tabbar-item[aria-selected="true"] > .sc-text { display:block; }
+@keyframes sc-tabbar-rise { from { transform:translateY(40%); opacity:.4; } }
+
+/* Badge sits on the icon corner */
+.sc-tabbar-item > .sc-bubble { top:6px; right:calc(50% - var(--icon) / 2 - 12px); }
+.sc-tabbar-item[aria-selected="true"] > .sc-bubble { top:calc(var(--lift) * -1); right:calc(50% - var(--icon-on) / 2 - 12px); }
+
+.sc-tabbar-item.sc-pressed > img[data-sc-icon] { scale:.9; }
+.sc-tabbar-item:focus-visible::after { content:""; position:absolute; inset:6px; border:3px solid #fff; border-radius:12px; }
+.sc-tabbar-item:disabled { cursor:not-allowed; opacity:.45; }
+@media (prefers-reduced-motion:reduce) { .sc-tabbar-item, .sc-tabbar-item > img, .sc-tabbar-item::before { transition:none; animation:none; } }

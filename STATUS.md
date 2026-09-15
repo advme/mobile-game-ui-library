@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.16.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.17.0-A**
 
 ## Next task
-**Build Bottom Tab Bar.** The main navigation bar at the bottom of a home screen: 3–5 icon buttons (Shop, Heroes, Play, Rank, Settings) on a dark bar, with the selected one raised/highlighted and showing its label. Target API: `<nav class="sc-tabbar" data-value="play"><button data-value="shop" data-icon="gem">Shop</button>…</nav>`, `change` event, `SC.tabbar.get/set`, badges via `data-badge`. Should sit in `.sc-screen-bottom`. Reuse Tabs' runtime pattern. Follow AGENTS.md §4.
+**Build Tag Ribbon.** Small labels that stick to a card/button/slot corner: NEW, HOT, BEST, SALE, -50%, x2. Code-made rounded label (like the slot BONUS tag: tight margins, attached corner sharp, free corners rounded) in kit colors, optional slight tilt. Target API: `data-tag="NEW"` + `data-tag-color` on buttons/slots/tabs, or standalone `<span class="sc-tag" data-color="red">HOT</span>`. The starburst BEST/HOT badges in the reference are image assets. Do not draw them; if wanted, add an image prompt to STATUS. Follow AGENTS.md §4. Skip Top Bar, Level Badge and Notification Dot until the owner delivers `icons/icons4.png` (prompt was given 2026-09-15: home, shop, helmet, play, sound on/off, music on/off, menu, restart, red ! dot, level shield, tutorial hand, avatar, gem pile, coin pile).
 
 ## In progress
 _Nothing._
@@ -27,20 +27,20 @@ _Nothing._
 | 14 | Slider | `.sc-slider` | v0.14.0-A |
 | 15 | Checkbox | `.sc-checkbox` | v0.15.0-A |
 | 16 | Tabs | `.sc-tabs` | v0.16.0-A |
+| 17 | Bottom Tab Bar | `.sc-tabbar` | v0.17.0-A |
 
 ## Left — components (in this order)
-1. Bottom Tab Bar ← next
-2. Top Bar (avatar, level, resources) 🖼 avatar image needed
-3. Level Badge 🖼 badge image needed (placeholder in `super-casual/old-demos/success.html`)
-4. Notification Dot 🖼 red "!" image needed
-5. Tag Ribbon (NEW, HOT, BEST)
-6. Title Banner Ribbon (NEW SKIN!)
-7. Tooltip / Hint Bubble
-8. Toast Message
-9. Item Row (mission, leaderboard)
-10. Shop Card 🖼 pack images needed
-11. Loading Bar / Screen
-12. Tutorial Hand 🖼 hand image needed
+1. Top Bar (avatar, level, resources) 🖼 avatar image needed ← next
+2. Level Badge 🖼 badge image needed (placeholder in `super-casual/old-demos/success.html`)
+3. Notification Dot 🖼 red "!" image needed
+4. Tag Ribbon (NEW, HOT, BEST)
+5. Title Banner Ribbon (NEW SKIN!)
+6. Tooltip / Hint Bubble
+7. Toast Message
+8. Item Row (mission, leaderboard)
+9. Shop Card 🖼 pack images needed
+10. Loading Bar / Screen
+11. Tutorial Hand 🖼 hand image needed
 
 ## Left — blocks (full screens built ONLY from kit components)
 Gameplay HUD · Pause · Success · Fail (old versions exist in `super-casual/old-demos/`; build each block as one `.sc-screen`) · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading

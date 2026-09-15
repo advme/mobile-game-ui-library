@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.17.0-A — Bottom Tab Bar component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `.sc-tabbar`, the bottom navigation bar for home screens, matching the reference. It's a dark navy bar. The selected item rises on a glossy indigo block with rounded free top corners and sharp attached bottom corners, a bigger icon and an uppercase label. It has count badges on icons, 9 block colors, disabled items and `data-panel` to switch screens. Inside `.sc-screen-bottom` it bleeds to the phone edges and pads the home-bar safe area. It shares the Tabs runtime (`SC.tabbar === SC.tabs`). Also added `tools/tests/index.html`, which runs every component test page at once (AGENTS.md §4 updated). `setSpan` and the bubble title now only write when the value changes.
+- Tested: `tools/tests/index.html`: all 6 pages pass (bubble 60, toggle 39, slider 30, checkbox 20, tabs 24, tabbar 13). Tab bar checks cover item class, selection, labels only on selected, badges, panels, edge bleed inside a scaled shell, click/disabled/keys and no attribute churn. Live docs demo switches 4 screens and clears the Chests badge.
+- Notes for next agent: The tab bar has no home/shop icons yet (uses cash/chest/star/trophy/settings). Swap in real ones after `icons4.png` arrives. Tabs and tab bar share `upgradeTabs`; the item class depends on the parent (`sc-tab` vs `sc-tabbar-item`).
+
 ## v0.16.0-A — Tabs component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `.sc-tabs`, a segmented row of 2–4 tabs matching the reference: glossy blue selected tab and muted dark purple unselected tabs with a thin light top edge. Supports optional kit icons, 9 selected colors, 3 sizes, `data-badge` on tabs (Count Bubble now accepts `.sc-tab` hosts), disabled tabs, and `data-panel` to auto show/hide content. It has full tab semantics (tablist/tab, aria-selected, roving tabindex, aria-controls), Left/Right/Home/End keys, a `change` event and `SC.tabs.get/set`. Added the AI manual, registry item, docs page and `tools/tests/tabs.html`.

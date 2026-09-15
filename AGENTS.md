@@ -42,6 +42,7 @@ Copy the pattern of an existing component (e.g. `progress`, `timer`):
 4. `registry.json`: add an item (name, description, whenToUse, files, docs, dependencies, html, props, events, js, rules, examples). Bump `version`.
 5. `docs/<name>.html` via `SCDocs.page({...})`, and add it to the `NAV` list in `docs/docs.js`.
 6. **Test in a browser** (`python3 tools/serve.py 8765`, open `http://localhost:8765/super-casual/kit/docs/<name>.html`): every example renders, images load, live demos work. Check the phone size 375×812.
+   Add automatic checks in `tools/tests/<name>.html` (copy an existing one), register it in `PAGES` in `tools/tests/index.html`, and open `http://localhost:8765/tools/tests/index.html`. Every page must PASS before you publish.
 7. Update **`STATUS.md`** and **`CHANGELOG.md`** (see §7).
 
 ## 5. Design rules (the owner approved these; never break them)

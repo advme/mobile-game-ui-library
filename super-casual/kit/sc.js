@@ -26,12 +26,13 @@
   const TOGGLES = 'button.sc-toggle';
   const SLIDERS = '.sc-slider';
   const CHECKBOXES = 'button.sc-checkbox';
-  const TABS = '.sc-tabs';
-  const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot, .sc-tab';
+  const TABS = '.sc-tabs, .sc-tabbar';
+  const TAB_ITEMS = '.sc-tabs > button, .sc-tabbar > button';
+  const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot, .sc-tab, .sc-tabbar-item';
   const MESSAGES = '.sc-popup-message, .sc-popup-value';
   const SCREENS = '.sc-screen';
   const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}`;
-  const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, ${TOGGLES}, ${CHECKBOXES}, .sc-tabs > button`;
+  const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, ${TOGGLES}, ${CHECKBOXES}, ${TAB_ITEMS}`;
 
   const script = document.currentScript;
   const ASSETS = script && script.dataset.assets
@@ -54,7 +55,7 @@
     span.className = 'sc-text'; span.textContent = text; span.dataset.text = text;
     return span;
   }
-  function setSpan(span, text) { if (span.textContent !== text) span.textContent = text; span.dataset.text = text; }
+  function setSpan(span, text) { if (span.textContent !== text) span.textContent = text; if (span.dataset.text !== text) span.dataset.text = text; }
 
   // Wrap plain text labels in <span class="sc-text" data-text="…">
   function upgradeText(el) {
@@ -95,7 +96,7 @@
     setSpan(bubble.firstElementChild, count > 99 ? '99+' : String(count));
     const color = el.dataset.badgeColor || 'blue';
     if (bubble.dataset.color !== color) bubble.dataset.color = color;
-    bubble.title = String(count);
+    if (bubble.title !== String(count)) bubble.title = String(count);
   }
 
   /* ---------- Toggle ---------- */
@@ -163,7 +164,7 @@
     checkbox.toggle(el, { emit: true });
   });
 
-  /* ---------- Tabs ---------- */
+  /* ---------- Tabs + Bottom Tab Bar (same selection logic) ---------- */
   const setAttr = (el, k, v) => { if (el.getAttribute(k) !== String(v)) el.setAttribute(k, v); };   // only real changes (no observer loops)
   const tabList = el => [...el.children].filter(c => c.tagName === 'BUTTON');
   function upgradeTabs(el) {
@@ -173,7 +174,8 @@
     const pick = list.find(t => t.dataset.value === value && !t.disabled) || list.find(t => !t.disabled);
     if (pick && pick.dataset.value !== value) { value = pick.dataset.value; el.dataset.value = value; }
     list.forEach(t => {
-      if (!t.classList.contains('sc-tab')) t.classList.add('sc-tab');
+      const cls = el.classList.contains('sc-tabbar') ? 'sc-tabbar-item' : 'sc-tab';
+      if (!t.classList.contains(cls)) t.classList.add(cls);
       if (t.type !== 'button') t.type = 'button';
       upgradeText(t); upgradeIcon(t); upgradeBubble(t);
       const on = t === pick;
@@ -197,12 +199,12 @@
     },
   };
   document.addEventListener('click', e => {
-    const t = e.target.closest && e.target.closest('.sc-tabs > button');
+    const t = e.target.closest && e.target.closest(TAB_ITEMS);
     if (!t || t.disabled) return;
     tabs.set(t.parentElement, t.dataset.value, { emit: true });
   });
   document.addEventListener('keydown', e => {
-    const t = e.target.closest && e.target.closest('.sc-tabs > button');
+    const t = e.target.closest && e.target.closest(TAB_ITEMS);
     if (!t || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
     const list = tabList(t.parentElement).filter(b => !b.disabled), i = list.indexOf(t);
     const next = { ArrowLeft: list[(i - 1 + list.length) % list.length], ArrowRight: list[(i + 1) % list.length], Home: list[0], End: list[list.length - 1] }[e.key];
@@ -722,7 +724,7 @@
         else if (r.target.matches(SLIDERS)) upgradeSlider(r.target);
         else if (r.target.matches(CHECKBOXES)) upgradeCheckbox(r.target);
         else if (r.target.matches(TABS)) upgradeTabs(r.target);
-        else if (r.target.matches('.sc-tabs > button')) upgradeTabs(r.target.parentElement);
+        else if (r.target.matches(TAB_ITEMS)) upgradeTabs(r.target.parentElement);
         else if (r.target.matches(ICON_COMPONENTS)) upgradeIcon(r.target);
       } else {
         r.addedNodes.forEach(n => n.nodeType === Node.ELEMENT_NODE && upgrade(n));
@@ -731,7 +733,7 @@
         if (r.target.matches && r.target.matches(TOGGLES)) upgradeToggle(r.target);
         if (r.target.matches && r.target.matches(CHECKBOXES)) upgradeCheckbox(r.target);
         if (r.target.matches && r.target.matches(TABS)) upgradeTabs(r.target);
-        if (r.target.matches && r.target.matches('.sc-tabs > button')) upgradeTabs(r.target.parentElement);
+        if (r.target.matches && r.target.matches(TAB_ITEMS)) upgradeTabs(r.target.parentElement);
       }
     }
   }).observe(document.documentElement, {
@@ -753,7 +755,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.16.0',
+    version: '0.17.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */
@@ -801,6 +803,8 @@
     checkbox,
     /** Segmented tabs: SC.tabs.get(el) · SC.tabs.set(el, value, {emit?}) */
     tabs,
+    /** Bottom tab bar: same API as tabs. SC.tabbar.get(el) · SC.tabbar.set(el, value, {emit?}) */
+    tabbar: tabs,
     /** Floating feedback text: SC.float('+50', event | element | {x, y}, { color, size, icon, style }) */
     float,
     /** URL of an icon in the kit: SC.icon('coin') */
