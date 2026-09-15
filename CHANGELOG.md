@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.31.0-A — Fail block
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `kit/blocks/fail.html`, the level-failed screen over the game. It has a dim Screen Shell with a gem counter, `FAILED` red title (shake), empty arc stars, "So close!" with a 78% orange progress bar, and a timed continue offer: "Continue?" + ring timer (8 s, warn at 3). Revive by video or for 20 gems (toast if short), plus Retry (restart icon) and Give up buttons. The offer hides when the timer ends.
+- Tested: Opened at 375×812. The layout fits with no scroll, the timer counts down and the offer hides at 0, and the gem check works.
+- Notes for next agent: The continue offer uses `visibility:hidden` so the layout doesn't jump when it expires.
+
 ## v0.30.0-A — Success block
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `kit/blocks/success.html`, the level-complete screen over the game. It has a dim Screen Shell with a coin counter, `CLEAR!` title (drop), an animated arc Star Rating, an XP bar with Level Badge that fills after the stars, a REWARDS divider and 4 Reward Slots popping in (`SC.popIn`), and Claim / x2 Claim (video icon) buttons plus a Home icon button. Claim floats +coins, counts the counter up, marks slots claimed and disables the buttons.

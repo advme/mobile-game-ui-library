@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.30.0",
+  "version": "0.31.0",
   "items": [
     {
       "name": "core",
@@ -2314,6 +2314,24 @@
         "icon-button",
         "counter",
         "float"
+      ]
+    },
+    {
+      "name": "fail",
+      "type": "registry:block",
+      "title": "Fail",
+      "file": "blocks/fail.html",
+      "description": "Level failed: title, empty stars, so-close progress, timed continue offer (video/gems), Retry, Give up.",
+      "whenToUse": "When the player loses a level.",
+      "components": [
+        "screen",
+        "title",
+        "stars",
+        "progress",
+        "timer",
+        "button",
+        "counter",
+        "toast"
       ]
     }
   ]

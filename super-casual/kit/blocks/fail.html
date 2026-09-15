@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Block: Fail — Super Casual UI Kit</title>
+<!-- BLOCK: Level failed with a continue offer. Built only from kit components. -->
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/screen/screen.css">
+<link rel="stylesheet" href="../components/title/title.css">
+<link rel="stylesheet" href="../components/stars/stars.css">
+<link rel="stylesheet" href="../components/progress/progress.css">
+<link rel="stylesheet" href="../components/timer/timer.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/counter/counter.css">
+<link rel="stylesheet" href="../components/toast/toast.css">
+<script src="../sc.js"></script>
+<style>
+  /* Layout glue only */
+  html, body { margin:0; height:100%; overflow:hidden; background:#1f2d4b; }
+  #game { position:fixed; inset:0; width:100%; height:100%; display:block; }
+  .close-call { display:flex; flex-direction:column; align-items:center; gap:8px; width:280px; }
+  .close-call > .sc-text, .question > .sc-text { --fs:22px; font-size:var(--fs); }
+  .offer { display:flex; flex-direction:column; align-items:center; gap:12px; width:300px; padding:14px 0 4px; }
+  .question { display:flex; align-items:center; gap:12px; }
+  .offer .row { display:flex; gap:12px; width:100%; }
+  .offer .row .sc-button { flex:1; }
+  .bottom { display:flex; flex-direction:column; align-items:center; gap:10px; width:300px; }
+  .bottom .sc-button { width:100%; }
+</style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <div class="sc-screen" id="fail" data-backdrop="dim">
+    <div class="sc-screen-top" data-align="end">
+      <div class="sc-counter" id="gems" data-icon="gem" data-value="45" data-size="sm"></div>
+    </div>
+
+    <div class="sc-screen-middle">
+      <h1 class="sc-title" data-color="red" data-animate="shake">FAILED</h1>
+      <div class="sc-stars" data-value="0" data-layout="arc" data-size="lg"></div>
+      <div class="close-call">
+        <span class="sc-text" data-text="So close!">So close!</span>
+        <div class="sc-progress" data-value="78" data-label="percent" data-color="orange" data-size="lg" style="width:100%"></div>
+      </div>
+      <div class="offer" id="offer">
+        <div class="question">
+          <span class="sc-text" data-text="Continue?">Continue?</span>
+          <div class="sc-timer" id="offerTimer" data-seconds="8" data-warn="3" data-color="yellow"></div>
+        </div>
+        <div class="row">
+          <button class="sc-button" data-color="green" data-icon="video" id="reviveVideo">Revive</button>
+          <button class="sc-button" data-color="purple" data-icon="gem" id="reviveGems">20</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc-screen-bottom">
+      <div class="bottom">
+        <button class="sc-button" data-color="yellow" data-icon="restart" id="retry">Retry</button>
+        <button class="sc-button" data-color="dark" data-size="sm" id="home">Give up</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // --- Stand-in game background (replace with your engine) ---
+  const canvas = document.getElementById('game'), ctx = canvas.getContext('2d');
+  function draw() { const d = devicePixelRatio || 1; canvas.width = innerWidth * d; canvas.height = innerHeight * d; ctx.scale(d, d);
+    ctx.fillStyle = '#6b3a3a'; ctx.fillRect(0, 0, innerWidth, innerHeight); }
+  addEventListener('resize', draw); draw();
+
+  // --- UI wiring ---
+  const $ = id => document.getElementById(id);
+  const hideOffer = () => { $('offer').style.visibility = 'hidden'; };
+  $('offerTimer').addEventListener('done', hideOffer);      // offer expires
+
+  function revive() { SC.timer.pause($('offerTimer')); SC.screen.hide('fail'); /* game: continue the level */ }
+  $('reviveVideo').onclick = revive;                         // game: show a rewarded video first
+  $('reviveGems').onclick = () => {
+    const have = Number($('gems').dataset.value);
+    if (have < 20) return SC.toast('Not enough gems!', { kind: 'error', icon: 'gem' });
+    SC.setValue($('gems'), have - 20); revive();
+  };
+  $('retry').onclick = () => { SC.timer.pause($('offerTimer')); SC.screen.hide('fail'); /* game: restart level */ };
+  $('home').onclick = () => { SC.timer.pause($('offerTimer')); SC.screen.hide('fail'); /* game: go to menu */ };
+</script>
+</body>
+</html>

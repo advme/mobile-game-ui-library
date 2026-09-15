@@ -8,14 +8,14 @@
     { group: 'Components', items: [
       ['Button', 'button.html'], ['Icon Button', 'icon-button.html'], ['Resource Counter', 'counter.html'],
       ['Reward Slot', 'slot.html'], ['Popup', 'popup.html'], ['Progress Bar', 'progress.html'], ['Screen Title', 'title.html'], ['Star Rating', 'stars.html'], ['Countdown Timer', 'timer.html'], ['Floating Text', 'float.html'], ['Count Bubble', 'bubble.html'], ['Screen Shell', 'screen.html'], ['Toggle', 'toggle.html'], ['Slider', 'slider.html'], ['Checkbox', 'checkbox.html'], ['Tabs', 'tabs.html'], ['Bottom Tab Bar', 'tabbar.html'], ['Tag Ribbon', 'tag.html'], ['Title Banner', 'banner.html'], ['Hint Bubble', 'hint.html'], ['Toast Message', 'toast.html'], ['Item Row', 'row.html'], ['Loading Bar', 'loading.html'], ['Notification Dot', 'alert.html'], ['Level Badge', 'level.html'], ['Top Bar', 'topbar.html'], ['Shop Card', 'shopcard.html'], ['Tutorial Hand', 'tutorial.html'] ] },
-    { group: 'Blocks', items: [['Gameplay HUD', '../blocks/hud.html'], ['Success', '../blocks/success.html']] },
+    { group: 'Blocks', items: [['Gameplay HUD', '../blocks/hud.html'], ['Success', '../blocks/success.html'], ['Fail', '../blocks/fail.html']] },
     { group: 'Examples', items: [['Button on a game canvas', '../examples/button-on-canvas.html'], ['Screens on a game canvas', '../examples/screen-on-canvas.html']] },
   ];
   const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   const here = location.pathname.split('/').pop();
 
   function nav() {
-    return `<div class="brand">Super Casual UI Kit<small>v0.30 · for mobile web games</small></div>` +
+    return `<div class="brand">Super Casual UI Kit<small>v0.31 · for mobile web games</small></div>` +
       NAV.map(g => `<div class="nav-group"><h4>${g.group}</h4>${g.items.map(([label, href]) =>
         href ? `<a href="${href}" class="${href === here ? 'active' : ''}">${label}</a>` : `<a class="soon">${label}</a>`
       ).join('')}</div>`).join('');

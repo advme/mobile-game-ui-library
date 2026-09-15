@@ -14,3 +14,4 @@ Rules for every block:
 |---|---|---|
 | Gameplay HUD | `hud.html` | In-game overlay: pause, score/stars, coins, lives, timer, boosters + pause popup |
 | Success | `success.html` | Level complete: CLEAR! title, stars, XP bar with level, rewards, Claim / x2 Claim, Home |
+| Fail | `fail.html` | Level failed: FAILED title, "So close" progress, timed continue offer (video / gems), Retry, Give up |

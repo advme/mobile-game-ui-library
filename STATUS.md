@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.30.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.31.0-A**
 
 ## Next task
-**Build the Fail block** (`kit/blocks/fail.html`, add a row to `blocks/README.md`). Level-failed screen: dim Screen Shell, `FAILED` Screen Title (red, shake), a continue offer with a ring Countdown Timer (data-warn) and a "Continue" button costing gems (`data-icon="gem"`) plus a video continue, a small progress line ("You were 80% there"), and Retry / Home buttons. When the timer ends, the continue offer disappears. Reference: `super-casual/old-demos/fail.html`. Update registry `blocks[]`, STATUS "Done — blocks", docs NAV "Blocks" group and CHANGELOG.
+**Build the Pause block** (`kit/blocks/pause.html`, add a row to `blocks/README.md`). Pause popup over a frozen game: `PAUSED` popup with a LEVEL sub-tag, quick settings (Sound, Music, Vibration Toggles with `sound`/`music` icons next to their labels), and Resume (lg green) / Restart / Home buttons stacked. Resume closes and resumes; toggles fire change. Update registry `blocks[]`, STATUS "Done — blocks", docs NAV "Blocks" group and CHANGELOG.
 
 ## In progress
 _Nothing._
@@ -45,12 +45,13 @@ _Nothing._
 |---|-------|------|---------|
 | 1 | Gameplay HUD | `blocks/hud.html` | v0.29.0-A |
 | 2 | Success | `blocks/success.html` | v0.30.0-A |
+| 3 | Fail | `blocks/fail.html` | v0.31.0-A |
 
 ## Left — components (in this order)
 _All components done._
 
 ## Left — blocks (full screens built ONLY from kit components)
-Pause · Fail · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading
+Pause · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading
 (Old pre-kit versions of some screens: `super-casual/old-demos/`. Each block = one HTML file in `kit/blocks/` using only kit components + layout glue.)
 
 ## Left — other
