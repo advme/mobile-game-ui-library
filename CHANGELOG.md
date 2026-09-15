@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.34.0-A — Reward Reveal block
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `kit/blocks/reward.html`, a chest-opening reveal on a solid Screen Shell. Closed step: EPIC CHEST banner (drop) and a shaking `chest` with a pulsing glow, plus "Tap the chest to open". Tapping swaps to the NEW SKIN! banner (unfurl, same spot), pops the `helmet` item in, shows the name + EPIC tag and a row of 3 Reward Slots (popIn), floats EPIC!, and reveals Collect.
+- Tested: Opened at 375×812. Both steps fit with no scroll, the tap switches the step, the banner/item/rewards animate, and Collect hides the screen.
+- Notes for next agent: The glow and shake are block-local layout glue (tiny keyframes). If more blocks need them, promote them to a kit component instead of copying.
+
 ## v0.33.0-A — Start block
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `kit/blocks/start.html`, the home/start screen. It has a Top Bar (avatar + level 12 + name, coins short format, gems with +), side flat icon-button shortcuts (Daily with Notification Dot, Mail with a red count bubble, Settings, Gift with a FREE tag), a gold title with the level name, and a big yellow PLAY. An always-visible Bottom Tab Bar layer switches Home / Shop / Rank screens via `data-panel` (the Shop alert clears when opened). PLAY hides the menu layers and shows a gameplay layer with a back-home button.

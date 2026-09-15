@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Block: Reward Reveal — Super Casual UI Kit</title>
+<!-- BLOCK: Chest opening / new item reveal. Built only from kit components. -->
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/screen/screen.css">
+<link rel="stylesheet" href="../components/banner/banner.css">
+<link rel="stylesheet" href="../components/slot/slot.css">
+<link rel="stylesheet" href="../components/tag/tag.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/float/float.css">
+<script src="../sc.js"></script>
+<style>
+  /* Layout glue only */
+  html, body { margin:0; height:100%; overflow:hidden; background:#1f2d4b; }
+  .banners { display:grid; place-items:center; }
+  .banners > * { grid-area:1 / 1; }
+  .stage { position:relative; width:260px; height:260px; display:grid; place-items:center; }
+  .stage::before { content:""; position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle, rgba(255,230,120,.55) 0%, rgba(255,200,60,.15) 45%, transparent 70%); animation:glow 2.4s ease-in-out infinite; }
+  @keyframes glow { 50% { transform:scale(1.12); opacity:.75; } }
+  .item { position:relative; width:200px; height:200px; object-fit:contain; cursor:pointer; }
+  .item.shake { animation:shake .5s ease-in-out infinite; }
+  .item.pop { animation:pop .45s cubic-bezier(.3,1.7,.5,1); }
+  @keyframes shake { 25% { rotate:-6deg; } 75% { rotate:6deg; } }
+  @keyframes pop { from { scale:.3; opacity:0; } }
+  .name { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .name > .sc-text { --fs:28px; font-size:var(--fs); }
+  .rewards { display:flex; gap:12px; }
+  .tap { font:900 16px var(--sc-font); color:rgba(255,255,255,.7); animation:blink 1.4s ease-in-out infinite; }
+  @keyframes blink { 50% { opacity:.3; } }
+  [data-step="closed"] .after, [data-step="open"] .before { visibility:hidden; }
+</style>
+</head>
+<body>
+  <div class="sc-screen" id="reveal" data-backdrop="solid" data-step="closed">
+    <div class="sc-screen-middle">
+      <div class="banners">
+        <div class="sc-banner before" data-color="purple" data-animate="drop">EPIC CHEST</div>
+        <div class="sc-banner after" id="banner" data-color="pink">NEW SKIN!</div>
+      </div>
+      <div class="stage"><img class="item shake" id="item" src="../assets/chest.png" alt="Chest"></div>
+      <div class="name after">
+        <span class="sc-text" data-text="Knight Helmet">Knight Helmet</span>
+        <span class="sc-tag" data-color="purple">EPIC</span>
+      </div>
+      <div class="rewards after" id="rewards">
+        <div class="sc-slot" data-icon="coin" data-count="250" data-color="yellow"></div>
+        <div class="sc-slot" data-icon="gem" data-count="15" data-color="purple"></div>
+        <div class="sc-slot" data-icon="key" data-count="1" data-color="sky"></div>
+      </div>
+    </div>
+    <div class="sc-screen-bottom" data-stack>
+      <span class="tap" id="tapText">Tap the chest to open</span>
+      <button class="sc-button after" data-color="green" data-size="lg" id="collect">Collect</button>
+    </div>
+  </div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  function open() {
+    if ($('reveal').dataset.step === 'open') return;
+    $('reveal').dataset.step = 'open';
+    const item = $('item');
+    item.classList.remove('shake'); item.src = '../assets/helmet.png'; item.alt = 'Knight Helmet';
+    item.classList.remove('pop'); void item.offsetWidth; item.classList.add('pop');
+    $('banner').dataset.animate = 'unfurl'; SC.replay($('banner'));
+    SC.popIn($('rewards').children, { delay: 0.3 });
+    SC.float('EPIC!', null, { size: 'lg', style: 'pop', color: 'purple' });
+    $('tapText').textContent = '';
+  }
+  $('item').onclick = open;
+  $('collect').onclick = () => SC.screen.hide('reveal');   // game: add rewards, return to menu
+</script>
+</body>
+</html>

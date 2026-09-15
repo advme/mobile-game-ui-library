@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.33.0",
+  "version": "0.34.0",
   "items": [
     {
       "name": "core",
@@ -2368,6 +2368,22 @@
         "bubble",
         "tag",
         "tabbar"
+      ]
+    },
+    {
+      "name": "reward",
+      "type": "registry:block",
+      "title": "Reward Reveal",
+      "file": "blocks/reward.html",
+      "description": "Chest opening / new item reveal: banner, shaking chest, item pop with glow, rarity tag, reward slots, Collect.",
+      "whenToUse": "Opening chests, unlocking skins/characters, big rewards.",
+      "components": [
+        "screen",
+        "banner",
+        "slot",
+        "tag",
+        "button",
+        "float"
       ]
     }
   ]

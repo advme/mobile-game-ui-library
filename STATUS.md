@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.33.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.34.0-A**
 
 ## Next task
-**Build the Reward Reveal block** (`kit/blocks/reward.html`, add a row to `blocks/README.md`). Chest-opening / new item reveal: solid dark Screen Shell, Title Banner (`NEW SKIN!` or `REWARD`, unfurl), a big item picture (kit icon, e.g. `helmet` or `chest`) that pops in with a glow, item name + rarity tag, reward slots row, and a "Tap to continue" hint; the first tap opens the chest (icon swaps chest → reward, `SC.float` of rewards), the second closes. Update registry `blocks[]`, STATUS "Done — blocks", docs NAV "Blocks" group and CHANGELOG.
+**Build the Daily Reward block** (`kit/blocks/daily.html`, add a row to `blocks/README.md`). A popup `DAILY REWARD` with a 7-day grid of Reward Slots (days 1–6 small, day 7 big `chest`), each with a "DAY n" label. Claimed days use `data-state="claimed"`, today's slot is highlighted (tag TODAY + Notification Dot), future days are dimmed, plus a Claim button and a countdown pill ("Next reward in" Countdown Timer, `data-format="long"`) after claiming. Update registry `blocks[]`, STATUS "Done — blocks", docs NAV "Blocks" group and CHANGELOG.
 
 ## In progress
 _Nothing._
@@ -48,12 +48,13 @@ _Nothing._
 | 3 | Fail | `blocks/fail.html` | v0.31.0-A |
 | 4 | Pause | `blocks/pause.html` | v0.32.0-A |
 | 5 | Start | `blocks/start.html` | v0.33.0-A |
+| 6 | Reward Reveal | `blocks/reward.html` | v0.34.0-A |
 
 ## Left — components (in this order)
 _All components done._
 
 ## Left — blocks (full screens built ONLY from kit components)
-Reward Reveal · Daily Reward · Settings · Shop · Loading
+Daily Reward · Settings · Shop · Loading
 (Old pre-kit versions of some screens: `super-casual/old-demos/`. Each block = one HTML file in `kit/blocks/` using only kit components + layout glue.)
 
 ## Left — other
