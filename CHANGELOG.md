@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.30.0-A — Success block
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `kit/blocks/success.html`, the level-complete screen over the game. It has a dim Screen Shell with a coin counter, `CLEAR!` title (drop), an animated arc Star Rating, an XP bar with Level Badge that fills after the stars, a REWARDS divider and 4 Reward Slots popping in (`SC.popIn`), and Claim / x2 Claim (video icon) buttons plus a Home icon button. Claim floats +coins, counts the counter up, marks slots claimed and disables the buttons.
+- Tested: Opened at 375×812. The layout matches the old demo, with everything inside the edges and no scroll. x2 Claim adds 1000 coins (1250 → 2250), all slots show claimed, and the buttons disable.
+- Notes for next agent: The rewards grid is 4 columns of md slots (fits 400px). Use 3 columns or `data-size="sm"` slots for more rewards.
+
 ## v0.29.0-A — Gameplay HUD block
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Started Blocks. Added `kit/blocks/hud.html`, a complete in-game HUD built only from kit components over a stand-in canvas. Top row: pause, a star-marker score bar and coins. Second row: lives counter and timer pill. Boosters with count bubbles at the bottom. It also has a Pause popup that pauses/resumes the timer and restarts. Taps score, count coins up, float +10, and pop STAR! at markers. Added `blocks/README.md`, a `blocks` list in `registry.json`, a "Blocks" group in the docs menu, and a "Done — blocks" table in STATUS. AGENTS.md file map now lists `blocks/` and `tools/tests/`.

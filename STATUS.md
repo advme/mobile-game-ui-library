@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.29.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.30.0-A**
 
 ## Next task
-**Build the Success block** (`kit/blocks/success.html`, add a row to `blocks/README.md`). Full result screen after winning a level: dim Screen Shell over the game, `CLEAR!` Screen Title (drop), Star Rating (arc, animated), XP bar with Level Badge (`data-level`), a REWARDS label and a grid of Reward Slots that pop in (`SC.popIn`), and bottom buttons Claim / x2 Claim (video icon) + Home icon button. Claim counts coins up in a top counter and floats +coins. Reference: `super-casual/old-demos/success.html`. Update registry `blocks[]`, STATUS "Done — blocks", docs NAV "Blocks" group and CHANGELOG.
+**Build the Fail block** (`kit/blocks/fail.html`, add a row to `blocks/README.md`). Level-failed screen: dim Screen Shell, `FAILED` Screen Title (red, shake), a continue offer with a ring Countdown Timer (data-warn) and a "Continue" button costing gems (`data-icon="gem"`) plus a video continue, a small progress line ("You were 80% there"), and Retry / Home buttons. When the timer ends, the continue offer disappears. Reference: `super-casual/old-demos/fail.html`. Update registry `blocks[]`, STATUS "Done — blocks", docs NAV "Blocks" group and CHANGELOG.
 
 ## In progress
 _Nothing._
@@ -44,12 +44,13 @@ _Nothing._
 | # | Block | File | Version |
 |---|-------|------|---------|
 | 1 | Gameplay HUD | `blocks/hud.html` | v0.29.0-A |
+| 2 | Success | `blocks/success.html` | v0.30.0-A |
 
 ## Left — components (in this order)
 _All components done._
 
 ## Left — blocks (full screens built ONLY from kit components)
-Pause · Success · Fail · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading
+Pause · Fail · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading
 (Old pre-kit versions of some screens: `super-casual/old-demos/`. Each block = one HTML file in `kit/blocks/` using only kit components + layout glue.)
 
 ## Left — other

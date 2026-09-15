@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Block: Success — Super Casual UI Kit</title>
+<!-- BLOCK: Success / level complete. Built only from kit components. -->
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/screen/screen.css">
+<link rel="stylesheet" href="../components/title/title.css">
+<link rel="stylesheet" href="../components/stars/stars.css">
+<link rel="stylesheet" href="../components/progress/progress.css">
+<link rel="stylesheet" href="../components/level/level.css">
+<link rel="stylesheet" href="../components/slot/slot.css">
+<link rel="stylesheet" href="../components/tag/tag.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../components/counter/counter.css">
+<link rel="stylesheet" href="../components/float/float.css">
+<script src="../sc.js"></script>
+<style>
+  /* Layout glue only */
+  html, body { margin:0; height:100%; overflow:hidden; background:#1f2d4b; }
+  #game { position:fixed; inset:0; width:100%; height:100%; display:block; }
+  .xp { width:300px; }
+  .rewards-label { display:flex; align-items:center; gap:10px; width:300px; }
+  .rewards-label::before, .rewards-label::after { content:""; flex:1; height:3px; border-radius:2px; background:rgba(255,255,255,.35); }
+  .rewards-label > .sc-text { --fs:18px; font-size:var(--fs); }
+  .rewards { display:grid; grid-template-columns:repeat(4, auto); gap:12px; }
+  .actions { display:flex; flex-direction:column; align-items:center; gap:12px; width:300px; }
+  .actions .row { display:flex; gap:12px; width:100%; }
+  .actions .row .sc-button { flex:1; }
+</style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <div class="sc-screen" id="success" data-backdrop="dim">
+    <div class="sc-screen-top" data-align="end">
+      <div class="sc-counter" id="coins" data-icon="coin" data-value="1250" data-size="sm"></div>
+    </div>
+
+    <div class="sc-screen-middle">
+      <h1 class="sc-title" data-color="gold" data-animate="drop">CLEAR!</h1>
+      <div class="sc-stars" id="stars" data-value="2" data-layout="arc" data-size="lg" data-animate></div>
+      <div class="xp"><div class="sc-progress" id="xp" data-value="723" data-max="1000" data-label="value" data-level="5"></div></div>
+      <div class="rewards-label"><span class="sc-text" data-text="REWARDS">REWARDS</span></div>
+      <div class="rewards" id="rewards">
+        <div class="sc-slot" data-icon="coin" data-count="500" data-color="white" data-tag="BONUS"></div>
+        <div class="sc-slot" data-icon="gem" data-count="20" data-color="purple"></div>
+        <div class="sc-slot" data-icon="clover" data-count="3" data-color="green"></div>
+        <div class="sc-slot" data-icon="gift" data-color="sky"></div>
+      </div>
+    </div>
+
+    <div class="sc-screen-bottom">
+      <div class="actions">
+        <div class="row">
+          <button class="sc-button" data-color="sky" id="claim">Claim</button>
+          <button class="sc-button" data-color="green" data-icon="video" id="claim2">x2 Claim</button>
+        </div>
+        <button class="sc-icon-button" data-icon="home" data-color="dark" data-size="sm" id="home" aria-label="Home"></button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // --- Stand-in game background (replace with your engine) ---
+  const canvas = document.getElementById('game'), ctx = canvas.getContext('2d');
+  function draw() { const d = devicePixelRatio || 1; canvas.width = innerWidth * d; canvas.height = innerHeight * d; ctx.scale(d, d);
+    ctx.fillStyle = '#3a7d44'; ctx.fillRect(0, 0, innerWidth, innerHeight); }
+  addEventListener('resize', draw); draw();
+
+  // --- UI wiring ---
+  const $ = id => document.getElementById(id);
+  SC.popIn($('rewards').children, { delay: 0.9, stagger: 0.1 });      // rewards pop in after the stars
+  setTimeout(() => SC.setValue($('xp'), 873), 1200);                   // XP gained this level
+
+  function claim(multiplier) {
+    const gained = 500 * multiplier;
+    $('claim').disabled = $('claim2').disabled = true;
+    SC.float('+' + gained, $('rewards').children[0], { icon: 'coin', color: 'gold' });
+    SC.setValue($('coins'), Number($('coins').dataset.value) + gained);
+    [...$('rewards').children].forEach(s => s.dataset.state = 'claimed');
+  }
+  $('claim').onclick = () => claim(1);
+  $('claim2').onclick = () => claim(2);          // game: show a rewarded video first, then claim(2)
+  $('home').onclick = () => SC.screen.hide('success');
+</script>
+</body>
+</html>

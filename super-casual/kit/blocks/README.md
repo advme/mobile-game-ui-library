@@ -13,3 +13,4 @@ Rules for every block:
 | Block | File | Use for |
 |---|---|---|
 | Gameplay HUD | `hud.html` | In-game overlay: pause, score/stars, coins, lives, timer, boosters + pause popup |
+| Success | `success.html` | Level complete: CLEAR! title, stars, XP bar with level, rewards, Claim / x2 Claim, Home |
