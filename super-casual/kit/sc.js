@@ -51,6 +51,20 @@
   // Icons that are drawn by mirroring another icon
   const ALIASES = { 'arrow-left': { name: 'arrow-right', flip: true } };
 
+  // Image resolver. Everywhere the kit shows a picture it accepts:
+  //   a kit icon name        "coin"                  → assets/coin.png
+  //   a path or web address  "img/fox.png", "https://…/fox.png", "data:image/png;base64,…"
+  // SC.setImage('hand', 'img/paw.png') replaces a name for the whole page (also the kit's built-in pictures:
+  // check, lock, alert, level-badge, hand, avatar, star, star-empty).
+  const IMAGE_MAP = {};
+  const isPath = v => /[\/.:]/.test(v);
+  function iconSrc(name) {
+    name = String(name || '').trim();
+    if (IMAGE_MAP[name]) return IMAGE_MAP[name];
+    if (isPath(name)) return new URL(name, location.href).href;
+    return ASSETS + name + '.png';
+  }
+
   // Load optical-centering nudges for the icon set once
   if (!document.querySelector('link[data-sc-offsets]')) {
     const link = document.createElement('link');
@@ -77,15 +91,16 @@
   function upgradeIcon(el) {
     const name = el.dataset.icon;
     if (!name) return;
-    const alias = ALIASES[name] || { name, flip: false };
+    const alias = (!IMAGE_MAP[name] && ALIASES[name]) || { name, flip: false };
     let img = el.querySelector(':scope > img[data-sc-icon]');
     if (!img) {
       img = document.createElement('img');
       img.alt = ''; img.dataset.scIcon = ''; img.draggable = false;
       el.prepend(img);
     }
-    const src = ASSETS + alias.name + '.png';
+    const src = iconSrc(alias.name);
     if (img.src !== src) img.src = src;
+    img.toggleAttribute('data-custom', isPath(name) || !!IMAGE_MAP[name]);
     img.toggleAttribute('data-flip', alias.flip);
   }
 
@@ -153,7 +168,7 @@
     let box = el.querySelector(':scope > .sc-checkbox-box');
     if (!box) {
       box = document.createElement('span'); box.className = 'sc-checkbox-box'; box.setAttribute('aria-hidden', 'true');
-      const img = document.createElement('img'); img.alt = ''; img.draggable = false; img.src = ASSETS + 'check.png';
+      const img = document.createElement('img'); img.alt = ''; img.draggable = false; img.src = iconSrc('check');
       box.append(img); el.prepend(box);
     }
   }
@@ -438,7 +453,7 @@
     if (el.dataset.icon) {
       let img = el.querySelector(':scope > .sc-loading-icon');
       if (!img) { img = document.createElement('img'); img.className = 'sc-loading-icon'; img.alt = ''; el.prepend(img); }
-      if (img.src !== ASSETS + el.dataset.icon + '.png') img.src = ASSETS + el.dataset.icon + '.png';
+      const src = iconSrc(el.dataset.icon); if (img.src !== src) img.src = src;
     } else el.querySelector(':scope > .sc-loading-icon')?.remove();
     const label = part('sc-loading-label');
     if (!label.firstElementChild) label.append(textSpan(''));
@@ -483,7 +498,7 @@
   function buildAlert(a, kind) {
     setAttr(a, 'data-kind', kind);
     let img = a.querySelector(':scope > img');
-    if (kind === 'icon' && !img) { img = document.createElement('img'); img.alt = ''; img.draggable = false; img.src = ASSETS + 'alert.png'; a.append(img); }
+    if (kind === 'icon' && !img) { img = document.createElement('img'); img.alt = ''; img.draggable = false; img.src = iconSrc('alert'); a.append(img); }
     if (kind === 'dot') img?.remove();
   }
   function upgradeAlert(el) {
@@ -502,7 +517,7 @@
   /* ---------- Level Badge ---------- */
   function upgradeLevel(el) {
     let img = el.querySelector(':scope > img');
-    if (!img) { img = document.createElement('img'); img.alt = ''; img.draggable = false; img.src = ASSETS + 'level-badge.png'; el.prepend(img); }
+    if (!img) { img = document.createElement('img'); img.alt = ''; img.draggable = false; img.src = iconSrc('level-badge'); el.prepend(img); }
     let span = el.querySelector(':scope > .sc-text');
     if (!span) { span = textSpan(''); el.append(span); }
     const v = String(el.dataset.value ?? '').trim();
@@ -522,7 +537,7 @@
     const loose = [...el.children].filter(c => c !== player && c !== res);
     if (loose.length) res.append(...loose);   // author's counters go to the right
     const avatar = player.querySelector('.sc-topbar-avatar'), img = avatar.querySelector('img');
-    const src = ASSETS + (el.dataset.avatar || 'avatar') + '.png';
+    const src = iconSrc(el.dataset.avatar || 'avatar');
     if (img.src !== src) img.src = src;
     let lvl = avatar.querySelector('.sc-level');
     if (el.dataset.level) {
@@ -570,7 +585,7 @@
       art = document.createElement('div'); art.className = 'sc-shopcard-art';
       art.innerHTML = '<img alt="" draggable="false">'; el.prepend(art);
     }
-    const img = art.querySelector('img'), src = ASSETS + (el.dataset.icon || 'gift') + '.png';
+    const img = art.querySelector('img'), src = iconSrc(el.dataset.icon || 'gift');
     if (img.src !== src) img.src = src;
     let amount = art.querySelector('.sc-shopcard-amount');
     if (el.dataset.amount) {
@@ -633,7 +648,7 @@
       tutorial.clear();
       if (!target) return Promise.resolve(false);
       const layer = document.createElement('div'); layer.className = 'sc-tut-layer';
-      const hand = document.createElement('img'); hand.className = 'sc-tut-hand'; hand.alt = ''; hand.draggable = false; hand.src = ASSETS + 'hand.png';
+      const hand = document.createElement('img'); hand.className = 'sc-tut-hand'; hand.alt = ''; hand.draggable = false; hand.src = iconSrc('hand');
       hand.dataset.gesture = ['tap', 'swipe-up', 'swipe-down', 'swipe-left', 'swipe-right', 'drag'].includes(gesture) ? gesture : 'tap';
       hand.style.setProperty('--tipx', TIP.x * 100 + '%'); hand.style.setProperty('--tipy', TIP.y * 100 + '%');
       let spot = null, blocks = [], ring = null;
@@ -750,7 +765,7 @@
     const stateIcon = { claimed: 'check', locked: 'lock' }[el.dataset.state];
     if (stateIcon) {
       if (!badge) { badge = document.createElement('img'); badge.className = 'sc-slot-state'; badge.alt = ''; el.append(badge); }
-      const url = ASSETS + stateIcon + '.png';
+      const url = iconSrc(stateIcon);
       if (badge.src !== url) badge.src = url;
     } else badge?.remove();
   }
@@ -796,7 +811,7 @@
       markers.forEach(m => m.remove());
       markers = stars.map(at => {
         const m = document.createElement('div'); m.className = 'sc-progress-marker';
-        m.innerHTML = `<img src="${ASSETS}star-empty.png" alt=""><img src="${ASSETS}star.png" alt="">`;
+        m.innerHTML = `<img src="${iconSrc('star-empty')}" alt=""><img src="${iconSrc('star')}" alt="">`;
         bar.append(m); return m;
       });
     }
@@ -830,7 +845,7 @@
       el.textContent = '';
       stars = Array.from({ length: max }, () => {
         const s = document.createElement('span'); s.className = 'sc-star';
-        s.innerHTML = `<img class="sc-star-empty" src="${ASSETS}star-empty.png" alt=""><img class="sc-star-full" src="${ASSETS}star.png" alt="">`;
+        s.innerHTML = `<img class="sc-star-empty" src="${iconSrc('star-empty')}" alt=""><img class="sc-star-full" src="${iconSrc('star')}" alt="">`;
         el.append(s); return s;
       });
       el.setAttribute('role', 'img');
@@ -941,7 +956,7 @@
     el.style.left = x + 'px'; el.style.top = y + 'px';
     el.style.setProperty('--dx', (Math.random() * 30 - 15).toFixed(1) + 'px');
     el.style.setProperty('--rot', (Math.random() * 12 - 6).toFixed(1) + 'deg');
-    if (icon) { const img = document.createElement('img'); img.src = ASSETS + icon + '.png'; img.alt = ''; el.append(img); }
+    if (icon) { const img = document.createElement('img'); img.src = iconSrc(icon); img.alt = ''; el.append(img); }
     el.append(textSpan(String(text)));
     el.setAttribute('aria-hidden', 'true');
     document.body.append(el);
@@ -1141,7 +1156,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.38.5',
+    version: '0.39.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */
@@ -1203,8 +1218,15 @@
     tutorial,
     /** Floating feedback text: SC.float('+50', event | element | {x, y}, { color, size, icon, style }) */
     float,
-    /** URL of an icon in the kit: SC.icon('coin') */
-    icon(name) { return ASSETS + name + '.png'; },
+    /** URL of a picture: SC.icon('coin') · SC.icon('img/fox.png') */
+    icon: iconSrc,
+    /** Replace a picture by name for the whole page, then refresh: SC.setImage('coin', 'img/shell.png') · SC.setImage('coin', null) resets */
+    setImage(name, src) {
+      const before = iconSrc(name);
+      if (src == null || src === '') delete IMAGE_MAP[name]; else IMAGE_MAP[name] = new URL(src, location.href).href;
+      const after = iconSrc(name);
+      document.querySelectorAll('img').forEach(img => { if (img.src === before) img.src = after; });   // pictures already on screen
+    },
   });
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => upgrade());

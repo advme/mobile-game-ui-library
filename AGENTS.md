@@ -56,6 +56,7 @@ Copy the pattern of an existing component (e.g. `progress`, `timer`):
 - **Never draw image assets with code** (icons, items, characters, badges with pictures). Put a grey placeholder, write an image-generation prompt for the owner, then crop the sheet they return (`tools/crop_sheet.py`) and run `tools/icon_offsets.py`.
 - **Icons are chosen by name** (`data-icon="coin"`). Only use names listed in `registry.json → icons`.
 - **Hint bubbles are flat white** with the outline only (no 3D shade band).
+- **Icons:** kit names, or a path/URL for a game's own picture (`data-icon="images/fox.png"`), or `SC.setImage`. New pictures come from `super-casual/kit/assets/IMAGE-PROMPTS.md`.
 - **Round glossy buttons** use a full circular face (no bottom lip) so they never look like ovals.
 - **Component default colors** must use `:where(...)` so `data-color` can override them.
 - **Never use `text-overflow: ellipsis` on outlined `.sc-text`** (its outline copy isn't cut and leaves a black smudge). Clip and fade instead (`.sc-long` pattern).

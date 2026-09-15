@@ -2,6 +2,16 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.39.0-A — Custom images everywhere + image prompt templates
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: The owner asked whether AIs can change the pictures inside components. Now they can, in three ways:
+  - Every icon attribute (`data-icon` on buttons, icon buttons, counters, slots, progress, tabs, tab bar, shop cards, row avatar/score, loading; `data-avatar` on Top Bar; `icon` in `SC.toast`/`SC.float`) accepts a kit name, a relative path, a web address or a `data:` image, via one resolver `iconSrc()` in `sc.js`.
+  - `SC.setImage(name, src)` replaces a picture for the whole page, including already-rendered ones and the built-ins (check, lock, alert, level-badge, hand, avatar, star, star-empty). `SC.setImage(name, null)` resets.
+  - `SC.icon(nameOrPath)` returns the resolved URL; custom images get `data-custom`.
+  - Added `kit/assets/IMAGE-PROMPTS.md`: a mandatory style block, one-icon and sheet templates, a ready-made subjects table and after-generation steps (crop, where to save, how to use). Added a `docs/images.html` page (in NAV), and updated `registry.json → icons.note`, AGENTS.md and the Introduction.
+- Tested: New `tools/tests/images.html` 17/17 (name, relative path, full URL, data: image loading; alias still mirrors; slot/shop card/top bar/row avatar/toast with paths; SC.icon; SC.setImage on built-ins and icons, existing and new elements, reset). All 18 test pages pass.
+- Notes for next agent: A value counts as a path if it contains `/`, `.` or `:`; kit icon names must stay plain kebab-case. Offsets (optical centering) only exist for kit assets.
+
 ## v0.38.5-A — Hint Bubble: pointer never covers text, side pointers fit the shape
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: The owner reported that (1) a top/bottom pointer covered letters and (2) left/right pointers looked like separate pieces. Fixes:

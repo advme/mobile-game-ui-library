@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.38.5-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.39.0-A**
 
 ## Next task
-**Final check: build a new screen with a fresh AI agent using only the kit.** Open a new AI session (Codex or Claude) with no history. Ask it to read `super-casual/kit/docs/introduction.html` + `registry.json` and build a small new screen (for example a "Level Select" map with locked levels and stars) in `kit/blocks/levels.html`. Write down everything that confused it, then fix the docs, manuals or registry. Also good next: a Level Select block and a Profile block.
+**Build the one-file bundle and a Pixelfork game template.** Add `tools/build_kit.py` that concatenates `core.css` + every `components/*/*.css` into `dist/kit.css` and copies `sc.js` + `assets/` into `dist/`. Then create `templates/pixelfork-game/` (index.html with canvas + `dist/kit.css` + `dist/kit.js`, Loading → Start → HUD → Pause → Success/Fail already wired to a stand-in game with clear "replace with your engine" hooks) plus a short `templates/pixelfork-game/AI.md` telling Pixelfork's AI how to customise texts, icons (`data-icon` paths, `SC.setImage`, IMAGE-PROMPTS.md) and screens. After that: the fresh-AI final check.
 
 ## In progress
 _Nothing._

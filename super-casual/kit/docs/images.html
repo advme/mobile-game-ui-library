@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Images — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../components/slot/slot.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+</head>
+<body>
+<script>
+SCDocs.article({
+  title: 'Images',
+  lead: 'Every picture in the kit can be changed — use a kit icon, your own file or a web address, or replace a kit picture for the whole game.',
+  body: `
+<h2>1. Kit icons by name</h2>
+<p class="desc">48 ready icons live in <code class="inline">kit/assets</code>. Use the name (list in <code class="inline">registry.json → icons</code>).</p>
+<pre data-code>
+<button class="sc-icon-button" data-icon="gem" aria-label="Gems"></button>
+<div class="sc-slot" data-icon="coin" data-count="500"></div>
+</pre>
+
+<h2>2. Your own picture</h2>
+<p class="desc">Anywhere a component takes an icon, you can pass a path, a web address or a data: image instead of a name.</p>
+<pre data-code>
+<button class="sc-button" data-icon="images/fox-head.png">Play as Fox</button>
+<div class="sc-shopcard" data-icon="https://cdn.example.com/packs/shells.png" data-amount="500" data-price="$4.99"></div>
+<div class="sc-topbar" data-avatar="images/player-photo.png" data-level="12"></div>
+</pre>
+<p class="desc">Works for: Button, Icon Button, Resource Counter, Reward Slot, Progress Bar icon, Shop Card, Top Bar avatar, Item Row avatar/score, Loading icon, Tab & Tab Bar icons, Toast and Floating Text icons.</p>
+
+<h2>3. Replace a kit picture for the whole game</h2>
+<p class="desc">Change a name once — every component using it updates, including the kit's built-in pictures: <code class="inline">check</code>, <code class="inline">lock</code>, <code class="inline">alert</code>, <code class="inline">level-badge</code>, <code class="inline">hand</code>, <code class="inline">avatar</code>, <code class="inline">star</code>, <code class="inline">star-empty</code>.</p>
+<pre data-code>
+SC.setImage('coin', 'images/shell-coin.png');   // an ocean game: coins become shells
+SC.setImage('hand', 'images/paw.png');          // tutorial hand becomes a paw
+SC.setImage('coin', null);                      // back to the kit picture
+</pre>
+
+<h2>4. A whole different icon set</h2>
+<p class="desc">Point the kit at another folder with the same file names.</p>
+<pre data-code>
+<script src="kit/sc.js" data-assets="my-game-icons/"><\/script>
+</pre>
+
+<h2>5. Making new pictures</h2>
+<p>Never draw pictures with code. Generate them in the kit style with the prompt templates in <code class="inline">kit/assets/IMAGE-PROMPTS.md</code>:</p>
+<ol>
+  <li>Fill in the template (one icon, or a sheet of up to 16) and always include the <b>style block</b>.</li>
+  <li>Generate a transparent PNG (e.g. GPT Image).</li>
+  <li>Cut sheets with <code class="inline">tools/crop_sheet.py</code>.</li>
+  <li>Save into the game (<code class="inline">images/…</code>) or the kit (<code class="inline">kit/assets</code> + run <code class="inline">tools/icon_offsets.py</code> + add to the registry).</li>
+  <li>Use it with <code class="inline">data-icon</code> or <code class="inline">SC.setImage</code>.</li>
+</ol>
+
+<h2>Rules for AI agents</h2>
+<ul class="rules">
+  <li>Use a kit icon when one fits; generate a new picture only when nothing fits.</li>
+  <li>New pictures: transparent, roughly square, object centered filling ~80%, no text in the image.</li>
+  <li>Keep one color palette per game so new pictures match.</li>
+  <li>Prefer <code class="inline">SC.setImage</code> for re-theming (coins → shells) over editing every element.</li>
+</ul>
+`,
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Images regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/button/button.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/slot/slot.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/shopcard/shopcard.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/topbar/topbar.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/level/level.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/counter/counter.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/checkbox/checkbox.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/toast/toast.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/row/row.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>body { margin:30px; font:14px system-ui; background:#243453; color:white; } #fixtures { display:flex; flex-wrap:wrap; gap:18px; align-items:center; } li { margin:6px 0; } .fail { color:#ff9da7; }</style>
+<h1>Image source checks</h1>
+<p id="summary">Running…</p>
+<div id="fixtures">
+  <button class="sc-icon-button" id="name" data-icon="gem" aria-label="x"></button>
+  <button class="sc-icon-button" id="path" data-icon="../../super-casual/kit/assets/helmet.png" aria-label="x"></button>
+  <button class="sc-button" id="url" data-icon="http://localhost:8765/super-casual/kit/assets/key.png">Key</button>
+  <button class="sc-icon-button" id="data" aria-label="x"></button>
+  <button class="sc-icon-button" id="flip" data-icon="arrow-left" aria-label="x"></button>
+  <div class="sc-slot" id="slot" data-icon="../../super-casual/kit/assets/avatar.png" data-count="3"></div>
+  <div class="sc-shopcard" id="card" data-icon="../../super-casual/kit/assets/crown.png" data-price="$1"></div>
+  <div class="sc-topbar" id="tb" data-avatar="../../super-casual/kit/assets/helmet.png" style="width:300px"></div>
+  <span class="sc-row-avatar" id="ra" data-icon="../../super-casual/kit/assets/avatar.png"></span>
+  <button class="sc-checkbox" id="cb" data-checked>Done</button>
+</div>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  const img = el => el.querySelector('img');
+  const loaded = el => new Promise(r => { const i = img(el); if (i.complete) r(i.naturalWidth > 0); else { i.onload = () => r(true); i.onerror = () => r(false); } });
+  const PX = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==';
+  try {
+    $('#data').dataset.icon = PX; await wait(50);
+    check('kit name → assets/<name>.png', img($('#name')).src.endsWith('/kit/assets/gem.png'));
+    check('relative path works and loads', img($('#path')).src.endsWith('/assets/helmet.png') && await loaded($('#path')));
+    check('full web address works and loads', img($('#url')).src === 'http://localhost:8765/super-casual/kit/assets/key.png' && await loaded($('#url')));
+    check('data: image works', img($('#data')).src === PX && await loaded($('#data')));
+    check('custom images are marked, kit names are not', img($('#path')).hasAttribute('data-custom') && !img($('#name')).hasAttribute('data-custom'));
+    check('arrow-left alias still mirrors', img($('#flip')).src.endsWith('/arrow-right.png') && img($('#flip')).hasAttribute('data-flip'));
+    check('slot accepts a path', $('#slot').querySelector('img').src.endsWith('/assets/avatar.png'));
+    check('shop card accepts a path', $('#card').querySelector('.sc-shopcard-art img').src.endsWith('/assets/crown.png'));
+    check('top bar avatar accepts a path', $('#tb .sc-topbar-avatar img').src.endsWith('/assets/helmet.png'));
+    check('row avatar accepts a path', $('#ra img').src.endsWith('/assets/avatar.png'));
+    check('SC.icon resolves names and paths', SC.icon('coin').endsWith('/kit/assets/coin.png') && SC.icon('img/fox.png') === new URL('img/fox.png', location.href).href);
+    SC.toast('Hi', { icon: '../../super-casual/kit/assets/gift.png', duration: 600 }); await wait(30);
+    check('toast icon accepts a path', $('.sc-toast img')?.src.endsWith('/assets/gift.png'));
+
+    // Replace a kit picture for the whole page
+    SC.setImage('check', '../../super-casual/kit/assets/star.png'); await wait(30);
+    check('SC.setImage updates built-in pictures already on screen (checkbox check)', $('#cb .sc-checkbox-box img').src.endsWith('/assets/star.png'));
+    $('#slot').dataset.state = 'claimed'; await wait(30);
+    check('…and new ones (slot claimed badge)', $('#slot .sc-slot-state').src.endsWith('/assets/star.png'));
+    SC.setImage('gem', PX); await wait(30);
+    check('SC.setImage on an icon name updates existing icons', img($('#name')).src === PX);
+    const fresh = document.createElement('button'); fresh.className = 'sc-icon-button'; fresh.dataset.icon = 'gem'; $('#fixtures').append(fresh); await wait(30);
+    check('…and icons added later', img(fresh).src === PX);
+    SC.setImage('gem', null); SC.setImage('check', null); await wait(30);
+    check('SC.setImage(name, null) resets to the kit picture', img($('#name')).src.endsWith('/kit/assets/gem.png') && $('#cb .sc-checkbox-box img').src.endsWith('/assets/check.png'));
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Images';
+});
+</script>
