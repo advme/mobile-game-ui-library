@@ -17,7 +17,7 @@
   JS: SC.hint.show(target, text, {pos, duration}) → bubble · SC.hint.hide(target?) (no target = hide all)
 */
 .sc-hint {
-  --h-fs:15px; --arrow:13px; --ax:50%; --ay:50%;
+  --h-fs:15px; --ax:50%; --ay:50%;
   position:relative; display:inline-block; box-sizing:border-box; max-width:230px; width:max-content;
   padding:calc(var(--h-fs) * .45) calc(var(--h-fs) * .85) calc(var(--h-fs) * .55);
   border:var(--sc-line) solid var(--sc-outline); border-radius:calc(var(--h-fs) * .8);
@@ -25,18 +25,32 @@
   font:900 var(--h-fs)/1.2 var(--sc-font); color:#1d1a2e; text-align:center; white-space:normal; overflow-wrap:break-word;
   user-select:none; -webkit-user-select:none; pointer-events:none;
 }
-.sc-hint[data-size="sm"] { --h-fs:12px; --arrow:10px; }
+.sc-hint[data-size="sm"] { --h-fs:12px; }
 
-/* Pointer: rotated rounded square with two outlined sides (no polygons) */
-.sc-hint::after {
-  content:""; position:absolute; width:var(--arrow); height:var(--arrow); box-sizing:border-box; background:#fff;
-  border:var(--sc-line) solid var(--sc-outline); border-top-color:transparent; border-left-color:transparent;
-  border-radius:0 0 3px 0;
+/* Pointer: two rotated rounded squares (no polygons).
+   ::before = dark square centered half an outline below the bubble's inner border edge → its edges continue the outline.
+   ::after  = same-size white square one outline width further in → hides the border inside the pointer
+   and leaves an outline exactly as thick as the bubble's. */
+.sc-hint { --arrow:17px; --ah:calc(var(--arrow) * .7071); --ad:calc(var(--sc-line) * 1.4142); }
+.sc-hint[data-size="sm"] { --arrow:13px; }
+.sc-hint::before, .sc-hint::after {
+  content:""; position:absolute; width:var(--arrow); height:var(--arrow); rotate:45deg; border-radius:2px; pointer-events:none;
 }
-.sc-hint:is(:not([data-pos]), [data-pos="top"])::after { left:var(--ax); bottom:calc(var(--arrow) / -2 - 1px); transform:translateX(-50%) rotate(45deg); }
-.sc-hint[data-pos="bottom"]::after { left:var(--ax); top:calc(var(--arrow) / -2 - 1px); transform:translateX(-50%) rotate(225deg); }
-.sc-hint[data-pos="left"]::after   { top:var(--ay); right:calc(var(--arrow) / -2 - 1px); transform:translateY(-50%) rotate(-45deg); }
-.sc-hint[data-pos="right"]::after  { top:var(--ay); left:calc(var(--arrow) / -2 - 1px); transform:translateY(-50%) rotate(135deg); }
+.sc-hint::before { background:var(--sc-outline); }
+.sc-hint::after  { background:#fff; }
+/* Bubble above the target → pointer at the bottom (continues the bottom shade band) */
+.sc-hint:is(:not([data-pos]), [data-pos="top"])::before { left:calc(var(--ax) - var(--arrow) / 2); bottom:calc(var(--arrow) / -2 - var(--ad) / 2); }
+.sc-hint:is(:not([data-pos]), [data-pos="top"])::after  { left:calc(var(--ax) - var(--arrow) / 2); bottom:calc(var(--arrow) / -2 + var(--ad) / 2);
+  background:linear-gradient(to bottom right, #fff calc(var(--ah) + var(--ad) / 2 - 3px), #d9dff0 0 calc(var(--ah) + var(--ad) / 2), #fff 0); }
+/* Bubble below the target → pointer on top */
+.sc-hint[data-pos="bottom"]::before { left:calc(var(--ax) - var(--arrow) / 2); top:calc(var(--arrow) / -2 - var(--ad) / 2); }
+.sc-hint[data-pos="bottom"]::after  { left:calc(var(--ax) - var(--arrow) / 2); top:calc(var(--arrow) / -2 + var(--ad) / 2); }
+/* Bubble left of the target → pointer on the right */
+.sc-hint[data-pos="left"]::before { top:calc(var(--ay) - var(--arrow) / 2); right:calc(var(--arrow) / -2 - var(--ad) / 2); }
+.sc-hint[data-pos="left"]::after  { top:calc(var(--ay) - var(--arrow) / 2); right:calc(var(--arrow) / -2 + var(--ad) / 2); }
+/* Bubble right of the target → pointer on the left */
+.sc-hint[data-pos="right"]::before { top:calc(var(--ay) - var(--arrow) / 2); left:calc(var(--arrow) / -2 - var(--ad) / 2); }
+.sc-hint[data-pos="right"]::after  { top:calc(var(--ay) - var(--arrow) / 2); left:calc(var(--arrow) / -2 + var(--ad) / 2); }
 
 /* Floating bubbles created by sc.js */
 .sc-hint.sc-hint-float { position:fixed; left:0; top:0; z-index:1160; transform-origin:var(--ox, 50%) var(--oy, 100%); animation:sc-hint-pop .22s cubic-bezier(.3,1.6,.6,1); }

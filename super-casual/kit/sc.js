@@ -365,7 +365,7 @@
       bubble.dataset.pos = HINT_POS.includes(pos) ? pos : 'top';
       bubble.textContent = text;
       const shell = target.closest('.sc-screen'), sc = shell ? Number(getComputedStyle(shell).getPropertyValue('--sc-s')) || 1 : 1;
-      if (sc !== 1) { bubble.style.setProperty('--h-fs', 15 * sc + 'px'); bubble.style.setProperty('--arrow', 13 * sc + 'px'); }
+      if (sc !== 1) { bubble.style.setProperty('--h-fs', 15 * sc + 'px'); bubble.style.setProperty('--arrow', 17 * sc + 'px'); }
       document.body.append(bubble);
       placeHint(target, bubble);
       openHints.set(target, bubble);
@@ -1123,7 +1123,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.38.1',
+    version: '0.38.2',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */

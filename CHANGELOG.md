@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.38.2-A — Hint Bubble: continuous pointer outline
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: The owner reported that the Hint Bubble's pointer broke the outline where it meets the bubble (white wedges cut the border). The pointer is now two rotated rounded squares: a dark one half an outline below the bubble's inner border edge, and a same-size white one an outline width further in. The dark edges now flow straight out of the bubble border with the same thickness and no gaps or bumps, in all 4 directions. The bottom pointer continues the grey shade band via a diagonal gradient. The pointer is a bit bigger (17px, sm 13px).
+- Tested: 10× zoom of the joint (no gap, no bump, shade band continuous) and all 4 directions + small size at normal scale. `tools/tests/hint.html` 15/15.
+- Notes for next agent: Pointer geometry uses `--arrow` (square side), `--ah` (half diagonal) and `--ad` (outline × √2). Keep the two squares the same size; the offset between them equals `--ad`.
+
 ## v0.38.1-A — Docs: Introduction and Installation
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `docs/introduction.html` (what the kit is, the look, a step-by-step guide for AI agents, tables of all components and blocks generated from the registry) and `docs/installation.html` (folder layout, page setup, minimal game page, how components work, Screen Shell basics, local preview). New `SCDocs.article()` renders prose pages. Both are enabled in the NAV, and the root `index.html` + README point to Introduction and the test runner.
