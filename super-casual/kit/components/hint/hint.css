@@ -39,7 +39,7 @@
 .sc-hint[data-pos="right"]::after  { top:var(--ay); left:calc(var(--arrow) / -2 - 1px); transform:translateY(-50%) rotate(135deg); }
 
 /* Floating bubbles created by sc.js */
-.sc-hint.sc-hint-float { position:fixed; left:0; top:0; z-index:1100; transform-origin:var(--ox, 50%) var(--oy, 100%); animation:sc-hint-pop .22s cubic-bezier(.3,1.6,.6,1); }
+.sc-hint.sc-hint-float { position:fixed; left:0; top:0; z-index:1160; transform-origin:var(--ox, 50%) var(--oy, 100%); animation:sc-hint-pop .22s cubic-bezier(.3,1.6,.6,1); }
 .sc-hint.sc-hint-float.sc-closing { animation:sc-hint-out .14s ease-in forwards; }
 @keyframes sc-hint-pop { from { opacity:0; scale:.6; } }
 @keyframes sc-hint-out { to { opacity:0; scale:.8; } }

@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tutorial Hand — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/tutorial/tutorial.css">
+<link rel="stylesheet" href="../components/hint/hint.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/slot/slot.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+.row { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:18px; padding:60px 0 20px; }
+.col { display:flex; flex-direction:column; align-items:center; gap:14px; }
+.log { margin:0; color:#dce6ff; font:14px/1.5 system-ui; text-align:center; }
+.static-hand { width:76px; height:76px; object-fit:contain; animation:sc-tut-tap 1.1s ease-in-out infinite; transform-origin:17% 5%; }
+</style>
+</head>
+<body>
+<script>
+SCDocs.page({
+  title: 'Tutorial Hand',
+  lead: 'An animated hand that shows the player what to do — tap here, swipe up, drag this there — with an optional spotlight and hint.',
+  hero: `<div class="col">
+  <img class="static-hand" src="assets/hand.png" alt="">
+  <button class="sc-button" data-color="yellow" id="heroStart">Start a tutorial</button>
+</div>`,
+  css: ['components/tutorial/tutorial.css', 'components/hint/hint.css'],
+  usageNote: 'JavaScript only. point() returns a promise that resolves when the player taps the target.',
+  usage: `await SC.tutorial.point(playButton, { text: 'Tap Play to start!' });
+startLevel();`,
+  examples: [
+    { title: 'Live: a 3-step tutorial', desc: 'Spotlight dims everything except the target; each step waits for the tap.',
+      html: `<div class="col">
+  <div class="row">
+    <button class="sc-button" data-color="green" id="stepA">Play</button>
+    <div class="sc-slot" id="stepB" data-icon="gift" data-color="purple"></div>
+    <button class="sc-button" data-color="sky" id="stepC">Claim</button>
+  </div>
+  <button class="sc-button" data-color="dark" data-size="sm" id="runTut">Run tutorial</button>
+  <p class="log">—</p>
+</div>`,
+      setup(p) {
+        const log = p.querySelector('.log');
+        p.querySelector('#runTut').onclick = async () => {
+          log.textContent = 'step 1';
+          await SC.tutorial.point(p.querySelector('#stepA'), { text: 'Tap Play!' });
+          log.textContent = 'step 2';
+          await SC.tutorial.point(p.querySelector('#stepB'), { text: 'Open your gift' });
+          log.textContent = 'step 3';
+          await SC.tutorial.point(p.querySelector('#stepC'), { text: 'Now claim it' });
+          log.textContent = 'tutorial complete!';
+        };
+      } },
+    { title: 'Gestures', desc: 'Swipe and drag hints without a spotlight (the game stays playable). Tap a gesture to preview; tap Stop to clear.',
+      html: `<div class="col">
+  <div class="row">
+    <div class="sc-slot" id="gFrom" data-icon="gem" data-color="purple"></div>
+    <div style="width:80px"></div>
+    <div class="sc-slot" id="gTo" data-icon="chest" data-color="dark"></div>
+  </div>
+  <div class="row" style="padding:0">
+    <button class="sc-button" data-size="sm" data-color="sky" data-g="swipe-up">Swipe up</button>
+    <button class="sc-button" data-size="sm" data-color="sky" data-g="swipe-right">Swipe right</button>
+    <button class="sc-button" data-size="sm" data-color="purple" data-g="drag">Drag</button>
+    <button class="sc-button" data-size="sm" data-color="red" data-g="stop">Stop</button>
+  </div>
+</div>`,
+      setup(p) {
+        p.querySelectorAll('[data-g]').forEach(b => b.onclick = () => {
+          if (b.dataset.g === 'stop') return SC.tutorial.clear();
+          SC.tutorial.point(p.querySelector('#gFrom'), { gesture: b.dataset.g, to: p.querySelector('#gTo'), spotlight: false, once: false });
+        });
+      } },
+  ],
+  api: [
+    ['gesture', 'tap swipe-up swipe-down swipe-left swipe-right drag', 'tap', 'Hand animation.'],
+    ['to', 'element', '', 'Drag destination.'],
+    ['text', 'string', '', 'Hint Bubble above the target (needs hint.css).'],
+    ['spotlight', 'boolean', 'true', 'Dim the screen; only the target can be tapped.'],
+    ['once', 'boolean', 'true', 'Clear when the target is tapped.'],
+  ],
+  js: `await SC.tutorial.point(btn, { text: 'Tap to jump!' });           // waits for the tap
+SC.tutorial.point(gem, { gesture: 'drag', to: slot, spotlight: false, once: false });
+SC.tutorial.point(canvasArea, { gesture: 'swipe-up', spotlight: false });
+SC.tutorial.clear();      // remove (a pending point() resolves false)
+SC.tutorial.active;       // true while showing`,
+  rules: [
+    '<b>One step at a time</b>: await each <code class="inline">point()</code> before the next.',
+    'Use the <b>spotlight</b> for menu steps (forces the right tap); turn it off for gameplay gestures so the game stays playable.',
+    'Hint text max ~6 words, action first ("Tap to jump!").',
+    'Show tutorials only the first time; save progress so they never repeat.',
+    'For gameplay swipes point at a big element (e.g. the canvas wrapper or a character).',
+  ],
+});
+document.getElementById('heroStart').onclick = e => SC.tutorial.point(e.currentTarget, { text: 'Like this!' });
+</script>
+</body>
+</html>

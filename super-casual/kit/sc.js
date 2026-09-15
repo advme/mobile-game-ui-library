@@ -584,6 +584,66 @@
     card.dispatchEvent(new CustomEvent('buy', { bubbles: true, detail: { price: card.dataset.price, currency: card.dataset.priceIcon || null } }));
   });
 
+  /* ---------- Tutorial Hand ---------- */
+  const TIP = { x: .17, y: .05 };   // fingertip position inside the 1:1 hand image box
+  let tut = null;
+  function tutRect(el) { const r = el.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height, cx: r.left + r.width / 2, cy: r.top + r.height / 2 }; }
+  function tutPlace() {
+    if (!tut) return;
+    if (!tut.target.isConnected) return tutorial.clear();
+    const r = tutRect(tut.target), pad = 8, hs = tut.hand.offsetWidth || 76;
+    tut.hand.style.translate = `${Math.round(r.cx - hs * TIP.x)}px ${Math.round(r.cy - hs * TIP.y)}px`;
+    const d = { 'swipe-up': [0, -90], 'swipe-down': [0, 90], 'swipe-left': [-90, 0], 'swipe-right': [90, 0] }[tut.gesture];
+    if (tut.gesture === 'drag' && tut.to && tut.to.isConnected) { const t = tutRect(tut.to); tut.hand.style.setProperty('--dx', t.cx - r.cx + 'px'); tut.hand.style.setProperty('--dy', t.cy - r.cy + 'px'); }
+    else if (d) { tut.hand.style.setProperty('--dx', d[0] + 'px'); tut.hand.style.setProperty('--dy', d[1] + 'px'); }
+    if (tut.ring) { tut.ring.style.left = r.cx + 'px'; tut.ring.style.top = r.cy + 'px'; }
+    if (tut.spot) {
+      const x = r.x - pad, y = r.y - pad, w = r.w + pad * 2, h = r.h + pad * 2;
+      Object.assign(tut.spot.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px' });
+      const [t, b, l, rr] = tut.blocks;   // transparent blockers around the hole
+      Object.assign(t.style, { left: 0, top: 0, width: '100vw', height: Math.max(0, y) + 'px' });
+      Object.assign(b.style, { left: 0, top: y + h + 'px', width: '100vw', height: `calc(100vh - ${y + h}px)` });
+      Object.assign(l.style, { left: 0, top: y + 'px', width: Math.max(0, x) + 'px', height: h + 'px' });
+      Object.assign(rr.style, { left: x + w + 'px', top: y + 'px', width: `calc(100vw - ${x + w}px)`, height: h + 'px' });
+    }
+    tut.raf = requestAnimationFrame(tutPlace);   // follow moving/resizing targets
+  }
+  const tutorial = {
+    point(target, { gesture = 'tap', to = null, text = '', spotlight = true, once = true } = {}) {
+      if (typeof target === 'string') target = document.getElementById(target);
+      if (typeof to === 'string') to = document.getElementById(to);
+      tutorial.clear();
+      if (!target) return Promise.resolve(false);
+      const layer = document.createElement('div'); layer.className = 'sc-tut-layer';
+      const hand = document.createElement('img'); hand.className = 'sc-tut-hand'; hand.alt = ''; hand.draggable = false; hand.src = ASSETS + 'hand.png';
+      hand.dataset.gesture = ['tap', 'swipe-up', 'swipe-down', 'swipe-left', 'swipe-right', 'drag'].includes(gesture) ? gesture : 'tap';
+      hand.style.setProperty('--tipx', TIP.x * 100 + '%'); hand.style.setProperty('--tipy', TIP.y * 100 + '%');
+      let spot = null, blocks = [], ring = null;
+      if (spotlight) {
+        spot = document.createElement('div'); spot.className = 'sc-tut-spot'; layer.append(spot);
+        blocks = [0, 1, 2, 3].map(() => { const b = document.createElement('div'); b.className = 'sc-tut-block'; layer.append(b); return b; });
+      }
+      if (hand.dataset.gesture === 'tap') { ring = document.createElement('div'); ring.className = 'sc-tut-ring'; layer.append(ring); }
+      layer.append(hand); document.body.append(layer);
+      if (text && typeof hint !== 'undefined') hint.show(target, text, { pos: 'top', duration: 0 });
+      let resolve; const done = new Promise(r => (resolve = r));
+      const onTap = () => { resolve(true); if (once) tutorial.clear(); };
+      target.addEventListener('click', onTap, { once: true });
+      tut = { target, to, gesture: hand.dataset.gesture, layer, hand, spot, blocks, ring, text, onTap, resolve };
+      tutPlace();
+      return done;
+    },
+    clear() {
+      if (!tut) return;
+      cancelAnimationFrame(tut.raf);
+      tut.target.removeEventListener('click', tut.onTap);
+      if (tut.text && typeof hint !== 'undefined') hint.hide(tut.target, { instant: true });
+      tut.layer.remove();
+      const r = tut.resolve; tut = null; r(false);
+    },
+    get active() { return !!tut; },
+  };
+
   /* ---------- Counter ---------- */
   function formatNumber(n, format) {
     n = Math.round(Number(n) || 0);
@@ -1063,7 +1123,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.27.0',
+    version: '0.28.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */
@@ -1121,6 +1181,8 @@
     loading,
     /** "Something new" marker: SC.setAlert(el, true | false | 'dot') */
     setAlert,
+    /** Tutorial pointer: await SC.tutorial.point(el, {gesture, to, text, spotlight, once}) · SC.tutorial.clear() */
+    tutorial,
     /** Floating feedback text: SC.float('+50', event | element | {x, y}, { color, size, icon, style }) */
     float,
     /** URL of an icon in the kit: SC.icon('coin') */

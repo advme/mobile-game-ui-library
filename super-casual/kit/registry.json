@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.27.0",
+  "version": "0.28.0",
   "items": [
     {
       "name": "core",
@@ -2180,6 +2180,42 @@
         {
           "title": "Coin price",
           "html": "<div class=\"sc-shopcard\" data-icon=\"heart\" data-amount=\"5\" data-price=\"200\" data-price-icon=\"coin\" data-color=\"red\"></div>"
+        }
+      ]
+    },
+    {
+      "name": "tutorial",
+      "type": "registry:ui",
+      "title": "Tutorial Hand",
+      "description": "Animated pointing hand for tutorials (tap/swipe/drag) with optional spotlight and hint; promise-based steps.",
+      "whenToUse": "First-time tutorials and gameplay gesture hints.",
+      "files": [
+        "components/tutorial/tutorial.css"
+      ],
+      "docs": "components/tutorial/tutorial.md",
+      "dependencies": [
+        "core",
+        "hint"
+      ],
+      "html": "",
+      "props": {},
+      "events": [],
+      "js": {
+        "await SC.tutorial.point(target, {gesture, to, text, spotlight, once})": "gesture tap|swipe-up|swipe-down|swipe-left|swipe-right|drag; resolves true on target tap, false if cleared/replaced",
+        "SC.tutorial.clear()": "Remove",
+        "SC.tutorial.active": "Boolean"
+      },
+      "rules": [
+        "One step at a time; await each point().",
+        "Spotlight for menu steps; off for gameplay gestures.",
+        "Hint text ~6 words, action first.",
+        "Only the first time; save progress.",
+        "Swipes point at a big element."
+      ],
+      "examples": [
+        {
+          "title": "Two steps",
+          "js": "await SC.tutorial.point(playBtn, { text: 'Tap Play!' }); await SC.tutorial.point(gift, { text: 'Open your gift' });"
         }
       ]
     }

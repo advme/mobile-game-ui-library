@@ -1,0 +1,58 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Tutorial regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/tutorial/tutorial.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/hint/hint.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/button/button.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>body { margin:0; padding:140px 40px 40px; font:14px system-ui; background:#243453; color:white; } #fixtures { display:flex; gap:60px; } li { margin:6px 0; } .fail { color:#ff9da7; }</style>
+<div id="fixtures">
+  <button class="sc-button" id="a">Play</button>
+  <button class="sc-button" id="b">Other</button>
+</div>
+<p id="summary">Running…</p>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  const center = el => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+  try {
+    let bClicks = 0; $('#b').addEventListener('click', () => bClicks++);
+    const p = SC.tutorial.point($('#a'), { text: 'Tap Play!' });
+    await wait(100);
+    const hand = $('.sc-tut-hand');
+    check('layer, hand, spotlight, blockers, ring, hint', !!$('.sc-tut-layer') && hand?.src.endsWith('/hand.png') && !!$('.sc-tut-spot') && document.querySelectorAll('.sc-tut-block').length === 4 && !!$('.sc-tut-ring') && $('.sc-hint-float')?.textContent === 'Tap Play!');
+    check('SC.tutorial.active', SC.tutorial.active === true);
+    const [ax, ay] = center($('#a')), hr = hand.getBoundingClientRect(), tr = hand.style.translate.split(' ').map(parseFloat);
+    check('fingertip placed at target center', Math.abs(tr[0] + 76 * .17 - ax) < 2 && Math.abs(tr[1] + 76 * .05 - ay) < 2);
+    const [bx, by] = center($('#b'));
+    check('outside target is blocked by the spotlight', document.elementFromPoint(bx, by).classList.contains('sc-tut-block'));
+    check('target itself stays tappable', document.elementFromPoint(ax, ay).closest('#a') !== null);
+    check('hint is above the dim layer', Number(getComputedStyle($('.sc-hint-float')).zIndex) > Number(getComputedStyle($('.sc-tut-layer')).zIndex));
+    $('#a').click();
+    check('tap resolves promise true', (await p) === true);
+    await wait(50);
+    check('cleared after tap (layer + hint gone)', !$('.sc-tut-layer') && !$('.sc-hint-float') && !SC.tutorial.active);
+    const p2 = SC.tutorial.point($('#a'), { gesture: 'drag', to: $('#b'), spotlight: false, once: false });
+    await wait(100);
+    const h2 = $('.sc-tut-hand');
+    check('no spotlight → no blockers, drag vars set to destination', !$('.sc-tut-spot') && !$('.sc-tut-block') && h2.dataset.gesture === 'drag' && Math.abs(parseFloat(h2.style.getPropertyValue('--dx')) - (bx - ax)) < 2);
+    $('#b').click();
+    check('without spotlight other elements work', bClicks === 1);
+    $('#a').click(); await wait(30);
+    check('once:false keeps showing after target tap', !!$('.sc-tut-layer'));
+    SC.tutorial.clear();
+    check('clear removes', !$('.sc-tut-layer'));
+    const p3 = SC.tutorial.point($('#a')); SC.tutorial.point($('#b'), { gesture: 'swipe-up' });
+    check('new point replaces old one (old resolves false)', (await p3) === false && document.querySelectorAll('.sc-tut-layer').length === 1 && $('.sc-tut-hand').style.getPropertyValue('--dy') === '-90px');
+    SC.tutorial.clear();
+    check('invalid target resolves false', (await SC.tutorial.point('nope')) === false);
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Tutorial';
+});
+</script>

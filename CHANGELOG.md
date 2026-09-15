@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.28.0-A — Tutorial Hand component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `SC.tutorial.point(target, {gesture, to, text, spotlight, once})` → Promise and `SC.tutorial.clear()` / `SC.tutorial.active`. It shows the kit `hand` icon with its fingertip placed exactly on the target, a tap ripple, swipe (up/down/left/right) and drag-to-destination animations, and an optional Hint Bubble. The spotlight dims the screen with a rounded hole (box-shadow) and 4 transparent blockers, so only the target is tappable. It follows moving targets. Hint bubbles now render above the spotlight. Added the AI manual, registry item, docs page (live 3-step tutorial, gesture previews) and `tools/tests/tutorial.html`. This completes the component list.
+- Tested: `tools/tests/index.html`: all 17 pages pass (adds tutorial 14/14, covering parts, fingertip position, spotlight blocking, target tappable, hint above dim, promise resolve/clear, no-spotlight drag vars, once:false, replacement, invalid target). Live docs tutorial walks through all 3 steps.
+- Notes for next agent: The fingertip offset is `TIP = {x:.17, y:.05}` of the 76px hand box (measured from `hand.png`). If the hand image is replaced, re-measure it.
+
 ## v0.27.0-A — Shop Card component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `.sc-shopcard`: a glossy shop offer card in 8 colors. It has a kit-icon pack picture with a radial glow and an "x500" amount, an optional bonus line, a corner tag (Shop Card is now a Tag host), and a green `.sc-button` price that is real-money text or in-game currency with `data-price-icon`. `data-state="sold"` greys it and disables "SOLD". The `buy` event carries `{price, currency}`. Added the AI manual, registry item, docs page (real/currency prices, colors, sold, live buy-with-coins with toast + float) and `tools/tests/shopcard.html`.
