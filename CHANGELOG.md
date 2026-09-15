@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.36.0-A — Settings block
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `kit/blocks/settings.html`, a SETTINGS popup opened from a settings icon button. First panel: Sound and Music Toggles (with icons), each with a full-width sm volume Slider showing a percent, and a Vibration Toggle. Second panel: language Tabs (EN/ES/DE/TR) and a Notifications Checkbox. Also Support (mail icon), Privacy and Restore purchases buttons, plus version text. One `change` listener saves every control via `data-setting`; `input` is ready for live volume.
+- Tested: Opened at 375×812. The popup (679px) fits. Vibration toggle, language tab, notifications checkbox and music slider each fire change with the right key/value (vibration true, language de, notifications false, musicVolume 30).
+- Notes for next agent: Sliders need their own full-width row inside a popup; next to a label + toggle they collapse to just the thumb.
+
 ## v0.35.0-A — Daily Reward block
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `kit/blocks/daily.html`: a menu calendar button with a Notification Dot opens a `DAILY REWARD` popup (DAY 3 sub-tag). The 7-day grid of Reward Slots is built from a data array: past days claimed, today white with a TODAY tag + alert, future days dimmed, and day 7 a wide chest slot. Claim floats the reward, counts coins up, re-renders today as claimed, starts a "19h 0m" next-reward pill timer and clears the menu alert. Kit fix: `core.css` now makes `[hidden]` always hide any `sc-*` element (component display styles used to override it), and the rule is added to AGENTS.md.

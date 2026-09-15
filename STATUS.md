@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.35.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.36.0-A**
 
 ## Next task
-**Build the Settings block** (`kit/blocks/settings.html`, add a row to `blocks/README.md`). Settings popup: Sound/Music/Vibration Toggles with icons, a Music volume Slider and Sound volume Slider, a Language row (Tabs EN/ES/DE or a button), a Notifications Checkbox, and buttons for Support (mail icon), Privacy, and Restore Purchases; version text at the bottom. All controls fire change events and a Save/Close. Update registry `blocks[]`, STATUS "Done — blocks", docs NAV "Blocks" group and CHANGELOG.
+**Build the Shop block** (`kit/blocks/shop.html`, add a row to `blocks/README.md`). Full shop screen (solid Screen Shell): Top Bar with coins + gems, `SHOP` Screen Title, Tabs (Gems / Coins / Offers) with `data-panel`, each panel a 3-column grid of Shop Cards (gem-pile/coin-pile packs with real prices, offers with coin/gem prices and tags), a special offer Item Row with a Countdown Timer pill, and a back icon button. Buying with currency checks the balance (toast if short) and updates counters; real-money prices call a stub. Update registry `blocks[]`, STATUS "Done — blocks", docs NAV "Blocks" group and CHANGELOG.
 
 ## In progress
 _Nothing._
@@ -50,12 +50,13 @@ _Nothing._
 | 5 | Start | `blocks/start.html` | v0.33.0-A |
 | 6 | Reward Reveal | `blocks/reward.html` | v0.34.0-A |
 | 7 | Daily Reward | `blocks/daily.html` | v0.35.0-A |
+| 8 | Settings | `blocks/settings.html` | v0.36.0-A |
 
 ## Left — components (in this order)
 _All components done._
 
 ## Left — blocks (full screens built ONLY from kit components)
-Settings · Shop · Loading
+Shop · Loading
 (Old pre-kit versions of some screens: `super-casual/old-demos/`. Each block = one HTML file in `kit/blocks/` using only kit components + layout glue.)
 
 ## Left — other

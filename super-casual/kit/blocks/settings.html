@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Block: Settings — Super Casual UI Kit</title>
+<!-- BLOCK: Settings popup. Built only from kit components. -->
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/screen/screen.css">
+<link rel="stylesheet" href="../components/popup/popup.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../components/toggle/toggle.css">
+<link rel="stylesheet" href="../components/slider/slider.css">
+<link rel="stylesheet" href="../components/tabs/tabs.css">
+<link rel="stylesheet" href="../components/checkbox/checkbox.css">
+<link rel="stylesheet" href="../components/toast/toast.css">
+<script src="../sc.js"></script>
+<style>
+  /* Layout glue only */
+  html, body { margin:0; height:100%; overflow:hidden; background:linear-gradient(#56b8ff, #7fdc6a 70%, #4aa845); }
+  .sc-panel { display:flex; flex-direction:column; gap:6px; }
+  .row { display:flex; align-items:center; gap:10px; width:100%; box-sizing:border-box; align-self:stretch; min-height:46px; }
+  .row > img { width:32px; height:32px; object-fit:contain; flex:none; }
+  .row > .sc-text { --fs:18px; font-size:var(--fs); flex:none; min-width:74px; }
+  .row > .sc-slider { flex:1; min-width:0; }
+  .row > .grow { flex:1; }
+  .links { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .links .sc-button { width:100%; }
+  .version { text-align:center; font:900 12px var(--sc-font); color:rgba(255,255,255,.75); }
+</style>
+</head>
+<body>
+  <div class="sc-screen">
+    <div class="sc-screen-top" data-align="end">
+      <button class="sc-icon-button" data-icon="settings" data-color="dark" id="openSettings" aria-label="Settings"></button>
+    </div>
+  </div>
+
+  <div class="sc-popup" id="settings" data-title="SETTINGS">
+    <div class="sc-panel">
+      <div class="row"><img src="../assets/sound.png" alt=""><span class="sc-text grow" data-text="Sound">Sound</span><button class="sc-toggle" data-size="sm" data-checked data-setting="sound" aria-label="Sound"></button></div>
+      <div class="row"><div class="sc-slider" data-setting="soundVolume" data-value="80" data-size="sm" data-label="percent" aria-label="Sound volume"></div></div>
+      <div class="row"><img src="../assets/music.png" alt=""><span class="sc-text grow" data-text="Music">Music</span><button class="sc-toggle" data-size="sm" data-checked data-setting="music" aria-label="Music"></button></div>
+      <div class="row"><div class="sc-slider" data-setting="musicVolume" data-value="60" data-size="sm" data-color="purple" data-label="percent" aria-label="Music volume"></div></div>
+      <div class="row"><img src="../assets/energy.png" alt=""><span class="sc-text grow" data-text="Vibration">Vibration</span><button class="sc-toggle" data-size="sm" data-setting="vibration" aria-label="Vibration"></button></div>
+    </div>
+    <div class="sc-panel">
+      <div class="sc-tabs" data-size="sm" data-value="en" data-setting="language">
+        <button data-value="en">EN</button><button data-value="es">ES</button><button data-value="de">DE</button><button data-value="tr">TR</button>
+      </div>
+      <div class="row"><button class="sc-checkbox" data-size="sm" data-checked data-setting="notifications">Notifications</button></div>
+    </div>
+    <div class="links">
+      <button class="sc-button" data-size="sm" data-color="sky" data-icon="mail" id="support">Support</button>
+      <button class="sc-button" data-size="sm" data-color="dark" id="privacy">Privacy</button>
+      <button class="sc-button" data-size="sm" data-color="dark" data-icon="restart" id="restore" style="grid-column:span 2">Restore purchases</button>
+    </div>
+    <div class="version">Version 1.0.0</div>
+  </div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const settings = {};                                        // game: load from save and apply below
+  document.addEventListener('change', e => {
+    const key = e.target.dataset && e.target.dataset.setting;
+    if (!key) return;
+    settings[key] = 'checked' in e.detail ? e.detail.checked : e.detail.value;
+    console.log('save', key, settings[key]);                  // game: apply + persist
+  });
+  document.addEventListener('input', e => {                   // live volume while dragging
+    if (e.target.matches && e.target.matches('.sc-slider[data-setting]')) { /* game: audio.setVolume(e.detail.value / 100) */ }
+  });
+  $('openSettings').onclick = () => SC.popup.open('settings');
+  $('support').onclick = () => SC.toast('Opening support…');
+  $('privacy').onclick = () => SC.toast('Opening privacy policy…');
+  $('restore').onclick = () => SC.toast('Purchases restored', { kind: 'success', icon: 'check' });
+</script>
+</body>
+</html>

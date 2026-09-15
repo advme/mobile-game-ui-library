@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.35.0",
+  "version": "0.36.0",
   "items": [
     {
       "name": "core",
@@ -2404,6 +2404,25 @@
         "timer",
         "counter",
         "float"
+      ]
+    },
+    {
+      "name": "settings",
+      "type": "registry:block",
+      "title": "Settings",
+      "file": "blocks/settings.html",
+      "description": "Settings popup: toggles + volume sliders, vibration, language tabs, notifications checkbox, support/privacy/restore, version.",
+      "whenToUse": "Game settings from the menu or pause screen.",
+      "components": [
+        "screen",
+        "popup",
+        "button",
+        "icon-button",
+        "toggle",
+        "slider",
+        "tabs",
+        "checkbox",
+        "toast"
       ]
     }
   ]
