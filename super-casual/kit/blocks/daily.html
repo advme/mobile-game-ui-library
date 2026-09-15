@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Block: Daily Reward — Super Casual UI Kit</title>
+<!-- BLOCK: 7-day daily reward popup. Built only from kit components. -->
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/screen/screen.css">
+<link rel="stylesheet" href="../components/popup/popup.css">
+<link rel="stylesheet" href="../components/slot/slot.css">
+<link rel="stylesheet" href="../components/tag/tag.css">
+<link rel="stylesheet" href="../components/alert/alert.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../components/timer/timer.css">
+<link rel="stylesheet" href="../components/counter/counter.css">
+<link rel="stylesheet" href="../components/float/float.css">
+<script src="../sc.js"></script>
+<style>
+  /* Layout glue only */
+  html, body { margin:0; height:100%; overflow:hidden; background:linear-gradient(#56b8ff, #7fdc6a 70%, #4aa845); }
+  .days { display:grid; grid-template-columns:repeat(4, 64px); gap:12px 10px; justify-content:center; padding-top:8px; }
+  .day { display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .day > .sc-text { --fs:12px; font-size:var(--fs); }
+  .day.big { grid-column:span 2; }
+  .day.big .sc-slot { --size:64px; width:138px; }
+  .day[data-future] .sc-slot { opacity:.7; }
+  [hidden] { display:none !important; }
+  .footer { display:flex; flex-direction:column; align-items:center; gap:10px; }
+</style>
+</head>
+<body>
+  <!-- Menu layer with the daily button -->
+  <div class="sc-screen">
+    <div class="sc-screen-top">
+      <button class="sc-icon-button" data-icon="calendar" data-color="orange" data-alert id="dailyBtn" aria-label="Daily reward, ready"></button>
+      <div class="sc-counter" id="coins" data-icon="coin" data-value="1200" data-size="sm"></div>
+    </div>
+  </div>
+
+  <div class="sc-popup" id="daily" data-title="DAILY REWARD" data-sub="DAY 3">
+    <div class="days" id="days"></div>
+    <div class="footer">
+      <div id="claimWrap"><button class="sc-button" data-color="green" data-size="lg" id="claim">Claim</button></div>
+      <div id="nextWrap" hidden><div class="sc-timer" id="next" data-variant="pill" data-format="long" data-icon="calendar" data-seconds="68400" data-autostart="false"></div></div>
+    </div>
+  </div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  // Days: [icon, count, color]. Day 7 is the big chest.
+  const DAYS = [['coin', 100, 'yellow'], ['gem', 5, 'purple'], ['coin', 250, 'yellow'], ['clover', 2, 'green'], ['gem', 15, 'purple'], ['key', 1, 'sky'], ['chest', 1, 'purple']];
+  let today = 3;               // game: load from save
+  let claimedToday = false;
+
+  function render() {
+    $('days').innerHTML = DAYS.map(([icon, count, color], i) => {
+      const n = i + 1, state = n < today || (n === today && claimedToday) ? 'claimed' : '';
+      const isToday = n === today && !claimedToday;
+      return `<div class="day${n === 7 ? ' big' : ''}"${n > today ? ' data-future' : ''}>
+        <div class="sc-slot" data-size="sm" data-icon="${icon}" data-count="${count}" data-color="${isToday ? 'white' : color}"
+             ${state ? `data-state="${state}"` : ''} ${isToday ? 'data-tag="TODAY" data-alert' : ''}></div>
+        <span class="sc-text" data-text="DAY ${n}">DAY ${n}</span></div>`;
+    }).join('');
+    $('claimWrap').hidden = claimedToday;   // wrap kit elements: their display style would override [hidden]
+    $('nextWrap').hidden = !claimedToday;
+  }
+  render();
+
+  $('claim').onclick = () => {
+    const [icon, count] = DAYS[today - 1];
+    claimedToday = true;
+    const slot = $('days').children[today - 1].querySelector('.sc-slot');
+    SC.float('+' + count, slot, { icon, color: 'gold' });
+    if (icon === 'coin') SC.setValue($('coins'), Number($('coins').dataset.value) + count);
+    setTimeout(() => { render(); SC.timer.start($('next')); SC.setAlert($('dailyBtn'), false); }, 350);
+  };
+  $('dailyBtn').onclick = () => SC.popup.open('daily');
+</script>
+</body>
+</html>

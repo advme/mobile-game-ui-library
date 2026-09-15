@@ -15,6 +15,9 @@
   --sc-text-drop: .08;     /* text 3D bottom edge, relative to font size */
 }
 
+/* The hidden attribute always wins over component display styles (e.g. <div class="sc-timer" hidden>) */
+[class^="sc-"][hidden], [class*=" sc-"][hidden] { display:none !important; }
+
 /* ---------- Color palette ----------
    Any component with data-color="…" gets these variables:
    --band (light top), --base (main), --line (thin highlight), --lip (dark 3D edge), --ink (text outline) */

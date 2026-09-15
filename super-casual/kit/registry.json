@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.34.0",
+  "version": "0.35.0",
   "items": [
     {
       "name": "core",
@@ -2383,6 +2383,26 @@
         "slot",
         "tag",
         "button",
+        "float"
+      ]
+    },
+    {
+      "name": "daily",
+      "type": "registry:block",
+      "title": "Daily Reward",
+      "file": "blocks/daily.html",
+      "description": "7-day daily reward popup with claimed/today/future states, big day-7 chest, Claim and next-reward countdown.",
+      "whenToUse": "Retention: daily login rewards.",
+      "components": [
+        "screen",
+        "popup",
+        "slot",
+        "tag",
+        "alert",
+        "button",
+        "icon-button",
+        "timer",
+        "counter",
         "float"
       ]
     }

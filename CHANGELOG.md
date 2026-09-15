@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.35.0-A — Daily Reward block
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `kit/blocks/daily.html`: a menu calendar button with a Notification Dot opens a `DAILY REWARD` popup (DAY 3 sub-tag). The 7-day grid of Reward Slots is built from a data array: past days claimed, today white with a TODAY tag + alert, future days dimmed, and day 7 a wide chest slot. Claim floats the reward, counts coins up, re-renders today as claimed, starts a "19h 0m" next-reward pill timer and clears the menu alert. Kit fix: `core.css` now makes `[hidden]` always hide any `sc-*` element (component display styles used to override it), and the rule is added to AGENTS.md.
+- Tested: Opened at 375×812. The popup fits, the timer is hidden before claiming, Claim adds 250 coins (1200 → 1450), day 3 becomes claimed, the timer shows and the alert clears. All 17 component test pages still pass with the core.css change.
+- Notes for next agent: Blocks that render slots from data use `innerHTML`; the runtime upgrades the inserted slots automatically.
+
 ## v0.34.0-A — Reward Reveal block
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `kit/blocks/reward.html`, a chest-opening reveal on a solid Screen Shell. Closed step: EPIC CHEST banner (drop) and a shaking `chest` with a pulsing glow, plus "Tap the chest to open". Tapping swaps to the NEW SKIN! banner (unfurl, same spot), pops the `helmet` item in, shows the name + EPIC tag and a row of 3 Reward Slots (popIn), floats EPIC!, and reveals Collect.

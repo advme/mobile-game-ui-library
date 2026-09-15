@@ -18,3 +18,4 @@ Rules for every block:
 | Pause | `pause.html` | Pause popup over the game: Sound / Music / Vibration toggles, Resume, Restart, Home |
 | Start | `start.html` | Home screen: Top Bar, side shortcuts (daily, mail, settings, gift), title + PLAY, Bottom Tab Bar switching screens |
 | Reward Reveal | `reward.html` | Chest opening: banner, shaking chest → new item pop with glow, rarity tag, reward slots, Collect |
+| Daily Reward | `daily.html` | 7-day reward popup: claimed / TODAY / future days, big day-7 chest, Claim, next-reward countdown |
