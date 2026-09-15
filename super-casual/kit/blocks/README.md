@@ -3,6 +3,8 @@
 Blocks are **complete, copy-paste game screens** built only from kit components, like shadcn "blocks".
 AI agents should start a screen by copying the closest block, then change texts, icons, numbers and the game code.
 
+**Device preview:** on a desktop computer, opening any block shows it inside `preview.html` with device frames (iPhone 17 Pro / Pro Max, Google Pixel 10 Pro, Samsung Galaxy S26 / S26 Ultra, iPhone SE, iPad Air, iPad Pro, Galaxy Tab S10), Rotate, and simulated notch / home-bar safe areas. On a phone or tablet the block opens directly and fills the real screen. The `<script src="preview.js">` line in each block is docs-only; **remove it when copying a block into a game.**
+
 Rules for every block:
 - One HTML file that works on its own: it loads `core.css`, the needed component CSS and `sc.js`.
 - Uses only kit components plus a few lines of layout glue CSS. No new visual styles.

@@ -27,6 +27,7 @@ super-casual/kit/                ← THE LIBRARY (work here)
   docs/<name>.html               docs page (uses docs/docs.css + docs/docs.js → SCDocs.page({...}))
   examples/                      components used over a game canvas
   blocks/<name>.html             BLOCKS: complete copy-paste screens built only from kit components (see blocks/README.md)
+  blocks/preview.html            desktop device-frame viewer for blocks (docs only; blocks load it via preview.js)
 super-casual/old-demos/          OLD demo pages (pre-kit). Reference only; screens will be rebuilt as Blocks.
 super-casual/dist/               BUNDLE for games: kit.css + kit.js + assets (generated, never edit)
 templates/pixelfork-game/        complete wired game template for Pixelfork (read its AI.md)
@@ -65,6 +66,7 @@ Copy the pattern of an existing component (e.g. `progress`, `timer`):
 - **Never use `text-overflow: ellipsis` on outlined `.sc-text`** (its outline copy isn't cut and leaves a black smudge). Clip and fade instead (`.sc-long` pattern).
 - **Show/hide kit elements with the `hidden` attribute** (core.css makes it win over component display styles). For screens and popups use `SC.screen` / `SC.popup`.
 - **Never reuse a CSS variable inside its own definition** (`--fs:var(--fs)` is invalid). Use a new name (`--fs:var(--cb-fs)`).
+- **Safe areas:** components use `var(--sc-safe-top/right/bottom/left)` (defined in core.css from `env()`), never `env()` directly, so previews can simulate devices.
 - **Mobile first:** every full-page UI is one `.sc-screen` (Screen Shell, no custom resize code); full-page screens never scroll, edge margins are real pixels (12px), and taps must give press feedback on iOS (`sc.js` handles it).
 - Reference screenshots from other games (`_archive/references/`) are **inspiration only**. Never copy their exact art, and never commit them.
 

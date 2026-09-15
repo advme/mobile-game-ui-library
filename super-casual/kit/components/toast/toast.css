@@ -18,8 +18,8 @@
   position:fixed; left:0; right:0; z-index:1200; display:flex; justify-content:center; pointer-events:none;
   padding:0 12px;
 }
-.sc-toast-layer[data-pos="top"]    { top:calc(12px + env(safe-area-inset-top, 0px)); }
-.sc-toast-layer[data-pos="bottom"] { bottom:calc(12px + env(safe-area-inset-bottom, 0px)); }
+.sc-toast-layer[data-pos="top"]    { top:calc(12px + var(--sc-safe-top)); }
+.sc-toast-layer[data-pos="bottom"] { bottom:calc(12px + var(--sc-safe-bottom)); }
 
 .sc-toast {
   --band:#4a4466; --base:#383252; --lip:#1f1b33;

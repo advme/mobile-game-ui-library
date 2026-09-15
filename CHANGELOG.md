@@ -2,6 +2,18 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.41.0-A — Device preview for blocks (desktop) + simulated safe areas
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: At the owner's request, opening a block on a desktop now shows it in `kit/blocks/preview.html`:
+  - Device buttons: Desktop · Phones (iPhone 17 Pro, iPhone 17 Pro Max, Google Pixel 10 Pro, Samsung Galaxy S26, Galaxy S26 Ultra, iPhone SE) · Tablets (iPad Air 11", iPad Pro 13", Galaxy Tab S10), plus Rotate.
+  - A "Safe areas" toggle simulates the notch/island and home bar.
+  - A block picker (from the registry), scale-to-fit, CSS-drawn frames (Dynamic Island, punch-hole, home indicator), an "Open full page" link, and a URL + localStorage that remember the choice.
+  - Phones/tablets (touch, no hover) skip the viewer and open the block full screen; `preview.html` itself redirects them to the block.
+  - Each block loads a tiny docs-only `blocks/preview.js`.
+  - Kit change: `core.css` defines `--sc-safe-top/right/bottom/left` from `env()`; Screen Shell, Tab Bar and Toast use these variables, so the viewer can simulate device safe areas. Dist rebuilt.
+- Tested: On desktop, `start.html` redirects to the viewer. iPhone 17 Pro portrait shows the top bar below the island and the tab bar above the home indicator. Rotate works, as do Pixel 10 Pro (punch-hole), iPad Air and Desktop (full width, rotate disabled). At mobile emulation, blocks open directly and `preview.html` redirects to the block. All 18 test pages pass.
+- Notes for next agent: After the desktop→viewer redirect, Chrome can hand the iframe half-cancelled stylesheet requests. The viewer reloads the frame once if any stylesheet is missing. The kit is portrait-first: in phone landscape the 400×870 design scales down a lot (a possible future "landscape layout" task). Device viewport sizes are close approximations.
+
 ## v0.40.0-A — One-file bundle + Pixelfork game template
 - Agent: A (Claude) · Date: 2026-09-15
 - Done:

@@ -38,10 +38,10 @@
   width:var(--sc-w, 100vw); height:var(--sc-h, 100vh); transform:scale(var(--sc-s)); transform-origin:0 0;
   display:flex; flex-direction:column; overflow:hidden;
   padding:
-    calc((12px + env(safe-area-inset-top, 0px)) / var(--sc-s))
-    calc((12px + env(safe-area-inset-right, 0px)) / var(--sc-s))
-    calc((12px + env(safe-area-inset-bottom, 0px)) / var(--sc-s))
-    calc((12px + env(safe-area-inset-left, 0px)) / var(--sc-s));
+    calc((12px + var(--sc-safe-top)) / var(--sc-s))
+    calc((12px + var(--sc-safe-right)) / var(--sc-s))
+    calc((12px + var(--sc-safe-bottom)) / var(--sc-s))
+    calc((12px + var(--sc-safe-left)) / var(--sc-s));
   font-family:var(--sc-font); user-select:none; -webkit-user-select:none;
   pointer-events:none;                             /* empty space lets taps reach the game */
   animation:sc-screen-fade .2s ease-out;

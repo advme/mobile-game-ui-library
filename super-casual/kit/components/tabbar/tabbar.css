@@ -34,11 +34,11 @@
 /* Full bleed when placed in a Screen Shell (undo the shell's 12px + safe-area padding) */
 .sc-screen .sc-tabbar {
   flex:1 1 100%; align-self:flex-end;
-  margin-left:calc((12px + env(safe-area-inset-left, 0px)) / var(--sc-s) * -1);
-  margin-right:calc((12px + env(safe-area-inset-right, 0px)) / var(--sc-s) * -1);
-  margin-bottom:calc((12px + env(safe-area-inset-bottom, 0px)) / var(--sc-s) * -1);
-  height:calc(var(--bar-h) + env(safe-area-inset-bottom, 0px) / var(--sc-s));
-  padding-bottom:calc(env(safe-area-inset-bottom, 0px) / var(--sc-s));
+  margin-left:calc((12px + var(--sc-safe-left)) / var(--sc-s) * -1);
+  margin-right:calc((12px + var(--sc-safe-right)) / var(--sc-s) * -1);
+  margin-bottom:calc((12px + var(--sc-safe-bottom)) / var(--sc-s) * -1);
+  height:calc(var(--bar-h) + var(--sc-safe-bottom) / var(--sc-s));
+  padding-bottom:calc(var(--sc-safe-bottom) / var(--sc-s));
 }
 
 .sc-tabbar-item {

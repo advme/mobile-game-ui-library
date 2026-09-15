@@ -38,7 +38,7 @@ The UI already handles pause, time limit, stars, coins, saving, settings and scr
 - **Icons:** use a kit icon name (`data-icon="gem"`). For the game's own picture use a path (`data-icon="images/fox.png"`).
 - **Re-theme kit pictures:** `CONFIG.images = { coin: 'images/shell.png', avatar: 'images/fox-face.png' }`.
 - **New pictures:** generate them with `kit/assets/IMAGE-PROMPTS.md` (always include the style block), save them to `images/`, and never draw them in code.
-- **More screens** (Shop, Daily Reward, Reward Reveal…): copy the markup + script from `super-casual/kit/blocks/<name>.html`.
+- **More screens** (Shop, Daily Reward, Reward Reveal…): copy the markup + script from `super-casual/kit/blocks/<name>.html` (leave out its docs-only `preview.js` line).
 - **Component details:** `kit/registry.json`, or the manuals in `super-casual/kit/components/<name>/<name>.md`.
 
 ## 4. Rules

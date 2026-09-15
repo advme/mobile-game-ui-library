@@ -13,6 +13,12 @@
   --sc-line-sm: 2px;
   --sc-text-stroke: .16;   /* text outline, relative to font size */
   --sc-text-drop: .08;     /* text 3D bottom edge, relative to font size */
+
+  /* Safe areas (notch, home bar). Components use these instead of env() so previews can simulate a device. */
+  --sc-safe-top: env(safe-area-inset-top, 0px);
+  --sc-safe-right: env(safe-area-inset-right, 0px);
+  --sc-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --sc-safe-left: env(safe-area-inset-left, 0px);
 }
 
 /* The hidden attribute always wins over component display styles (e.g. <div class="sc-timer" hidden>) */

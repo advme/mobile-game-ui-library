@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.40.0",
+  "version": "0.41.0",
   "items": [
     {
       "name": "core",
@@ -2474,5 +2474,6 @@
     "js": "../dist/kit.js",
     "build": "python3 tools/build_kit.py",
     "template": "templates/pixelfork-game/ (read AI.md)"
-  }
+  },
+  "blocksPreview": "blocks/preview.html?block=<file> — desktop device frames (docs only; remove the preview.js line when copying a block into a game)"
 }

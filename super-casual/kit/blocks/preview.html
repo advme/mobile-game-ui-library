@@ -1,0 +1,208 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Block preview — Super Casual UI Kit</title>
+<!-- Docs helper, NOT part of the kit. Shows a block inside phone / tablet frames on desktop. -->
+<script>
+  // Phones and tablets skip the viewer and open the block full screen.
+  (function () {
+    const desktop = matchMedia('(pointer: fine)').matches && matchMedia('(hover: hover)').matches && Math.max(screen.width, innerWidth) >= 1000;
+    const block = new URLSearchParams(location.search).get('block') || 'hud.html';
+    if (!desktop) location.replace(block);
+  })();
+</script>
+<style>
+  :root { --bg:#eef0f5; --panel:#fff; --fg:#111; --muted:#6b7080; --border:#e1e4ec; --accent:#2563eb; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; height:100%; }
+  body { display:flex; flex-direction:column; background:var(--bg); color:var(--fg); font:14px/1.4 -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif; }
+
+  .bar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 16px; background:var(--panel); border-bottom:1px solid var(--border); }
+  .bar a.back { color:var(--muted); text-decoration:none; font-weight:600; margin-right:4px; }
+  .bar a.back:hover { color:var(--fg); }
+  .group { display:flex; align-items:center; gap:4px; padding:3px; background:#f3f4f8; border:1px solid var(--border); border-radius:10px; }
+  .group button, .bar select { border:0; background:none; font:600 13px inherit; color:var(--muted); padding:7px 11px; border-radius:7px; cursor:pointer; white-space:nowrap; }
+  #devices { overflow-x:auto; max-width:100%; scrollbar-width:none; }
+  #devices .info { white-space:nowrap; }
+  .group button:hover { color:var(--fg); }
+  .group button.on { background:#fff; color:var(--fg); box-shadow:0 1px 2px rgba(0,0,0,.12); }
+  .group button:disabled { opacity:.35; cursor:not-allowed; }
+  .bar select { background:#f3f4f8; border:1px solid var(--border); color:var(--fg); padding:8px 10px; }
+  .spacer { flex:1; }
+  .info { color:var(--muted); font-size:12px; font-variant-numeric:tabular-nums; }
+  .bar .open { color:var(--accent); text-decoration:none; font-weight:600; font-size:13px; }
+
+  .stage { position:relative; flex:1; min-height:0; overflow:hidden; display:grid; place-items:center; padding:28px; }
+  .stage.desktop { padding:0; }
+  .stage.desktop iframe { width:100%; height:100%; border:0; display:block; background:#1f2d4b; }
+
+  /* Device frame (drawn preview chrome, not a game asset) */
+  .device { position:absolute; left:50%; top:50%; translate:-50% -50%; background:#0d0d10; border-radius:var(--r); padding:var(--bezel); transform-origin:center;
+            box-shadow:0 0 0 2px #3a3a42, 0 0 0 4px #1a1a1f, 0 30px 60px rgba(20,25,40,.35); }
+  .device iframe { display:block; border:0; border-radius:calc(var(--r) - var(--bezel)); background:#1f2d4b; }
+  .cam { position:absolute; z-index:2; background:#000; pointer-events:none; }
+  .cam.island { width:124px; height:36px; border-radius:18px; }
+  .cam.hole { width:13px; height:13px; border-radius:50%; box-shadow:inset 0 0 0 3px #16161c; }
+  .cam.dot { width:8px; height:8px; border-radius:50%; background:#26262e; }
+  .homebar { position:absolute; z-index:2; width:134px; height:5px; border-radius:3px; background:rgba(255,255,255,.75); pointer-events:none; }
+  .btn-side { position:absolute; background:#2a2a31; border-radius:2px; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <a class="back" href="../docs/introduction.html">← Docs</a>
+  <select id="block" aria-label="Block"></select>
+  <div class="group" id="devices"></div>
+  <div class="group"><button id="rotate" title="Rotate">⟳ Rotate</button></div>
+  <div class="group"><button id="safe" class="on" title="Simulate notch / home bar safe areas">Safe areas</button></div>
+  <div class="spacer"></div>
+  <span class="info" id="info"></span>
+  <a class="open" id="open" target="_blank" rel="noopener">Open full page ↗</a>
+</div>
+<div class="stage" id="stage"></div>
+
+<script>
+// CSS viewport sizes (portrait). Safe areas: [top, right, bottom, left] in portrait; landscape rotates them.
+const DEVICES = [
+  { id:'desktop',       label:'Desktop' },
+  { id:'iphone17pro',   label:'iPhone 17 Pro',       group:'Phones',  w:402,  h:874,  r:62, bezel:12, cam:'island', home:true, safe:[62, 0, 34, 0] },
+  { id:'iphone17max',   label:'iPhone 17 Pro Max',   group:'Phones',  w:440,  h:956,  r:66, bezel:12, cam:'island', home:true, safe:[62, 0, 34, 0] },
+  { id:'pixel10pro',    label:'Google Pixel 10 Pro', group:'Phones',  w:410,  h:914,  r:48, bezel:10, cam:'hole', safe:[48, 0, 24, 0] },
+  { id:'galaxys26',     label:'Samsung Galaxy S26',  group:'Phones',  w:360,  h:780,  r:44, bezel:10, cam:'hole', safe:[40, 0, 24, 0] },
+  { id:'galaxys26ultra',label:'Galaxy S26 Ultra',    group:'Phones',  w:384,  h:824,  r:26, bezel:10, cam:'hole', safe:[40, 0, 24, 0] },
+  { id:'iphonese',      label:'iPhone SE (small)',   group:'Phones',  w:375,  h:667,  r:40, bezel:14, cam:null, safe:[20, 0, 0, 0] },
+  { id:'ipadair',       label:'iPad Air 11"',        group:'Tablets', w:820,  h:1180, r:36, bezel:18, cam:'dot', home:true, safe:[24, 0, 20, 0] },
+  { id:'ipadpro',       label:'iPad Pro 13"',        group:'Tablets', w:1032, h:1376, r:36, bezel:18, cam:'dot', home:true, safe:[24, 0, 20, 0] },
+  { id:'galaxytab',     label:'Galaxy Tab S10',      group:'Tablets', w:800,  h:1280, r:28, bezel:18, cam:'dot', safe:[24, 0, 16, 0] },
+];
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const store = { get(k, d) { try { return localStorage.getItem('scPreview.' + k) ?? d; } catch (_) { return d; } },
+                set(k, v) { try { localStorage.setItem('scPreview.' + k, v); } catch (_) {} } };
+const state = {
+  block: params.get('block') || 'hud.html',
+  device: params.get('device') || store.get('device', 'iphone17pro'),
+  landscape: (params.get('orient') || store.get('orient', 'portrait')) === 'landscape',
+  safe: store.get('safe', '1') === '1',
+};
+let frame = null;
+
+// Toolbar: block list from the registry (fallback: current file), device buttons grouped
+fetch('../registry.json').then(r => r.json()).then(reg => fillBlocks((reg.blocks || []).map(b => [b.title, b.file.split('/').pop()]))).catch(() => fillBlocks([]));
+function fillBlocks(list) {
+  if (!list.some(([, f]) => f === state.block)) list.unshift([state.block, state.block]);
+  $('block').innerHTML = list.map(([t, f]) => `<option value="${f}"${f === state.block ? ' selected' : ''}>${t}</option>`).join('');
+}
+$('block').onchange = e => { state.block = e.target.value; load(); };
+
+let lastGroup = null;
+DEVICES.forEach(d => {
+  if (d.group && d.group !== lastGroup) {
+    lastGroup = d.group;
+    const sep = document.createElement('span'); sep.className = 'info'; sep.style.padding = '0 4px 0 8px'; sep.textContent = d.group; $('devices').append(sep);
+  }
+  const b = document.createElement('button'); b.textContent = d.label; b.dataset.id = d.id;
+  b.onclick = () => { state.device = d.id; store.set('device', d.id); render(); };
+  $('devices').append(b);
+});
+$('rotate').onclick = () => { state.landscape = !state.landscape; store.set('orient', state.landscape ? 'landscape' : 'portrait'); render(); };
+$('safe').onclick = () => { state.safe = !state.safe; store.set('safe', state.safe ? '1' : '0'); render(); };
+addEventListener('resize', () => fit());
+
+function load() {
+  const url = state.block + (state.block.includes('?') ? '&' : '?') + 'embed=1';
+  $('open').href = state.block + '?embed=1';
+  history.replaceState(null, '', `?block=${encodeURIComponent(state.block)}&device=${state.device}&orient=${state.landscape ? 'landscape' : 'portrait'}`);
+  render(url);
+}
+
+function render(url) {
+  const d = DEVICES.find(x => x.id === state.device) || DEVICES[1];
+  document.querySelectorAll('#devices button').forEach(b => b.classList.toggle('on', b.dataset.id === d.id));
+  $('rotate').disabled = d.id === 'desktop';
+  $('safe').disabled = d.id === 'desktop';
+  $('safe').classList.toggle('on', state.safe);
+  const src = url || (frame && frame.dataset.src) || (state.block + '?embed=1');
+  const stage = $('stage');
+
+  // Keep the same iframe (and the block's state) when only the device changes; reload only when the block changes
+  if (!frame || frame.dataset.src !== src) {
+    frame = document.createElement('iframe'); frame.dataset.src = src; frame.src = src; frame.title = 'Block preview';
+    frame.addEventListener('load', () => {
+      // After the desktop→viewer redirect the browser can hand the frame half-cancelled style downloads: reload once if any style is missing
+      try {
+        const doc = frame.contentDocument;
+        const broken = [...doc.querySelectorAll('link[rel="stylesheet"]')].some(l => { try { return !l.sheet || !l.sheet.cssRules; } catch (_) { return true; } });
+        if (broken && !frame.dataset.retried) { frame.dataset.retried = '1'; frame.contentWindow.location.reload(); return; }
+      } catch (_) {}
+      applySafe();
+    });
+  }
+  stage.replaceChildren();
+  stage.classList.toggle('desktop', d.id === 'desktop');
+  if (d.id === 'desktop') {
+    frame.style.width = frame.style.height = '';
+    stage.append(frame);
+    $('info').textContent = 'Desktop · full width';
+    history.replaceState(null, '', `?block=${encodeURIComponent(state.block)}&device=desktop`);
+    applySafe();
+    return;
+  }
+
+  const land = state.landscape, w = land ? d.h : d.w, h = land ? d.w : d.h;
+  const dev = document.createElement('div'); dev.className = 'device'; dev.id = 'device';
+  dev.style.setProperty('--r', d.r + 'px'); dev.style.setProperty('--bezel', d.bezel + 'px');
+  frame.style.width = w + 'px'; frame.style.height = h + 'px';
+  dev.append(frame);
+
+  // camera + home indicator, placed on the "top" of the device in both orientations
+  if (d.cam) {
+    const cam = document.createElement('div'); cam.className = 'cam ' + d.cam;
+    if (d.cam === 'island') Object.assign(cam.style, land ? { left: d.bezel + 11 + 'px', top: '50%', width: '36px', height: '124px', marginTop: '-62px' } : { top: d.bezel + 11 + 'px', left: '50%', marginLeft: '-62px' });
+    if (d.cam === 'hole') Object.assign(cam.style, land ? { left: d.bezel + 14 + 'px', top: '50%', marginTop: '-6.5px' } : { top: d.bezel + 14 + 'px', left: '50%', marginLeft: '-6.5px' });
+    if (d.cam === 'dot') Object.assign(cam.style, land ? { left: (d.bezel - 8) / 2 + 'px', top: '50%', marginTop: '-4px' } : { top: (d.bezel - 8) / 2 + 'px', left: '50%', marginLeft: '-4px' });
+    dev.append(cam);
+  }
+  if (d.home) {
+    const hb = document.createElement('div'); hb.className = 'homebar';
+    Object.assign(hb.style, { bottom: d.bezel + 8 + 'px', left: '50%', marginLeft: '-67px' });
+    dev.append(hb);
+  }
+  stage.append(dev);
+  fit();
+  $('info').textContent = `${d.label} · ${w}×${h}${land ? ' · landscape' : ''}`;
+  history.replaceState(null, '', `?block=${encodeURIComponent(state.block)}&device=${d.id}&orient=${land ? 'landscape' : 'portrait'}`);
+  applySafe();
+}
+
+function fit() {
+  const dev = $('device'); if (!dev) return;
+  const stage = $('stage'), pad = 56;
+  const s = Math.min(1, (stage.clientWidth - pad) / dev.offsetWidth, (stage.clientHeight - pad) / dev.offsetHeight);
+  dev.style.scale = s;
+  const base = $('info').textContent.replace(/ · \d+%$/, '');
+  $('info').textContent = base + (s < 1 ? ` · ${Math.round(s * 100)}%` : '');
+}
+
+// Tell the block's kit how much of the screen the notch / home bar covers
+function applySafe() {
+  const d = DEVICES.find(x => x.id === state.device);
+  let doc; try { doc = frame.contentDocument; } catch (_) { return; }
+  if (!doc || !doc.documentElement) return;
+  let st = doc.getElementById('sc-preview-safe');
+  if (!st) { st = doc.createElement('style'); st.id = 'sc-preview-safe'; (doc.head || doc.documentElement).append(st); }
+  if (!d || d.id === 'desktop' || !state.safe) { st.textContent = ''; }
+  else {
+    const [t, r, b, l] = d.safe;
+    const v = state.landscape ? [0, t, Math.min(b, 21), t] : [t, r, b, l];   // landscape: notch moves to the side
+    st.textContent = `:root { --sc-safe-top:${v[0]}px !important; --sc-safe-right:${v[1]}px !important; --sc-safe-bottom:${v[2]}px !important; --sc-safe-left:${v[3]}px !important; }`;
+  }
+  try { frame.contentWindow.dispatchEvent(new Event('resize')); } catch (_) {}
+}
+
+load();
+</script>
+</body>
+</html>
