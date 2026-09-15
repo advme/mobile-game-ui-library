@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.37.0",
+  "version": "0.38.0",
   "items": [
     {
       "name": "core",
@@ -2447,6 +2447,22 @@
         "timer",
         "toast",
         "float"
+      ]
+    },
+    {
+      "name": "loading-screen",
+      "type": "registry:block",
+      "title": "Loading",
+      "file": "blocks/loading.html",
+      "description": "Start-up flow: title + loading bar with tips → PLAY / tap to start → game HUD.",
+      "whenToUse": "Game start while assets load.",
+      "components": [
+        "screen",
+        "title",
+        "progress",
+        "loading",
+        "button",
+        "icon-button"
       ]
     }
   ]

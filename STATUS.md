@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.37.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.38.0-A**
 
 ## Next task
-**Build the Loading block** (`kit/blocks/loading.html`, add a row to `blocks/README.md`), the last block. A full start-up flow: solid Screen Shell with game title + `.sc-loading` (bouncing icon, tips), simulated asset loading with `SC.loading.set`, `done` reveals a "Tap to start" state, then hands over to the game. After that, write the docs Introduction + Installation pages (`docs/introduction.html`, `docs/installation.html`, enable them in NAV) and do the final check from STATUS "Left — other".
+**Write the docs Introduction and Installation pages.** Create `super-casual/kit/docs/introduction.html` (what the kit is, the look, how AI agents should use it: registry.json → component .md → blocks, the design rules in plain words, list of components and blocks) and `docs/installation.html` (folder layout, the 3 lines: core.css + component css + sc.js, a minimal page over a canvas, the icon list, Screen Shell basics). Enable both in the docs NAV (they are currently `null`), make the docs start page point to Introduction, and link it from the root `index.html`. Then do the final check in STATUS "Left — other".
 
 ## In progress
 _Nothing._
@@ -52,13 +52,13 @@ _Nothing._
 | 7 | Daily Reward | `blocks/daily.html` | v0.35.0-A |
 | 8 | Settings | `blocks/settings.html` | v0.36.0-A |
 | 9 | Shop | `blocks/shop.html` | v0.37.0-A |
+| 10 | Loading | `blocks/loading.html` | v0.38.0-A |
 
 ## Left — components (in this order)
 _All components done._
 
 ## Left — blocks (full screens built ONLY from kit components)
-Loading
-(Old pre-kit versions of some screens: `super-casual/old-demos/`. Each block = one HTML file in `kit/blocks/` using only kit components + layout glue.)
+_All blocks done._
 
 ## Left — other
 - Docs pages: Introduction, Installation

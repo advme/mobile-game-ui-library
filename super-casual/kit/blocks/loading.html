@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Block: Loading — Super Casual UI Kit</title>
+<!-- BLOCK: Start-up loading → tap to start → game. Built only from kit components. -->
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/screen/screen.css">
+<link rel="stylesheet" href="../components/title/title.css">
+<link rel="stylesheet" href="../components/progress/progress.css">
+<link rel="stylesheet" href="../components/loading/loading.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<script src="../sc.js"></script>
+<style>
+  /* Layout glue only */
+  html, body { margin:0; height:100%; overflow:hidden; background:#1f2d4b; }
+  #game { position:fixed; inset:0; width:100%; height:100%; display:block; }
+  [hidden] { display:none !important; }
+  .start-wrap { display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:40px; }
+  .tap { font:900 18px var(--sc-font); color:rgba(255,255,255,.8); animation:blink 1.4s ease-in-out infinite; }
+  @keyframes blink { 50% { opacity:.35; } }
+</style>
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- 1. Loading screen -->
+  <div class="sc-screen" id="loadingScreen" data-backdrop="solid">
+    <div class="sc-screen-middle">
+      <h1 class="sc-title" data-color="gold" data-animate="drop">SKY RUN</h1>
+    </div>
+    <div class="sc-screen-bottom" data-stack>
+      <div class="sc-loading" id="loader" data-icon="coin" data-tips="Tap to jump over gaps|Collect coins to unlock skins|Watch out for spikes!"></div>
+      <div class="start-wrap" id="startWrap" hidden>
+        <button class="sc-button" data-color="yellow" data-size="lg" id="start">PLAY</button>
+        <span class="tap">Tap to start</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Game HUD (after start) -->
+  <div class="sc-screen" id="hud" hidden>
+    <div class="sc-screen-top">
+      <button class="sc-icon-button" data-icon="pause" data-color="sky" aria-label="Pause"></button>
+    </div>
+  </div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const canvas = $('game'), ctx = canvas.getContext('2d');
+  let running = false;
+  function resize() { const d = devicePixelRatio || 1; canvas.width = innerWidth * d; canvas.height = innerHeight * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
+  addEventListener('resize', resize); resize();
+  (function loop(t) { ctx.fillStyle = '#3a7d44'; ctx.fillRect(0, 0, innerWidth, innerHeight);
+    if (running) { ctx.beginPath(); ctx.arc(innerWidth / 2, innerHeight * .6 - Math.abs(Math.sin(t / 300)) * 120, 28, 0, 7); ctx.fillStyle = '#f5c02e'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#050308'; ctx.stroke(); }
+    requestAnimationFrame(loop); })(0);
+
+  // --- Loading: replace the simulation with real asset progress ---
+  const ASSETS_TOTAL = 12; let loaded = 0;
+  const timer = setInterval(() => {
+    loaded++;
+    SC.loading.set($('loader'), loaded / ASSETS_TOTAL * 100);      // fires "done" at 100
+    if (loaded >= ASSETS_TOTAL) clearInterval(timer);
+  }, 220);
+
+  $('loader').addEventListener('done', () => {
+    setTimeout(() => { $('loader').hidden = true; $('startWrap').hidden = false; }, 300);
+  });
+  $('start').onclick = () => {
+    SC.screen.hide('loadingScreen'); SC.screen.show('hud'); running = true;   // game: start level 1
+  };
+</script>
+</body>
+</html>

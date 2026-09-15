@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.38.0-A — Loading block
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `kit/blocks/loading.html`, the start-up flow. A solid Screen Shell with the gold game title and `.sc-loading` (bouncing coin, rotating tips) runs simulated asset loading via `SC.loading.set(loaded/total)`. On `done` the bar hides and PLAY + a blinking "Tap to start" appear; PLAY hides the loading screen and shows the game HUD. This completes all 10 planned blocks. `blocks/README.md` now notes that custom wrappers hidden with `hidden` need a `[hidden]` glue rule.
+- Tested: Opened at 375×812. Loading shows only the bar (PLAY hidden) and counts to 100%. Then the bar hides and PLAY shows, and PLAY switches to the HUD. No scroll.
+- Notes for next agent: All 10 blocks are in `kit/blocks/` and listed in `registry.json → blocks` and the docs NAV "Blocks" group.
+
 ## v0.37.0-A — Shop block
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `kit/blocks/shop.html`, a solid shop screen. It has a back button + coin/gem counters, a `SHOP` title (md), a purple Item Row starter offer (chest slot with -50% tag, name, 23h countdown pill, $1.99), and sm Tabs Gems / Coins / Items (Items with a Notification Dot that clears) switching 3-column Shop Card grids via `data-panel`. Gems cost real money, coins cost gems, and items cost coins. One `buy` listener handles store stubs, balance checks (error toast), counter updates and floats. Kit fix: `core.css` also makes `[role="tabpanel"][hidden]` always hide, so custom grid panels switch correctly.

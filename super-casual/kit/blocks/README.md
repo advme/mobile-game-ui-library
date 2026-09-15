@@ -9,6 +9,7 @@ Rules for every block:
 - Built on the Screen Shell (`.sc-screen`), so it fits any phone and never scrolls.
 - Uses a stand-in canvas "game" where needed, marked "replace with your engine".
 - Shows how the UI talks to the game (events and `SC.*` calls) in a short script.
+- If you hide your own layout wrappers with `hidden`, add `[hidden] { display:none !important; }` to the glue (kit elements already respect `hidden`).
 
 | Block | File | Use for |
 |---|---|---|
@@ -21,3 +22,4 @@ Rules for every block:
 | Daily Reward | `daily.html` | 7-day reward popup: claimed / TODAY / future days, big day-7 chest, Claim, next-reward countdown |
 | Settings | `settings.html` | Settings popup: sound/music toggles + volume sliders, vibration, language tabs, notifications checkbox, support/privacy/restore |
 | Shop | `shop.html` | Shop screen: wallet, timed starter offer row, Gems / Coins / Items tabs with Shop Card grids, buy handling |
+| Loading | `loading.html` | Start-up: title + loading bar with tips → PLAY / tap to start → game HUD |
