@@ -1,0 +1,87 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Count Bubble regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<!-- Deliberately load bubble first to check that host styles do not override it. -->
+<link rel="stylesheet" href="../../super-casual/kit/components/bubble/bubble.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/button/button.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/slot/slot.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>
+body { margin:20px; font:14px system-ui; background:#243453; color:white; }
+#fixtures { display:flex; flex-wrap:wrap; gap:24px; padding:12px; }
+li { margin:8px 0; } .fail { color:#ff9da7; }
+</style>
+<h1>Count Bubble checks</h1>
+<p id="summary">Running…</p>
+<div id="fixtures"></div>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const fixtures = document.querySelector('#fixtures'), results = document.querySelector('#results');
+  let passed = 0, failed = 0;
+  const settle = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  const check = (name, condition) => {
+    const li = document.createElement('li'); li.textContent = (condition ? 'PASS: ' : 'FAIL: ') + name;
+    if (condition) passed++; else { failed++; li.className = 'fail'; }
+    results.append(li);
+  };
+  const bubble = el => el.querySelector(':scope > .sc-bubble');
+  const label = el => bubble(el)?.textContent;
+  const mount = (cls, attrs = {}) => {
+    const el = document.createElement(cls === 'sc-slot' ? 'div' : 'button');
+    el.className = cls;
+    for (const [key, value] of Object.entries(attrs)) el.setAttribute(key, value);
+    if (cls === 'sc-button') el.textContent = 'Claim';
+    fixtures.append(el); return el;
+  };
+  for (const cls of ['sc-button','sc-icon-button','sc-slot']) {
+    const host = mount(cls, {'data-icon':'key','data-badge':'3','data-color':'green'});
+    await settle();
+    check(cls + ': inserted host upgrades automatically', label(host) === '3');
+    check(cls + ': badge has independent blue palette and compact text', getComputedStyle(bubble(host)).getPropertyValue('--base').trim() === '#197bf9' && getComputedStyle(bubble(host).firstChild).fontSize === '13px');
+    host.dataset.badge = '12'; host.dataset.badgeColor = 'red'; await settle();
+    check(cls + ': direct count and color updates', label(host) === '12' && getComputedStyle(bubble(host)).getPropertyValue('--base').trim() === '#f42e48');
+    host.removeAttribute('data-badge-color'); await settle();
+    check(cls + ': removing color restores blue', bubble(host).dataset.color === 'blue');
+    SC.setBadge(host, 125, 'red'); SC.upgrade(host); SC.upgrade(host); await settle();
+    check(cls + ': caps at 99+, preserves exact title, no duplicate badge', label(host) === '99+' && bubble(host).title === '125' && host.querySelectorAll('.sc-bubble').length === 1);
+    SC.setBadge(host, 0); await settle();
+    check(cls + ': zero visible, color preserved', label(host) === '0' && bubble(host).dataset.color === 'red');
+    for (const invalid of ['', 'nope', '-1', '1.5', 'Infinity', '9007199254740992']) {
+      host.dataset.badge = invalid; await settle();
+      check(cls + ': hides invalid value ' + JSON.stringify(invalid), !bubble(host));
+    }
+    SC.setBadge(host, 3); SC.setIcon(host, 'gift');
+    if (cls !== 'sc-slot') SC.setLabel(host, 'Ready');
+    else { host.dataset.count = '50'; host.dataset.state = 'claimed'; }
+    await settle();
+    check(cls + ': label/icon or slot updates preserve badge', label(host) === '3' && (cls === 'sc-slot' ? host.querySelector('.sc-slot-count').textContent === '50' && !!host.querySelector('.sc-slot-state') : host.querySelector(':scope > .sc-text').textContent === 'Ready'));
+    if (cls !== 'sc-slot') { host.textContent = 'Reset'; await settle(); check(cls + ': replacing label content rebuilds badge', label(host) === '3' && host.querySelector(':scope > .sc-text').textContent === 'Reset'); }
+    SC.setBadge(host, null); await settle();
+    check(cls + ': API removes bubble and attribute', !bubble(host) && !host.hasAttribute('data-badge'));
+    SC.setBadge(host, 1); host.removeAttribute('data-badge'); await settle();
+    check(cls + ': direct attribute removal hides', !bubble(host));
+    host.remove();
+  }
+  for (const size of ['sm','md','lg']) for (const variant of ['glossy','flat','ring']) {
+    const host = mount('sc-icon-button', {'data-icon':'key','data-size':size,'data-variant':variant,'data-shape':'round'});
+    await settle(); const before = host.getBoundingClientRect();
+    SC.setBadge(host, 3); await settle(); const after = host.getBoundingClientRect();
+    check(size + ' ' + variant + ': badge preserves circular button dimensions', before.width === after.width && before.height === after.height && after.width === after.height);
+    host.remove();
+  }
+  const button = mount('sc-button', {'data-badge':'3'}); SC.upgrade(button);
+  button.dispatchEvent(new PointerEvent('pointerdown', {bubbles:true}));
+  check('Badge host has delegated press feedback', button.classList.contains('sc-pressed'));
+  button.dispatchEvent(new PointerEvent('pointerup', {bubbles:true}));
+  check('Press feedback clears on release', !button.classList.contains('sc-pressed'));
+  check('Badge does not capture taps', getComputedStyle(bubble(button)).pointerEvents === 'none');
+  button.disabled = true; button.dispatchEvent(new PointerEvent('pointerdown', {bubbles:true}));
+  check('Disabled badge host does not press', !button.classList.contains('sc-pressed'));
+  document.querySelector('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = failed ? 'FAIL — Count Bubble' : 'PASS — Count Bubble';
+});
+</script>

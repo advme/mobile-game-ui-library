@@ -11,6 +11,7 @@
   data-size     sm | md | lg                          (44 / 56 / 72 px, default: md)
   disabled      native attribute
   Label: plain text inside the button → icon on top, label underneath (use with data-variant="flat").
+  data-badge / data-badge-color  optional corner count; requires components/bubble/bubble.css
 */
 .sc-icon-button {
   --size:56px;
@@ -65,6 +66,6 @@
 .sc-icon-button[data-variant="ring"][data-shape="round"] > img { margin-bottom:0; }
 
 /* ---------- With label (icon on top, text underneath) ---------- */
-.sc-icon-button:has(.sc-text) { height:calc(var(--size) * 1.12); grid-template-rows:1fr auto; padding-top:calc(var(--size) * .06); padding-bottom:calc(var(--size) * .12); }
-.sc-icon-button:has(.sc-text) > img { width:66%; height:100%; align-self:end; }
-.sc-icon-button .sc-text { --fs:calc(var(--size) * .22); font-size:var(--fs); }
+.sc-icon-button:has(> .sc-text) { height:calc(var(--size) * 1.12); grid-template-rows:1fr auto; padding-top:calc(var(--size) * .06); padding-bottom:calc(var(--size) * .12); }
+.sc-icon-button:has(> .sc-text) > img { width:66%; height:100%; align-self:end; }
+.sc-icon-button > .sc-text { --fs:calc(var(--size) * .22); font-size:var(--fs); }

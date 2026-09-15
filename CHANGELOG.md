@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.11.0-B — Count Bubble component
+- Agent: B (Codex / GPT) · Date: 2026-09-15
+- Done: Added glossy corner counts to Button, Icon Button and Reward Slot through `data-badge`, optional `data-badge-color`, and `SC.setBadge()`. Counts update automatically, including on newly inserted components. Zero stays visible; counts above 99 display as 99+; missing or invalid counts hide. Added the AI manual, registry entries and live docs. Kept icon buttons round and label updates separate from badge text.
+- Tested: Browser preview at 375×812 and normal desktop width; all examples, palette colors, images, live use/refill/hide/add controls, and code tabs. 60 browser regression checks passed in `tools/tests/bubble.html`, covering all hosts, attribute and API updates, invalid values, removal, repeated upgrades, label/icon preservation, round sizes/variants, and press feedback. JavaScript syntax, registry links/version consistency and `git diff --check` passed.
+- Notes for next agent: Count Bubble sits top-right to avoid the slot quantity at bottom-right. Load bubble CSS plus the selected host CSS. Leave 8px outside the host and keep the whole badge inside screen margins. Avoid overlapping long slot tags. Accessible labels remain game-owned. Preview regression checks at `/tools/tests/bubble.html`. Next: Screen Shell.
+
 ## v0.10.2-A — Repo made private
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: GitHub repo switched to private at the owner's request. GitHub Pages (live docs site) is therefore offline. Removed live-site links from README, AGENTS.md, STATUS.md.

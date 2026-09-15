@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Count Bubble — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/bubble/bubble.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../components/slot/slot.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+.row { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:24px; }
+.col { display:flex; flex-direction:column; align-items:center; gap:24px; }
+.badge-log { margin:0; color:#dce6ff; font:14px system-ui; text-align:center; }
+</style>
+</head>
+<body>
+<script>
+SCDocs.page({
+  title:'Count Bubble',
+  lead:'Small corner counts for boosters, unread messages and available rewards. Attach one to any button or reward slot.',
+  hero:`<div class="row">
+  <button class="sc-icon-button" data-icon="key" data-variant="flat" data-badge="3" aria-label="Key booster, 3 available"></button>
+  <button class="sc-button" data-color="green" data-badge="2">Claim</button>
+  <div class="sc-slot" data-icon="gift" data-badge="5" role="img" aria-label="5 gifts available"></div>
+</div>`,
+  css:['components/button/button.css', 'components/icon-button/icon-button.css', 'components/slot/slot.css', 'components/bubble/bubble.css'],
+  usageNote:'Include the CSS for the host components you use. The runtime creates the bubble from data-badge.',
+  usage:`<button class="sc-icon-button" data-icon="key" data-badge="3"
+        aria-label="Key booster, 3 available"></button>`,
+  examples:[
+    {title:'All host sizes', desc:'The count stays compact on small, medium and large buttons and slots.',
+      html:`<div class="col">
+  <div class="row">
+    <button class="sc-button" data-size="sm" data-badge="1">Claim</button>
+    <button class="sc-button" data-badge="12">Claim</button>
+    <button class="sc-button" data-size="lg" data-badge="123">CLAIM</button>
+  </div>
+  <div class="row">
+    <button class="sc-icon-button" data-size="sm" data-icon="key" data-badge="1" aria-label="Key, 1 available"></button>
+    <button class="sc-icon-button" data-icon="clover" data-badge="12" aria-label="Clover, 12 available"></button>
+    <button class="sc-icon-button" data-size="lg" data-icon="crystal-ball" data-badge="123" aria-label="Crystal ball, 123 available"></button>
+  </div>
+  <div class="row">
+    <div class="sc-slot" data-size="sm" data-icon="coin" data-count="50" data-badge="1" role="img" aria-label="1 reward of 50 coins"></div>
+    <div class="sc-slot" data-icon="gem" data-count="100" data-badge="12" role="img" aria-label="12 rewards of 100 gems"></div>
+    <div class="sc-slot" data-size="lg" data-icon="gift" data-count="500" data-badge="123" role="img" aria-label="123 rewards of 500 gifts"></div>
+  </div>
+</div>`},
+    {title:'Round, flat and labeled', desc:'Adding a badge preserves the button shape and its label.',
+      html:`<div class="row">
+  <button class="sc-icon-button" data-shape="round" data-color="green" data-icon="mail" data-badge="8" data-badge-color="red" aria-label="Mail, 8 unread"></button>
+  <button class="sc-icon-button" data-variant="ring" data-shape="round" data-icon="gift" data-badge="2" aria-label="Gifts, 2 available"></button>
+  <button class="sc-icon-button" data-variant="flat" data-icon="calendar" data-badge="1" aria-label="Daily reward, 1 available">Daily</button>
+</div>`},
+    {title:'Independent colors', desc:'Badge colors use the kit palette and do not change the host color.',
+      html:`<div class="row">${['sky','blue','dark','green','yellow','orange','red','purple','pink','mint'].map((color, i) => `
+  <button class="sc-icon-button" data-color="dark" data-icon="gift" data-badge="${i + 1}" data-badge-color="${color}" aria-label="Gifts, ${i + 1} available"></button>`).join('')}
+</div>`},
+    {title:'Zero, overflow and slot states', desc:'Zero stays visible; large counts show 99+. Locked and claimed slots keep their state artwork.',
+      html:`<div class="row">
+  <button class="sc-icon-button" data-icon="key" data-badge="0" disabled aria-label="Key booster, none available"></button>
+  <button class="sc-icon-button" data-icon="mail" data-badge="125" data-badge-color="red" aria-label="Mail, 125 unread"></button>
+  <div class="sc-slot" data-icon="chest" data-state="locked" data-badge="2" role="img" aria-label="2 locked chests"></div>
+  <div class="sc-slot" data-icon="gift" data-state="claimed" data-badge="1" role="img" aria-label="1 claimed gift"></div>
+</div>`},
+    {title:'Live: booster stock', desc:'Tap the key to use a booster. Refill changes attributes, Hide removes the badge, and Add booster inserts a new component.',
+      html:`<div class="col">
+  <div class="row" data-stock>
+    <button class="sc-icon-button" data-icon="key" data-variant="flat" data-badge="3" aria-label="Use key booster, 3 available"></button>
+  </div>
+  <p class="badge-log" aria-live="polite">3 boosters available</p>
+  <div class="row">
+    <button class="sc-button" data-size="sm" data-color="green" data-refill>Refill</button>
+    <button class="sc-button" data-size="sm" data-color="dark" data-hide>Hide</button>
+    <button class="sc-button" data-size="sm" data-color="yellow" data-add>Add booster</button>
+  </div>
+</div>`,
+      setup(preview) {
+        const stock = preview.querySelector('[data-stock]'), booster = stock.querySelector('button');
+        const log = preview.querySelector('.badge-log');
+        let count = 3;
+        booster.onclick = () => {
+          count = Math.max(0, count - 1);
+          SC.setBadge(booster, count, count ? 'blue' : 'red');
+          booster.disabled = count === 0;
+          booster.setAttribute('aria-label', `Use key booster, ${count} available`);
+          log.textContent = `${count} boosters available`;
+        };
+        preview.querySelector('[data-refill]').onclick = () => {
+          count = 3; booster.disabled = false;
+          booster.dataset.badge = '3'; booster.removeAttribute('data-badge-color');
+          booster.setAttribute('aria-label', 'Use key booster, 3 available');
+          log.textContent = '3 boosters available';
+        };
+        preview.querySelector('[data-hide]').onclick = () => { SC.setBadge(booster, null); log.textContent = 'Badge hidden'; };
+        preview.querySelector('[data-add]').onclick = () => {
+          if (stock.children.length > 1) return;
+          const extra = document.createElement('button');
+          extra.className = 'sc-icon-button'; extra.dataset.icon = 'clover'; extra.dataset.badge = '2';
+          extra.setAttribute('aria-label', 'Clover booster, 2 available'); stock.append(extra);
+          log.textContent = 'Clover booster added with 2 available';
+        };
+      }},
+  ],
+  api:[
+    ['data-badge','integer','','0 stays visible. Above 99 shows 99+. Missing, empty or invalid values hide the badge.'],
+    ['data-badge-color','sky blue dark green yellow orange red purple pink mint','blue','Independent of the host color.'],
+  ],
+  js:`SC.setBadge(booster, 3);        // change count
+SC.setBadge(booster, 1, 'red'); // change count and color
+SC.setBadge(booster, 0);        // show zero
+SC.setBadge(booster, null);     // remove bubble
+booster.dataset.badge = '2';   // attributes also update automatically`,
+  rules:[
+    'Attach only to Button, Icon Button or Reward Slot. Load the host CSS and bubble CSS.',
+    'Let the runtime build the bubble; change the attributes on its host.',
+    'Use blue for ordinary counts and red for attention.',
+    'Leave at least 8px above and to the right of the host. Keep the entire badge inside the screen’s 12px edge margin.',
+    'A slot’s reward quantity stays bottom-right; its badge sits top-right. Avoid overlapping long tags.',
+    'Keep icon-only button and slot accessible labels in sync with the exact count.',
+    'The game decides when to decrement, disable or hide. The bubble has no separate click action.',
+  ],
+});
+</script>
+</body>
+</html>

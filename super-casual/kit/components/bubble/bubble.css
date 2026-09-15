@@ -1,0 +1,28 @@
+/*
+  Count Bubble — Super Casual UI Kit
+  Requires: core.css, sc.js, and the host component CSS (button, icon-button or slot).
+  Add data-badge="3" to .sc-button, .sc-icon-button or .sc-slot.
+  sc.js creates .sc-bubble; do not write its inner markup by hand.
+
+  data-badge        non-negative safe integer; 0 visible, >99 shown as 99+.
+                    Missing, empty or invalid values hide the bubble.
+  data-badge-color  sky | blue | dark | green | yellow | orange | red | purple | pink | mint
+                    Default: blue. Independent of the host's data-color.
+  Position: top-right; leave at least 8px space outside the host.
+*/
+:where(.sc-bubble) {
+  --band:#3094f8; --base:#197bf9; --line:#1c90ff; --lip:#0b3aac; --ink:#003090;
+}
+.sc-bubble {
+  position:absolute; right:-7px; top:-7px; z-index:4;
+  display:grid; place-items:center; box-sizing:border-box;
+  min-width:24px; height:24px; padding:0 5px;
+  border:var(--sc-line-sm) solid var(--sc-outline); border-radius:12px;
+  background:linear-gradient(var(--band) 0 50%, var(--base) 50%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35), inset 0 -2px 0 var(--lip);
+  pointer-events:none; user-select:none; -webkit-user-select:none;
+}
+.sc-bubble > .sc-text {
+  --fs:13px; --ink:inherit; font-size:var(--fs); padding-bottom:2px;
+  font-variant-numeric:tabular-nums;
+}

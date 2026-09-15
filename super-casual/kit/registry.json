@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "items": [
     {
       "name": "core",
@@ -71,11 +71,33 @@
           "type": "icon",
           "optional": true,
           "description": "Leading icon by name (see icons)"
+        },
+        "data-badge": {
+          "type": "number",
+          "optional": true,
+          "description": "Corner count; requires components/bubble/bubble.css. See bubble component."
+        },
+        "data-badge-color": {
+          "type": "enum",
+          "values": [
+            "sky",
+            "blue",
+            "dark",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "default": "blue"
         }
       },
       "js": {
         "SC.setLabel(el, text)": "Change the label and keep the 3D text in sync",
-        "SC.setIcon(el, name)": "Change the icon"
+        "SC.setIcon(el, name)": "Change the icon",
+        "SC.setBadge(el, count, color?)": "Set the corner count (requires bubble CSS); null removes it."
       },
       "rules": [
         "One lg button per screen for the main action",
@@ -182,10 +204,32 @@
           "type": "text",
           "optional": true,
           "description": "Plain text inside \u2192 label under the icon (use with flat)"
+        },
+        "data-badge": {
+          "type": "number",
+          "optional": true,
+          "description": "Corner count; requires components/bubble/bubble.css. See bubble component."
+        },
+        "data-badge-color": {
+          "type": "enum",
+          "values": [
+            "sky",
+            "blue",
+            "dark",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "default": "blue"
         }
       },
       "js": {
-        "SC.setIcon(el, name)": "Change the icon"
+        "SC.setIcon(el, name)": "Change the icon",
+        "SC.setBadge(el, count, color?)": "Set the corner count (requires bubble CSS); null removes it."
       },
       "rules": [
         "Pause in gameplay: top-left, ring or glossy sky",
@@ -371,11 +415,33 @@
             "lg"
           ],
           "default": "md"
+        },
+        "data-badge": {
+          "type": "number",
+          "optional": true,
+          "description": "Corner count; requires components/bubble/bubble.css. See bubble component."
+        },
+        "data-badge-color": {
+          "type": "enum",
+          "values": [
+            "sky",
+            "blue",
+            "dark",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "default": "blue"
         }
       },
       "js": {
         "SC.setValue(el, count)": "Animate the count",
-        "SC.popIn(elements, { stagger, delay })": "Reveal elements one after another"
+        "SC.popIn(elements, { stagger, delay })": "Reveal elements one after another",
+        "SC.setBadge(el, count, color?)": "Set the corner count (requires bubble CSS); null removes it."
       },
       "rules": [
         "Rarity by color: white/dark common, green/sky uncommon, purple epic, yellow legendary, red special, lavender premium",
@@ -895,6 +961,71 @@
         {
           "title": "Combo",
           "js": "SC.float('COMBO x3!', null, { size: 'lg', color: 'gold', style: 'pop' });"
+        }
+      ]
+    },
+    {
+      "name": "bubble",
+      "type": "registry:ui",
+      "title": "Count Bubble",
+      "description": "Small glossy top-right count attached to a Button, Icon Button or Reward Slot.",
+      "whenToUse": "Booster stock, unread messages or available rewards on an existing component.",
+      "files": [
+        "components/bubble/bubble.css"
+      ],
+      "docs": "components/bubble/bubble.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<button class=\"sc-icon-button\" data-icon=\"key\" data-badge=\"3\" aria-label=\"Key booster, 3 available\"></button>",
+      "props": {
+        "data-badge": {
+          "type": "number",
+          "optional": true,
+          "description": "Non-negative safe integer on the host. 0 is visible; >99 shows 99+. Missing, empty or invalid hides."
+        },
+        "data-badge-color": {
+          "type": "enum",
+          "values": [
+            "sky",
+            "blue",
+            "dark",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink",
+            "mint"
+          ],
+          "default": "blue"
+        }
+      },
+      "events": [],
+      "js": {
+        "SC.setBadge(el, count, color?)": "Set count and optionally color. null removes the bubble. Existing color is preserved when omitted."
+      },
+      "rules": [
+        "Load bubble CSS plus the selected host component (button, icon-button or slot) and its dependencies; core alone does not style the host.",
+        "Set data-badge on the host; never write .sc-bubble markup by hand.",
+        "Leave at least 8px top/right outside the host; keep the entire badge within the screen margin and avoid clipping.",
+        "Zero remains visible; remove data-badge to hide. Disabling the host is a separate game decision.",
+        "Use data-badge-color for the bubble independently of the host data-color.",
+        "Keep accessible labels on icon-only buttons and slots in sync with the exact count.",
+        "Avoid overlap with long slot tags. Slot reward quantity stays bottom-right."
+      ],
+      "examples": [
+        {
+          "title": "Booster stock",
+          "html": "<button class=\"sc-icon-button\" data-icon=\"key\" data-badge=\"3\" aria-label=\"Key booster, 3 available\"></button>"
+        },
+        {
+          "title": "Unread messages",
+          "html": "<button class=\"sc-icon-button\" data-icon=\"mail\" data-badge=\"125\" data-badge-color=\"red\" aria-label=\"Mail, 125 unread\"></button>"
+        },
+        {
+          "title": "Update or remove",
+          "js": "SC.setBadge(booster, 2); SC.setBadge(booster, null);"
         }
       ]
     }

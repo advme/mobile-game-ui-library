@@ -67,3 +67,7 @@ button.disabled = true;                                 // disable
 - **Labels:** 1–2 words. Short labels read better on phones.
 - **Never** restyle the button with custom CSS colors — pick a `data-color`.
 - Buttons are HTML on top of the game canvas. Put UI in a layer above the canvas (see `examples/button-on-canvas.html`).
+
+## Corner count
+
+Load `kit/components/bubble/bubble.css` and add `data-badge="3"` to this component. Optional `data-badge-color="red"` changes the blue default. Update with `SC.setBadge(el, count, color?)`; pass `null` to hide. See [Count Bubble](../bubble/bubble.md) for values, spacing and accessibility rules.

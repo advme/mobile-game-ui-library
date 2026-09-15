@@ -23,6 +23,7 @@
   const TITLES = '.sc-title';
   const STARS = '.sc-stars';
   const TIMERS = '.sc-timer';
+  const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot';
   const MESSAGES = '.sc-popup-message, .sc-popup-value';
   const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}`;
   const PRESSABLE = '.sc-button, .sc-icon-button, .sc-counter-plus';
@@ -71,6 +72,25 @@
     const src = ASSETS + alias.name + '.png';
     if (img.src !== src) img.src = src;
     img.toggleAttribute('data-flip', alias.flip);
+  }
+
+  /* ---------- Count Bubble (attachment on buttons and slots) ---------- */
+  function upgradeBubble(el) {
+    const raw = el.getAttribute('data-badge');
+    const count = Number(raw);
+    let bubble = el.querySelector(':scope > .sc-bubble');
+    if (raw == null || raw.trim() === '' || !Number.isSafeInteger(count) || count < 0) {
+      bubble?.remove();
+      return;
+    }
+    if (!bubble) {
+      bubble = document.createElement('span'); bubble.className = 'sc-bubble';
+      bubble.append(textSpan('')); el.append(bubble);
+    }
+    setSpan(bubble.firstElementChild, count > 99 ? '99+' : String(count));
+    const color = el.dataset.badgeColor || 'blue';
+    if (bubble.dataset.color !== color) bubble.dataset.color = color;
+    bubble.title = String(count);
   }
 
   /* ---------- Counter ---------- */
@@ -413,6 +433,7 @@
 
   /* ---------- upgrade pipeline ---------- */
   function upgradeOne(el) {
+    if (el.matches(BADGE_HOSTS)) upgradeBubble(el);
     if (el.matches(COUNTERS)) return upgradeCounter(el);
     if (el.matches(SLOTS)) return upgradeSlot(el);
     if (el.matches(POPUPS)) return upgradePopup(el);
@@ -437,7 +458,10 @@
         if (span && span.classList.contains('sc-text')) span.dataset.text = span.textContent;
         else if (span && span.parentElement && span.parentElement.matches(TITLES)) span.parentElement.dataset.text = span.textContent;
       } else if (r.type === 'attributes') {
-        if (r.target.matches(COUNTERS)) upgradeCounter(r.target);
+        if (r.attributeName === 'data-badge' || r.attributeName === 'data-badge-color') {
+          if (r.target.matches(BADGE_HOSTS)) upgradeBubble(r.target);
+        }
+        else if (r.target.matches(COUNTERS)) upgradeCounter(r.target);
         else if (r.target.matches(SLOTS)) upgradeSlot(r.target);
         else if (r.target.matches(POPUPS)) upgradePopup(r.target);
         else if (r.target.matches(PROGRESS)) upgradeProgress(r.target);
@@ -447,11 +471,12 @@
       } else {
         r.addedNodes.forEach(n => n.nodeType === Node.ELEMENT_NODE && upgrade(n));
         if (r.target.matches && r.target.matches(`${TEXT_COMPONENTS}, ${MESSAGES}`)) upgradeText(r.target);
+        if (r.target.matches && r.target.matches(BADGE_HOSTS)) upgradeBubble(r.target);
       }
     }
   }).observe(document.documentElement, {
     childList: true, subtree: true, characterData: true,
-    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant'],
+    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color'],
   });
 
   // Press feedback (delegated, so it works for dynamically added components)
@@ -468,17 +493,24 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.10.2',
+    version: '0.11.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */
     setLabel(el, text) {
       if (el.matches(TITLES)) { upgradeTitle(el); el.firstElementChild.textContent = text; el.dataset.text = text; return; }
-      const span = el.querySelector('.sc-text');
+      const span = el.querySelector(el.matches(TEXT_COMPONENTS) ? ':scope > .sc-text' : '.sc-text');
       if (span) setSpan(span, text); else { el.append(text); upgradeText(el); }
     },
     /** Change a component's icon: SC.setIcon(el, 'check') */
     setIcon(el, name) { el.dataset.icon = name; upgradeIcon(el); },
+    /** Set a corner count; null removes it. Color is optional and otherwise preserved. */
+    setBadge(el, count, color) {
+      if (!el.matches(BADGE_HOSTS)) return;
+      if (count == null) el.removeAttribute('data-badge'); else el.dataset.badge = count;
+      if (color != null) el.dataset.badgeColor = color;
+      upgradeBubble(el);
+    },
     /** Change a counter's value or a slot's count with a count animation: SC.setValue(el, 350000) */
     setValue,
     /** Play an element's entrance animation again: SC.replay(title) */

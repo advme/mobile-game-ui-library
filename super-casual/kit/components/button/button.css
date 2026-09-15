@@ -9,6 +9,7 @@
   data-width  full                                                                       (optional: stretch to container)
   disabled    native attribute → grey, not clickable
   data-icon   optional leading icon by name from kit/assets (e.g. video, gem)
+  data-badge / data-badge-color  optional corner count; requires components/bubble/bubble.css
 */
 .sc-button {
   --h:64px; --fs:23px; --minw:150px; --padx:22px;
@@ -16,7 +17,7 @@
   height:var(--h); min-width:var(--minw); padding:0 var(--padx) var(--lipH);
   font-family:var(--sc-font); font-size:var(--fs); line-height:1; white-space:nowrap; vertical-align:middle;
 }
-.sc-button .sc-text { --fs:inherit; font-size:var(--fs); --ink:inherit; }
+.sc-button > .sc-text { --fs:inherit; font-size:var(--fs); --ink:inherit; }
 .sc-button > img { height:calc(var(--fs) * 1.25); width:auto; flex:none; margin-bottom:calc(var(--fs) * .08); pointer-events:none; }
 
 /* Sizes */

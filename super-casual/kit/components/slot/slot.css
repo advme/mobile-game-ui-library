@@ -11,6 +11,7 @@
   data-state   claimed | locked                                                    optional
   data-format  full | short                                                        default: full
   data-size    sm | md | lg   (60 / 84 / 104 px)                                   default: md
+  data-badge / data-badge-color  optional corner count; requires components/bubble/bubble.css
 */
 .sc-slot {
   --size:84px; --slot:#505390; --slot2:#44467e;

@@ -61,3 +61,7 @@ SC.popIn(grid.children, { stagger: 0.07 }); // reveal slots one after another
 - **Tags:** one short word or `x2`, and at most one tagged slot per group.
 - **`locked`** for rewards the player can't get yet, **`claimed`** after collecting.
 - **Doubling rewards:** update with `SC.setValue()` so counts animate. Never edit inner text directly.
+
+## Corner count
+
+Load `kit/components/bubble/bubble.css` and add `data-badge="3"` to this component. Optional `data-badge-color="red"` changes the blue default. Update with `SC.setBadge(el, count, color?)`; pass `null` to hide. See [Count Bubble](../bubble/bubble.md) for values, spacing and accessibility rules.
