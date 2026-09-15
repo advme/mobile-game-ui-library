@@ -1,0 +1,250 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#131426">
+<title>Game</title>
+<!-- PIXELFORK GAME TEMPLATE — read AI.md before changing anything. -->
+<link rel="stylesheet" href="kit/kit.css">
+<script src="kit/kit.js"></script>
+<style>
+  /* Layout glue only (no new visual styles) */
+  html, body { margin:0; height:100%; overflow:hidden; overscroll-behavior:none; background:#1f2d4b; -webkit-user-select:none; user-select:none; }
+  [hidden] { display:none !important; }
+  #game { position:fixed; inset:0; width:100%; height:100%; display:block; touch-action:none; }
+  .col { display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .wide { width:300px; }
+  .wide .sc-button { width:100%; }
+  .hud-score { flex:1; min-width:0; }
+  .setting { display:flex; align-items:center; gap:10px; width:100%; align-self:stretch; box-sizing:border-box; padding:4px 2px; }
+  .setting > img { width:32px; height:32px; object-fit:contain; }
+  .setting > .sc-text { --fs:19px; font-size:var(--fs); flex:1; }
+</style>
+</head>
+<body>
+
+<!-- ============ 1. THE GAME (canvas — replace the stand-in game at the bottom with your engine) ============ -->
+<canvas id="game"></canvas>
+
+<!-- ============ 2. SCREENS (kit Screen Shells — only one menu screen visible at a time) ============ -->
+
+<!-- Loading -->
+<div class="sc-screen" id="screenLoading" data-backdrop="solid">
+  <div class="sc-screen-middle"><h1 class="sc-title" data-color="gold" data-animate="drop" data-ui="title">GAME</h1></div>
+  <div class="sc-screen-bottom">
+    <div class="sc-loading" id="loader" data-icon="coin" data-tips="Tap the balls to score|Be quick before time runs out"></div>
+  </div>
+</div>
+
+<!-- Start / home -->
+<div class="sc-screen" id="screenStart" data-backdrop="dim" hidden>
+  <div class="sc-screen-top">
+    <div class="sc-topbar" id="topbar" data-name="Player" data-level="1">
+      <div class="sc-counter" data-ui="coins" data-icon="coin" data-value="0" data-format="short" data-size="sm"></div>
+    </div>
+    <button class="sc-icon-button" data-icon="settings" data-color="dark" data-size="sm" id="btnSettings" aria-label="Settings"></button>
+  </div>
+  <div class="sc-screen-middle">
+    <h1 class="sc-title" data-color="gold" data-animate="drop" data-ui="title">GAME</h1>
+    <span class="sc-text" id="levelLabel" data-text="Level 1">Level 1</span>
+  </div>
+  <div class="sc-screen-bottom">
+    <button class="sc-button" data-color="yellow" data-size="lg" id="btnPlay">PLAY</button>
+  </div>
+</div>
+
+<!-- Gameplay HUD (no backdrop: taps reach the game) -->
+<div class="sc-screen" id="screenHud" hidden>
+  <div class="sc-screen-top">
+    <button class="sc-icon-button" data-icon="pause" data-color="sky" id="btnPause" aria-label="Pause"></button>
+    <div class="hud-score"><div class="sc-progress" id="hudScore" data-value="0" data-max="20" data-stars="50,75,100" data-color="green" data-size="lg"></div></div>
+    <div class="sc-counter" data-ui="coins" data-icon="coin" data-value="0" data-format="short" data-size="sm"></div>
+  </div>
+  <div class="sc-screen-top" data-align="center" style="margin-top:10px">
+    <div class="sc-timer" id="hudTimer" data-variant="pill" data-seconds="30" data-warn="5" data-autostart="false"></div>
+  </div>
+</div>
+
+<!-- Success -->
+<div class="sc-screen" id="screenSuccess" data-backdrop="dim" hidden>
+  <div class="sc-screen-middle">
+    <h1 class="sc-title" data-color="gold" data-animate="drop">CLEAR!</h1>
+    <div class="sc-stars" id="winStars" data-value="0" data-layout="arc" data-size="lg" data-animate></div>
+    <div class="sc-slot" id="winReward" data-icon="coin" data-count="0" data-color="white"></div>
+  </div>
+  <div class="sc-screen-bottom">
+    <div class="col wide">
+      <button class="sc-button" data-color="green" data-size="lg" id="btnNext">Next</button>
+      <button class="sc-button" data-color="dark" data-size="sm" data-icon="home" data-go="home">Home</button>
+    </div>
+  </div>
+</div>
+
+<!-- Fail -->
+<div class="sc-screen" id="screenFail" data-backdrop="dim" hidden>
+  <div class="sc-screen-middle">
+    <h1 class="sc-title" data-color="red" data-animate="shake">FAILED</h1>
+    <div class="sc-progress" id="failProgress" data-value="0" data-max="20" data-label="percent" data-color="orange" data-size="lg" style="width:280px"></div>
+  </div>
+  <div class="sc-screen-bottom">
+    <div class="col wide">
+      <button class="sc-button" data-color="yellow" data-size="lg" data-icon="restart" id="btnRetry">Retry</button>
+      <button class="sc-button" data-color="dark" data-size="sm" data-icon="home" data-go="home">Home</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 3. POPUPS (outside screens) ============ -->
+<div class="sc-popup" id="popupPause" data-title="PAUSED" data-backdrop="static" hidden>
+  <div class="sc-panel">
+    <div class="setting"><img src="kit/assets/sound.png" alt=""><span class="sc-text" data-text="Sound">Sound</span><button class="sc-toggle" data-setting="sound" aria-label="Sound"></button></div>
+    <div class="setting"><img src="kit/assets/music.png" alt=""><span class="sc-text" data-text="Music">Music</span><button class="sc-toggle" data-setting="music" aria-label="Music"></button></div>
+  </div>
+  <div class="sc-popup-actions" data-layout="stack">
+    <button class="sc-button" data-color="green" data-size="lg" data-close>RESUME</button>
+    <button class="sc-button" data-color="yellow" data-icon="restart" id="btnRestart">Restart</button>
+    <button class="sc-button" data-color="red" data-icon="home" data-go="home">Home</button>
+  </div>
+</div>
+
+<div class="sc-popup" id="popupSettings" data-title="SETTINGS" hidden>
+  <div class="sc-panel">
+    <div class="setting"><img src="kit/assets/sound.png" alt=""><span class="sc-text" data-text="Sound">Sound</span><button class="sc-toggle" data-setting="sound" aria-label="Sound"></button></div>
+    <div class="setting"><img src="kit/assets/music.png" alt=""><span class="sc-text" data-text="Music">Music</span><button class="sc-toggle" data-setting="music" aria-label="Music"></button></div>
+  </div>
+  <div class="sc-popup-actions"><button class="sc-button" data-color="green" data-close>OK</button></div>
+</div>
+
+<script>
+/* =====================================================================
+   A. GAME CONFIG — change these for your game
+   ===================================================================== */
+const CONFIG = {
+  title: 'GAME',             // shown on loading + start screens (keep it short, ~8 letters)
+  playerName: 'Player',
+  levelSeconds: 30,          // time limit per level
+  targetScore: 20,           // score needed to win a level
+  coinsPerLevel: 50,
+  images: {                  // optional re-theming, e.g. coin: 'images/shell.png' (see kit/assets/IMAGE-PROMPTS.md)
+  },
+};
+
+/* =====================================================================
+   B. SAVE DATA — localStorage (replace with Pixelfork save API if any)
+   ===================================================================== */
+const save = Object.assign({ level: 1, coins: 0, sound: true, music: true },
+  (() => { try { return JSON.parse(localStorage.getItem('save') || '{}'); } catch (_) { return {}; } })());
+const persist = () => { try { localStorage.setItem('save', JSON.stringify(save)); } catch (_) {} };
+
+/* =====================================================================
+   C. UI CONTROLLER — talks to the kit. The game calls UI.*, the UI calls Game.*
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const SCREENS = ['screenLoading', 'screenStart', 'screenHud', 'screenSuccess', 'screenFail'];
+
+const UI = {
+  show(id) { SCREENS.forEach(s => s === id ? SC.screen.show(s) : (!$(s).hidden && SC.screen.hide(s))); },
+  setCoins(n) { document.querySelectorAll('[data-ui="coins"]').forEach(c => SC.setValue(c, n)); },
+  refreshMeta() {
+    $('topbar').dataset.level = save.level; $('topbar').dataset.name = CONFIG.playerName;
+    $('levelLabel').textContent = $('levelLabel').dataset.text = 'Level ' + save.level;
+    document.querySelectorAll('[data-ui="title"]').forEach(t => SC.setLabel(t, CONFIG.title));
+    document.querySelectorAll('.sc-toggle[data-setting]').forEach(t => SC.toggle.set(t, !!save[t.dataset.setting]));
+  },
+
+  // ---- called by the game ----
+  onScore(score, x, y) {
+    SC.setValue($('hudScore'), score);
+    if (x != null) SC.float('+1', { x, y }, { color: 'gold' });
+  },
+  onWin(secondsLeft) {
+    Game.stop(); SC.timer.pause($('hudTimer'));
+    const stars = secondsLeft > CONFIG.levelSeconds * .5 ? 3 : secondsLeft > CONFIG.levelSeconds * .2 ? 2 : 1;
+    const reward = CONFIG.coinsPerLevel * stars;
+    save.level++; save.coins += reward; persist();
+    $('winStars').dataset.value = 0; $('winReward').dataset.count = reward;
+    UI.show('screenSuccess');
+    setTimeout(() => { SC.setValue($('winStars'), stars); UI.setCoins(save.coins); }, 350);
+  },
+  onLose(score) {
+    Game.stop();
+    SC.setValue($('failProgress'), score, { animate: false });
+    UI.show('screenFail');
+  },
+};
+
+function startLevel() {
+  $('hudScore').dataset.max = CONFIG.targetScore; $('failProgress').dataset.max = CONFIG.targetScore;
+  SC.setValue($('hudScore'), 0, { animate: false });
+  UI.show('screenHud');
+  SC.timer.reset($('hudTimer'), CONFIG.levelSeconds); SC.timer.start($('hudTimer'));
+  Game.start(save.level);
+}
+function goHome() { Game.stop(); SC.popup.close('popupPause'); UI.refreshMeta(); UI.show('screenStart'); }
+
+// Buttons
+$('btnPlay').onclick = startLevel;
+$('btnNext').onclick = startLevel;
+$('btnRetry').onclick = startLevel;
+$('btnRestart').onclick = () => { SC.popup.close('popupPause'); startLevel(); };
+$('btnSettings').onclick = () => SC.popup.open('popupSettings');
+$('btnPause').onclick = () => { Game.pause(); SC.timer.pause($('hudTimer')); SC.popup.open('popupPause'); };
+$('popupPause').addEventListener('close', () => { if (!$('screenHud').hidden) { Game.resume(); SC.timer.start($('hudTimer')); } });
+document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-go="home"]')) goHome(); });
+$('hudTimer').addEventListener('done', () => UI.onLose(Game.score));
+$('hudScore').addEventListener('star', () => SC.float('STAR!', null, { size: 'lg', style: 'pop', color: 'gold', icon: 'star' }));
+
+// Settings (both popups share data-setting toggles)
+document.addEventListener('change', e => {
+  const key = e.target.dataset && e.target.dataset.setting; if (!key) return;
+  save[key] = e.detail.checked; persist(); UI.refreshMeta();
+  Game.setAudio(save.sound, save.music);
+});
+
+/* =====================================================================
+   D. STAND-IN GAME — REPLACE WITH YOUR ENGINE.
+   Keep this interface: Game.start(level) · pause() · resume() · stop() · setAudio(sound, music) · score
+   and report back with UI.onScore(score, x, y) · UI.onWin(secondsLeft) · UI.onLose(score)
+   ===================================================================== */
+const Game = (() => {
+  const canvas = $('game'), ctx = canvas.getContext('2d');
+  let W, H, running = false, balls = [], api;
+  function resize() { const d = devicePixelRatio || 1; W = innerWidth; H = innerHeight; canvas.width = W * d; canvas.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
+  addEventListener('resize', resize); resize();
+  const spawn = () => ({ x: 40 + Math.random() * (W - 80), y: H * .25 + Math.random() * H * .55, r: 26 + Math.random() * 14, vx: (Math.random() - .5) * 3, vy: (Math.random() - .5) * 3, c: ['#01bcff', '#15f15c', '#f5c02e', '#f42e48'][Math.floor(Math.random() * 4)] });
+  (function loop() {
+    ctx.fillStyle = '#1f2d4b'; ctx.fillRect(0, 0, W, H);
+    for (const b of balls) {
+      if (running) { b.x += b.vx; b.y += b.vy; if (b.x < b.r || b.x > W - b.r) b.vx *= -1; if (b.y < H * .2 || b.y > H * .85) b.vy *= -1; }
+      ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fillStyle = b.c; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#050308'; ctx.stroke();
+    }
+    requestAnimationFrame(loop);
+  })();
+  canvas.addEventListener('pointerdown', e => {
+    if (!running) return;
+    const i = balls.findIndex(b => Math.hypot(b.x - e.clientX, b.y - e.clientY) < b.r + 8);
+    if (i < 0) return;
+    balls[i] = spawn(); api.score++;
+    UI.onScore(api.score, e.clientX, e.clientY);
+    if (api.score >= CONFIG.targetScore) UI.onWin(SC.timer.left($('hudTimer')));
+  });
+  return api = {
+    score: 0,
+    start(level) { api.score = 0; balls = Array.from({ length: Math.min(3 + level, 8) }, spawn); running = true; },
+    pause() { running = false; }, resume() { running = true; }, stop() { running = false; },
+    setAudio(sound, music) { /* hook your audio engine here */ },
+  };
+})();
+
+/* =====================================================================
+   E. BOOT — load assets, then show the start screen
+   ===================================================================== */
+Object.entries(CONFIG.images).forEach(([name, src]) => SC.setImage(name, src));
+UI.refreshMeta(); UI.setCoins(save.coins);
+let loaded = 0; const TOTAL = 10;                           // replace with real asset loading progress
+const loadTimer = setInterval(() => { loaded++; SC.loading.set($('loader'), loaded / TOTAL * 100); if (loaded >= TOTAL) clearInterval(loadTimer); }, 120);
+$('loader').addEventListener('done', () => setTimeout(() => UI.show('screenStart'), 250));
+</script>
+</body>
+</html>

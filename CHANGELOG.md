@@ -2,6 +2,16 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.40.0-A — One-file bundle + Pixelfork game template
+- Agent: A (Claude) · Date: 2026-09-15
+- Done:
+  - Added `tools/build_kit.py`, which builds `super-casual/dist/`: `kit.css` (core + all 28 component CSS in a safe order, 93 KB), `kit.js` (runtime), `assets/` (icons, offsets, IMAGE-PROMPTS.md), `registry.json` and a README. It also copies dist into the template. It fails loudly if a new component is missing from its ORDER list.
+  - Added `templates/pixelfork-game/`: a complete mobile game using only the bundle, with Loading → Start (Top Bar, settings) → HUD (pause, star score bar, coins, timer) → Pause popup (sound/music) → Success (stars, coin reward) / Fail (progress, retry) → Home. It has a CONFIG block (title, time, target, rewards, image re-theming), localStorage save, a UI controller, and a stand-in tap-the-balls game behind a clear `Game`/`UI` contract to replace with a real engine. Includes `AI.md` with instructions for Pixelfork's AI.
+  - Kit: added `SC.timer.left(el)`.
+  - AGENTS.md now lists dist, template and build step (run the build after any kit change), and Installation docs mention the bundle/template.
+- Tested: At 375×812, loading → start; Play → HUD with 30 s timer; Pause freezes the timer and Resume continues; a real tap on a ball scores; win gives 3 stars and 150 coins, saved as level 2; Next → HUD; lose → Fail; Home shows Level 2 and 150 coins.
+- Notes for next agent: `templates/pixelfork-game/kit/` is gitignored (built copy). Run `python3 tools/build_kit.py` before opening the template. `super-casual/dist/` IS committed, so always rebuild it before publishing.
+
 ## v0.39.0-A — Custom images everywhere + image prompt templates
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: The owner asked whether AIs can change the pictures inside components. Now they can, in three ways:

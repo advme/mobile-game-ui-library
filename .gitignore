@@ -3,3 +3,6 @@ __pycache__/
 
 # Local-only: early experiments + reference screenshots from other games (never publish)
 _archive/
+
+# Built copy of super-casual/dist for the template (run tools/build_kit.py)
+templates/pixelfork-game/kit/
