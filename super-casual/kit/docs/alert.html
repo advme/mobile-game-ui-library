@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notification Dot — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/alert/alert.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/icon-button/icon-button.css">
+<link rel="stylesheet" href="../components/slot/slot.css">
+<link rel="stylesheet" href="../components/tabs/tabs.css">
+<link rel="stylesheet" href="../components/tabbar/tabbar.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+.row { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:26px; padding-top:12px; }
+.wide { width:100%; max-width:380px; padding-top:20px; }
+</style>
+</head>
+<body>
+<script>
+SCDocs.page({
+  title: 'Notification Dot',
+  lead: 'A small red "!" on a button corner that says "something new here" — new mail, a free reward, an unlocked skin.',
+  hero: `<div class="row">
+  <button class="sc-icon-button" data-icon="mail" data-color="sky" data-alert aria-label="Mail, new"></button>
+  <button class="sc-icon-button" data-icon="gift" data-color="purple" data-shape="round" data-alert aria-label="Gifts, new"></button>
+  <button class="sc-button" data-color="yellow" data-alert="dot">Shop</button>
+</div>`,
+  css: ['components/alert/alert.css'],
+  usageNote: 'Add data-alert to a button, icon button, slot, tab or tab bar item. It gently pulses.',
+  usage: `<button class="sc-icon-button" data-icon="mail" data-alert aria-label="Mail, new"></button>`,
+  examples: [
+    { title: 'Icon or dot', desc: 'data-alert (bare) shows the "!" icon; data-alert="dot" a small plain dot for quieter places.',
+      html: `<div class="row">
+  <button class="sc-icon-button" data-icon="settings" data-color="dark" data-alert aria-label="Settings, new"></button>
+  <button class="sc-icon-button" data-icon="settings" data-color="dark" data-alert="dot" aria-label="Settings, new"></button>
+  <span class="sc-alert"></span>
+  <span class="sc-alert" data-alert="dot"></span>
+</div>` },
+    { title: 'On slots, tabs and the tab bar', desc: 'Same attribute everywhere.',
+      html: `<div class="wide">
+  <div class="row">
+    <div class="sc-slot" data-icon="chest" data-color="purple" data-alert></div>
+  </div>
+  <div class="sc-tabs" style="margin-top:22px"><button data-value="a">Skins</button><button data-value="b" data-alert>Pets</button></div>
+  <div style="margin-top:34px"><nav class="sc-tabbar" data-value="home">
+    <button data-value="shop" data-icon="shop" data-alert>Shop</button>
+    <button data-value="home" data-icon="home">Home</button>
+    <button data-value="rank" data-icon="trophy" data-alert="dot">Rank</button>
+  </nav></div>
+</div>` },
+    { title: 'Live: clear when opened', desc: 'Tap the mail button: the alert clears, like a real inbox.',
+      html: `<div class="row">
+  <button class="sc-icon-button" data-icon="mail" data-color="sky" data-alert id="mailBtn" aria-label="Mail"></button>
+  <button class="sc-button" data-color="dark" data-size="sm" id="newMail">New mail</button>
+</div>`,
+      setup(p) {
+        const mail = p.querySelector('#mailBtn');
+        mail.onclick = () => SC.setAlert(mail, false);
+        p.querySelector('#newMail').onclick = () => SC.setAlert(mail, true);
+      } },
+  ],
+  api: [
+    ['data-alert', '(bare) icon dot false', '', 'On a host: "!" icon, small dot, or none.'],
+    ['.sc-alert', '', '', 'Standalone marker (inline).'],
+  ],
+  js: `SC.setAlert(mailButton, true);   // "!" icon
+SC.setAlert(mailButton, 'dot');  // small dot
+SC.setAlert(mailButton, false);  // remove`,
+  rules: [
+    '<b>Alert = something new, no number.</b> For "3 new" use Count Bubble (<code class="inline">data-badge</code>) instead — never both on one element.',
+    'Clear it as soon as the player opens that thing.',
+    'At most 2–3 alerts on a screen; use the quiet <code class="inline">dot</code> for secondary places (settings, profile).',
+    'Update the button’s <code class="inline">aria-label</code> (e.g. "Mail, new") — the marker itself is hidden from screen readers.',
+  ],
+});
+</script>
+</body>
+</html>

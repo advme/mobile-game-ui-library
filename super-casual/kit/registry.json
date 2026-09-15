@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "items": [
     {
       "name": "core",
@@ -1942,6 +1942,53 @@
         {
           "title": "Update",
           "js": "SC.loading.set('loader', 42); loader.addEventListener('done', startGame);"
+        }
+      ]
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "title": "Notification Dot",
+      "description": "Red '!' icon or small dot on a host corner meaning something new (no number).",
+      "whenToUse": "New mail, free reward available, unlocked item, unseen tab.",
+      "files": [
+        "components/alert/alert.css"
+      ],
+      "docs": "components/alert/alert.md",
+      "dependencies": [
+        "core"
+      ],
+      "html": "<button class=\"sc-icon-button\" data-icon=\"mail\" data-alert aria-label=\"Mail, new\"></button>",
+      "props": {
+        "data-alert": {
+          "type": "enum",
+          "values": [
+            "",
+            "icon",
+            "dot",
+            "false"
+          ],
+          "optional": true,
+          "description": "On .sc-button/.sc-icon-button/.sc-slot/tab/tab bar item"
+        }
+      },
+      "parts": {
+        ".sc-alert": "Standalone inline marker (data-alert=dot for dot)"
+      },
+      "events": [],
+      "js": {
+        "SC.setAlert(el, true|false|'dot')": "Show icon, remove, or dot"
+      },
+      "rules": [
+        "No number; counts use data-badge; never both.",
+        "Clear when opened.",
+        "Max 2-3 per screen; dot for secondary.",
+        "Update host aria-label."
+      ],
+      "examples": [
+        {
+          "title": "Tab bar",
+          "html": "<button data-value=\"shop\" data-icon=\"shop\" data-alert>Shop</button>"
         }
       ]
     }

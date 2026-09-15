@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.23.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.24.0-A**
 
 ## Next task
-**Build Notification Dot.** A small red `alert` icon ("!") or a plain red dot pinned to the top-right corner of any button, icon button, tab, tab bar item or slot, meaning "something new here" (no count; counts use Count Bubble). Target API: `data-alert` (bare = "!" icon, `data-alert="dot"` = small plain dot), gentle pulse, `SC.setAlert(el, true|false|'dot')`. Uses the `alert` kit icon. Follow AGENTS.md §4.
+**Build Level Badge.** The `level-badge` shield icon with an outlined level number centered on it ("5", "12"), in sizes sm/md/lg, optionally overlapping the left end of a Progress Bar (XP bar) like the reference. Target API: `<span class="sc-level" data-value="5"></span>`, `SC.setValue(level, 6)` with a pop, and a `data-level` attribute on `.sc-progress` that puts the badge on the bar's left end. Follow AGENTS.md §4.
 
 ## In progress
 _Nothing._
@@ -34,13 +34,13 @@ _Nothing._
 | 21 | Toast Message | `SC.toast()` | v0.21.0-A |
 | 22 | Item Row | `.sc-row` | v0.22.0-A |
 | 23 | Loading Bar | `.sc-loading` | v0.23.0-A |
+| 24 | Notification Dot | `data-alert / .sc-alert` | v0.24.0-A |
 
 ## Left — components (in this order)
-1. Top Bar (avatar, level, resources) (use `avatar`, `level-badge` icons) ← next
-2. Level Badge (use `level-badge` icon + number)
-3. Notification Dot (use `alert` icon)
-4. Shop Card (use `gem-pile`, `coin-pile` icons)
-5. Tutorial Hand (use `hand` icon)
+1. Level Badge (use `level-badge` icon + number) ← next
+2. Top Bar (avatar, level, resources) (use `avatar`, `level-badge` icons)
+3. Shop Card (use `gem-pile`, `coin-pile` icons)
+4. Tutorial Hand (use `hand` icon)
 
 ## Left — blocks (full screens built ONLY from kit components)
 Gameplay HUD · Pause · Success · Fail (old versions exist in `super-casual/old-demos/`; build each block as one `.sc-screen`) · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading

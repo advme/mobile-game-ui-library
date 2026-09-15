@@ -1,0 +1,55 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Alert regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/alert/alert.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/button/button.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/tabs/tabs.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/slot/slot.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>body { margin:30px; font:14px system-ui; background:#243453; color:white; } #fixtures { display:grid; gap:24px; width:300px; } li { margin:6px 0; } .fail { color:#ff9da7; }</style>
+<h1>Alert checks</h1>
+<p id="summary">Running…</p>
+<div id="fixtures">
+  <button id="b" class="sc-button" data-alert>Shop</button>
+  <button id="d" class="sc-button" data-alert="dot" data-tag="NEW">Dot</button>
+  <div class="sc-slot" id="s" data-icon="chest" data-alert data-badge="2"></div>
+  <div class="sc-tabs"><button data-value="a">A</button><button data-value="b" id="t" data-alert>B</button></div>
+  <span class="sc-alert" id="st"></span>
+</div>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const settle = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  const a = el => el.querySelector(':scope > .sc-alert-attached');
+  try {
+    await new Promise(r => setTimeout(r, 450));
+    check('bare data-alert = icon with alert.png', a($('#b'))?.dataset.kind === 'icon' && a($('#b')).querySelector('img').src.endsWith('/alert.png'));
+    check('dot kind has no image', a($('#d'))?.dataset.kind === 'dot' && !a($('#d')).querySelector('img'));
+    check('works with tag and badge on same host', !!$('#d').querySelector('.sc-tag-attached') && !!a($('#s')) && !!$('#s').querySelector('.sc-bubble'));
+    check('on tab', !!a($('#t')));
+    check('aria-hidden and absolute top-right', a($('#b')).getAttribute('aria-hidden') === 'true' && getComputedStyle(a($('#b'))).position === 'absolute' && a($('#b')).getBoundingClientRect().right > $('#b').getBoundingClientRect().right);
+    check('standalone alert builds icon inline', $('#st').querySelector('img')?.src.endsWith('/alert.png') && getComputedStyle($('#st')).position === 'relative');
+    SC.setAlert($('#b'), 'dot'); await settle();
+    check('setAlert dot switches kind, removes image', a($('#b')).dataset.kind === 'dot' && !a($('#b')).querySelector('img'));
+    SC.setAlert($('#b'), true); await settle();
+    check('setAlert true back to icon', a($('#b')).dataset.kind === 'icon' && !!a($('#b')).querySelector('img') && $('#b').getAttribute('data-alert') === '');
+    SC.setAlert($('#b'), false); await settle();
+    check('setAlert false removes', !a($('#b')) && !$('#b').hasAttribute('data-alert'));
+    $('#d').dataset.alert = 'false'; await settle();
+    check('data-alert="false" removes', !a($('#d')));
+    $('#d').setAttribute('data-alert', ''); await settle();
+    check('attribute added later shows', !!a($('#d')));
+    SC.setLabel($('#d'), 'Store'); SC.upgrade($('#d')); SC.upgrade($('#d'));
+    check('label change + upgrades keep one alert', $('#d').querySelectorAll('.sc-alert-attached').length === 1);
+    let records = 0; const mo = new MutationObserver(x => records += x.length); mo.observe($('#fixtures'), { attributes: true, subtree: true, childList: true });
+    await new Promise(r => setTimeout(r, 200)); mo.disconnect();
+    check('no endless updates', records === 0);
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Alert';
+});
+</script>

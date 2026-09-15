@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.24.0-A — Notification Dot component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added the Notification Dot, a "something new" marker. `data-alert` on buttons, icon buttons, slots, tabs and tab bar items shows the red `alert` icon (bare) or a small plain dot (`dot`) on the top-right corner, with pop-in + gentle pulse; on tab bar items it sits on the icon corner. Standalone `.sc-alert` works inline. `SC.setAlert(el, true|false|'dot')`. Coexists with tags and badges. Added the AI manual, registry item, docs page (hosts, tab bar, live clear-on-open) and `tools/tests/alert.html`.
+- Tested: `tools/tests/index.html`: 13 pages pass (adds alert 13/13, covering icon vs dot, coexistence with tag/badge, tabs, position, standalone, setAlert switching/removal, attribute changes, no duplicates/churn).
+- Notes for next agent: Not supported on `.sc-row-avatar` (it has overflow:hidden). Geometry checks must wait ~450ms for the pop-in scale animation.
+
 ## v0.23.0-A — Loading Bar component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `.sc-loading` for the start/loading screen: a large glossy progress bar with "Loading… 42%", an optional bouncing kit icon and rotating tips (`data-tips="a|b"`, every 3 s). It has `data-color`/`data-label`, progressbar semantics, and `SC.loading.set(el, pct)` (clamped; fires `done` once at 100). `SC.loading.done(el)` fills it and hides its Screen Shell. Added the AI manual, registry item, docs page (hero + live simulated load that switches to a play screen) and `tools/tests/loading.html`. STATUS image notes now point to the new icons.
