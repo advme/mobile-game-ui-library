@@ -54,7 +54,6 @@ Copy the pattern of an existing component (e.g. `progress`, `timer`):
 - **Outline thickness** comes only from `--sc-line`, `--sc-line-sm`, `--sc-text-stroke`, `--sc-text-drop`.
 - **No sharp corners.** Every free corner is slightly rounded. Corners where a shape attaches to another element (e.g. a tag hanging from a header) stay sharp. Never use `clip-path: polygon()`.
 - **Never draw image assets with code** (icons, items, characters, badges with pictures). Put a grey placeholder, write an image-generation prompt for the owner, then crop the sheet they return (`tools/crop_sheet.py`) and run `tools/icon_offsets.py`.
-- **Icons are chosen by name** (`data-icon="coin"`). Only use names listed in `registry.json → icons`.
 - **Hint bubbles are flat white** with the outline only (no 3D shade band).
 - **Icons:** kit names, or a path/URL for a game's own picture (`data-icon="images/fox.png"`), or `SC.setImage`. New pictures come from `super-casual/kit/assets/IMAGE-PROMPTS.md`.
 - **Round glossy buttons** use a full circular face (no bottom lip) so they never look like ovals.
