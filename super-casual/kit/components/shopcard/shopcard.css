@@ -1,0 +1,47 @@
+/*
+  Shop Card — Super Casual UI Kit
+  Requires: core.css, sc.js, button/button.css   (+ tag/tag.css for data-tag)
+
+  <div class="sc-shopcard" data-icon="gem-pile" data-amount="500" data-price="$4.99" data-color="purple" data-tag="BEST"></div>
+
+  data-icon        pack picture (kit icon: gem-pile, coin-pile, chest, gift…)   required
+  data-amount      amount shown on the picture ("500" → "x500")               optional
+  data-price       price text ("$4.99", "FREE", "500")                        required
+  data-price-icon  currency icon on the price button (coin, gem)              optional (in-game currency)
+  data-bonus       small line under the picture ("+20% bonus")                optional
+  data-color       sky | blue | green | yellow | orange | red | purple | pink   default: blue
+  data-tag / data-tag-color   corner sticker (BEST, HOT, -50%)               optional
+  data-state       sold  → greyed out, button disabled ("SOLD")              optional
+
+  Event: "buy" on .sc-shopcard (detail.price, detail.currency) when the price button is tapped.
+  Lay cards out in a row/grid of 2–3; each card is 120px wide by default (width can be set).
+*/
+.sc-shopcard {
+  --c1:#7fc4ff; --c2:#3b8cf0; --c3:#2566c8;
+  position:relative; display:inline-flex; flex-direction:column; align-items:stretch; box-sizing:border-box; vertical-align:top;
+  width:120px; padding:6px 6px 8px; gap:6px;
+  border:var(--sc-line) solid var(--sc-outline); border-radius:16px;
+  background:linear-gradient(var(--c2), var(--c3)); box-shadow:inset 0 2px 0 rgba(255,255,255,.35), inset 0 -4px 0 rgba(0,0,0,.18);
+  font-family:var(--sc-font); user-select:none; -webkit-user-select:none;
+}
+.sc-shopcard[data-color="sky"]    { --c1:#9eeaff; --c2:#2fc3ff; --c3:#0a95e0; }
+.sc-shopcard[data-color="green"]  { --c1:#b4ffb0; --c2:#3fd66a; --c3:#1c9f48; }
+.sc-shopcard[data-color="yellow"] { --c1:#fff6a8; --c2:#ffd33a; --c3:#e69a12; }
+.sc-shopcard[data-color="orange"] { --c1:#ffd9a0; --c2:#ff9f36; --c3:#dd6a14; }
+.sc-shopcard[data-color="red"]    { --c1:#ffb3bb; --c2:#f4506a; --c3:#c21f3c; }
+.sc-shopcard[data-color="purple"] { --c1:#e2c2ff; --c2:#a45ff2; --c3:#6d2fc0; }
+.sc-shopcard[data-color="pink"]   { --c1:#ffc9f4; --c2:#ec6fe0; --c3:#b43aa8; }
+
+.sc-shopcard-art {
+  position:relative; aspect-ratio:1 / .9; border-radius:11px; overflow:hidden;
+  background:radial-gradient(circle at 50% 42%, var(--c1) 0%, color-mix(in srgb, var(--c1) 40%, var(--c2)) 45%, transparent 75%), rgba(0,0,0,.12);
+  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.25);
+}
+.sc-shopcard-art > img { position:absolute; inset:8% 8% 16%; width:84%; height:76%; object-fit:contain; translate:var(--ox, 0%) var(--oy, 0%); }
+.sc-shopcard-amount { position:absolute; left:0; right:0; bottom:3px; text-align:center; line-height:1; }
+.sc-shopcard-amount > .sc-text { --fs:20px; font-size:var(--fs); font-variant-numeric:tabular-nums; }
+.sc-shopcard-bonus { text-align:center; font:900 12px/1.1 var(--sc-font); color:#fff7a8; text-shadow:0 1px 0 rgba(0,0,0,.35); }
+.sc-shopcard > .sc-shopcard-buy { width:100%; min-width:0; }
+.sc-shopcard > .sc-tag-attached { --t:12px; }
+
+.sc-shopcard[data-state="sold"] { filter:grayscale(1) brightness(.85); }

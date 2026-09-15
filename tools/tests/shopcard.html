@@ -1,0 +1,50 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Shop Card regression checks</title>
+<link rel="stylesheet" href="../../super-casual/kit/core.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/shopcard/shopcard.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/button/button.css">
+<link rel="stylesheet" href="../../super-casual/kit/components/tag/tag.css">
+<script src="../../super-casual/kit/sc.js"></script>
+<style>body { margin:30px; font:14px system-ui; background:#243453; color:white; } #fixtures { display:flex; gap:14px; } li { margin:6px 0; } .fail { color:#ff9da7; }</style>
+<h1>Shop Card checks</h1>
+<p id="summary">Running…</p>
+<div id="fixtures">
+  <div class="sc-shopcard" id="a" data-icon="gem-pile" data-amount="1500" data-price="$4.99" data-tag="BEST" data-bonus="+20%"></div>
+  <div class="sc-shopcard" id="b" data-icon="heart" data-price="200" data-price-icon="coin"></div>
+</div>
+<ol id="results"></ol>
+<script>
+addEventListener('load', async () => {
+  const $ = s => document.querySelector(s), results = $('#results');
+  let passed = 0, failed = 0;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const check = (name, ok) => { const li = document.createElement('li'); li.textContent = (ok ? 'PASS: ' : 'FAIL: ') + name; ok ? passed++ : (failed++, li.className = 'fail'); results.append(li); };
+  const buyOf = c => c.querySelector(':scope > .sc-shopcard-buy');
+  try {
+    await wait(100);
+    const a = $('#a'), b = $('#b');
+    check('picture, amount, bonus, tag, buy button built', a.querySelector('.sc-shopcard-art img').src.endsWith('/gem-pile.png') && a.querySelector('.sc-shopcard-amount .sc-text').dataset.text === 'x1500' && a.querySelector('.sc-shopcard-bonus').textContent === '+20%' && !!a.querySelector(':scope > .sc-tag-attached') && buyOf(a)?.classList.contains('sc-button'));
+    check('real price button: green, text, no icon, aria', buyOf(a).dataset.color === 'green' && buyOf(a).querySelector(':scope > .sc-text').dataset.text === '$4.99' && !buyOf(a).querySelector('img[data-sc-icon]') && buyOf(a).getAttribute('aria-label') === 'Buy 1500 for $4.99');
+    check('currency price button has coin icon', buyOf(b).querySelector(':scope > img[data-sc-icon]')?.src.endsWith('/coin.png') && buyOf(b).querySelector(':scope > .sc-text').dataset.text === '200');
+    let ev = []; document.addEventListener('buy', e => ev.push([e.target.id, e.detail.price, e.detail.currency]));
+    buyOf(a).click(); buyOf(b).click();
+    check('buy event with price + currency', JSON.stringify(ev) === JSON.stringify([['a', '$4.99', null], ['b', '200', 'coin']]));
+    b.dataset.state = 'sold'; await wait(50);
+    check('sold: disabled dark SOLD, icon removed', buyOf(b).disabled && buyOf(b).dataset.color === 'dark' && buyOf(b).querySelector(':scope > .sc-text').dataset.text === 'SOLD' && !buyOf(b).querySelector('img[data-sc-icon]'));
+    ev = []; buyOf(b).click();
+    check('sold card fires no buy', ev.length === 0);
+    b.removeAttribute('data-state'); await wait(50);
+    check('unsold restores price and icon', !buyOf(b).disabled && buyOf(b).querySelector(':scope > .sc-text').dataset.text === '200' && !!buyOf(b).querySelector('img[data-sc-icon]'));
+    a.dataset.amount = '2000'; a.removeAttribute('data-bonus'); a.dataset.price = '$9.99'; await wait(50);
+    check('attribute updates amount/bonus/price', a.querySelector('.sc-shopcard-amount .sc-text').dataset.text === 'x2000' && !a.querySelector('.sc-shopcard-bonus') && buyOf(a).querySelector(':scope > .sc-text').dataset.text === '$9.99');
+    SC.upgrade(a); SC.upgrade(a);
+    check('no duplicates', a.querySelectorAll('.sc-shopcard-art').length === 1 && a.querySelectorAll('.sc-shopcard-buy').length === 1 && buyOf(a).querySelectorAll('.sc-text').length === 1);
+    let records = 0; const mo = new MutationObserver(x => records += x.length); mo.observe($('#fixtures'), { attributes: true, subtree: true, childList: true, attributeFilter: ['data-icon', 'data-color', 'aria-label', 'data-text', 'src', 'disabled'] });
+    await wait(300); mo.disconnect();
+    check('no endless updates', records === 0);
+  } catch (err) { check('unexpected error: ' + err.message, false); }
+  $('#summary').textContent = `${passed} passed; ${failed} failed`;
+  document.title = (failed ? 'FAIL' : 'PASS') + ' — Shop Card';
+});
+</script>

@@ -27,7 +27,7 @@
   const SLIDERS = '.sc-slider';
   const CHECKBOXES = 'button.sc-checkbox';
   const TABS = '.sc-tabs, .sc-tabbar';
-  const TAG_HOSTS = '.sc-button, .sc-icon-button, .sc-tab';
+  const TAG_HOSTS = '.sc-button, .sc-icon-button, .sc-tab, .sc-shopcard';
   const TAGS = '.sc-tag:not(.sc-tag-attached)';
   const BANNERS = '.sc-banner';
   const LOADINGS = '.sc-loading';
@@ -35,11 +35,12 @@
   const ALERTS = '.sc-alert:not(.sc-alert-attached)';
   const LEVELS = '.sc-level';
   const TOPBARS = '.sc-topbar';
+  const SHOPCARDS = '.sc-shopcard';
   const TAB_ITEMS = '.sc-tabs > button, .sc-tabbar > button';
   const BADGE_HOSTS = '.sc-button, .sc-icon-button, .sc-slot, .sc-tab, .sc-tabbar-item';
   const MESSAGES = '.sc-popup-message, .sc-popup-value';
   const SCREENS = '.sc-screen';
-  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}, ${TAGS}, ${BANNERS}, .sc-row-avatar, ${LOADINGS}, ${ALERTS}, ${LEVELS}, ${TOPBARS}`;
+  const ALL = `${TEXT_COMPONENTS}, ${COUNTERS}, ${SLOTS}, ${POPUPS}, ${MESSAGES}, ${PROGRESS}, ${TITLES}, ${STARS}, ${TIMERS}, ${SCREENS}, ${TOGGLES}, ${SLIDERS}, ${CHECKBOXES}, ${TABS}, ${TAGS}, ${BANNERS}, .sc-row-avatar, ${LOADINGS}, ${ALERTS}, ${LEVELS}, ${TOPBARS}, ${SHOPCARDS}`;
   const PRESSABLE = `.sc-button, .sc-icon-button, .sc-counter-plus, .sc-topbar-player, ${TOGGLES}, ${CHECKBOXES}, ${TAB_ITEMS}`;
 
   const script = document.currentScript;
@@ -544,6 +545,45 @@
     if (p) p.parentElement.dispatchEvent(new CustomEvent('profile', { bubbles: true }));
   });
 
+  /* ---------- Shop Card ---------- */
+  function upgradeShopcard(el) {
+    let art = el.querySelector(':scope > .sc-shopcard-art');
+    if (!art) {
+      art = document.createElement('div'); art.className = 'sc-shopcard-art';
+      art.innerHTML = '<img alt="" draggable="false">'; el.prepend(art);
+    }
+    const img = art.querySelector('img'), src = ASSETS + (el.dataset.icon || 'gift') + '.png';
+    if (img.src !== src) img.src = src;
+    let amount = art.querySelector('.sc-shopcard-amount');
+    if (el.dataset.amount) {
+      if (!amount) { amount = document.createElement('span'); amount.className = 'sc-shopcard-amount'; amount.append(textSpan('')); art.append(amount); }
+      setSpan(amount.firstElementChild, 'x' + formatNumber(el.dataset.amount, 'full'));
+    } else amount?.remove();
+    let bonus = el.querySelector(':scope > .sc-shopcard-bonus');
+    if (el.dataset.bonus) {
+      if (!bonus) { bonus = document.createElement('div'); bonus.className = 'sc-shopcard-bonus'; art.after(bonus); }
+      if (bonus.textContent !== el.dataset.bonus) bonus.textContent = el.dataset.bonus;
+    } else bonus?.remove();
+    let buy = el.querySelector(':scope > .sc-shopcard-buy');
+    if (!buy) { buy = document.createElement('button'); buy.type = 'button'; buy.className = 'sc-button sc-shopcard-buy'; buy.dataset.size = 'sm'; el.append(buy); }
+    const sold = el.dataset.state === 'sold';
+    setAttr(buy, 'data-color', sold ? 'dark' : 'green');
+    if (el.dataset.priceIcon && !sold) setAttr(buy, 'data-icon', el.dataset.priceIcon); else if (buy.hasAttribute('data-icon')) { buy.removeAttribute('data-icon'); buy.querySelector(':scope > img[data-sc-icon]')?.remove(); }
+    const label = sold ? 'SOLD' : (el.dataset.price || '');
+    let span = buy.querySelector(':scope > .sc-text');
+    if (!span) { span = textSpan(''); buy.append(span); }
+    setSpan(span, label);
+    upgradeIcon(buy);
+    if (buy.disabled !== sold) buy.disabled = sold;
+    setAttr(buy, 'aria-label', sold ? 'Sold out' : `Buy ${el.dataset.amount ? el.dataset.amount + ' ' : ''}for ${el.dataset.price || ''}${el.dataset.priceIcon ? ' ' + el.dataset.priceIcon : ''}`);
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('.sc-shopcard-buy');
+    if (!b || b.disabled) return;
+    const card = b.parentElement;
+    card.dispatchEvent(new CustomEvent('buy', { bubbles: true, detail: { price: card.dataset.price, currency: card.dataset.priceIcon || null } }));
+  });
+
   /* ---------- Counter ---------- */
   function formatNumber(n, format) {
     n = Math.round(Number(n) || 0);
@@ -935,6 +975,7 @@
     if (el.matches(ALERT_HOSTS)) upgradeAlert(el);
     if (el.matches(LEVELS)) return upgradeLevel(el);
     if (el.matches(TOPBARS)) return upgradeTopbar(el);
+    if (el.matches(SHOPCARDS)) return upgradeShopcard(el);
     if (el.matches(ALERTS)) return buildAlert(el, el.dataset.alert === 'dot' ? 'dot' : 'icon');
     if (el.matches(TAGS)) return upgradeText(el);
     if (el.matches(BANNERS)) return upgradeBanner(el);
@@ -988,6 +1029,7 @@
         else if (r.target.matches(LOADINGS)) upgradeLoading(r.target);
         else if (r.target.matches(LEVELS)) upgradeLevel(r.target);
         else if (r.target.matches(TOPBARS)) upgradeTopbar(r.target);
+        else if (r.target.matches(SHOPCARDS)) upgradeShopcard(r.target);
         else if (r.target.matches(TAB_ITEMS)) upgradeTabs(r.target.parentElement);
         else if (r.target.matches(ICON_COMPONENTS)) upgradeIcon(r.target);
       } else {
@@ -1004,7 +1046,7 @@
     }
   }).observe(document.documentElement, {
     childList: true, subtree: true, characterData: true,
-    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-tag-color', 'data-tag-pos', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-checked', 'data-min', 'data-step', 'disabled', 'data-panel', 'data-tips', 'data-alert', 'data-level', 'data-name', 'data-avatar', 'data-width', 'data-height', 'data-fit'],
+    attributes: true, attributeFilter: ['data-icon', 'data-value', 'data-max', 'data-plus', 'data-format', 'data-count', 'data-tag', 'data-tag-color', 'data-tag-pos', 'data-state', 'data-title', 'data-sub', 'data-closable', 'data-label', 'data-stars', 'data-seconds', 'data-variant', 'data-badge', 'data-badge-color', 'data-checked', 'data-min', 'data-step', 'disabled', 'data-panel', 'data-tips', 'data-alert', 'data-level', 'data-name', 'data-avatar', 'data-amount', 'data-price', 'data-price-icon', 'data-bonus', 'data-width', 'data-height', 'data-fit'],
   });
 
   // Press feedback (delegated, so it works for dynamically added components)
@@ -1021,7 +1063,7 @@
 
   /* ---------- Public API ---------- */
   window.SC = Object.assign(window.SC || {}, {
-    version: '0.26.0',
+    version: '0.27.0',
     assets: ASSETS,
     upgrade,
     /** Change a component's label: SC.setLabel(el, 'Claimed') */

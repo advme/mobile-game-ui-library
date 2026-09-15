@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shop Card — Super Casual UI Kit</title>
+<link rel="stylesheet" href="../core.css">
+<link rel="stylesheet" href="../components/shopcard/shopcard.css">
+<link rel="stylesheet" href="../components/button/button.css">
+<link rel="stylesheet" href="../components/tag/tag.css">
+<link rel="stylesheet" href="../components/counter/counter.css">
+<link rel="stylesheet" href="../components/toast/toast.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../sc.js"></script>
+<script src="docs.js"></script>
+<style>
+.grid { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; padding-top:10px; }
+.col { display:flex; flex-direction:column; align-items:center; gap:14px; }
+</style>
+</head>
+<body>
+<script>
+SCDocs.page({
+  title: 'Shop Card',
+  lead: 'A shop offer — pack picture, amount, optional sticker and a price button. Put 2–3 in a row.',
+  hero: `<div class="grid">
+  <div class="sc-shopcard" data-icon="coin-pile" data-amount="1000" data-price="$0.99" data-color="yellow"></div>
+  <div class="sc-shopcard" data-icon="gem-pile" data-amount="500" data-price="$4.99" data-color="purple" data-tag="BEST" data-bonus="+20% bonus"></div>
+  <div class="sc-shopcard" data-icon="chest" data-price="300" data-price-icon="gem" data-color="sky" data-tag="-50%" data-tag-color="purple"></div>
+</div>`,
+  css: ['components/shopcard/shopcard.css', 'components/button/button.css', 'components/tag/tag.css'],
+  usageNote: 'Everything is attributes. The runtime builds the picture, amount, bonus line and the green price button.',
+  usage: `<div class="sc-shopcard" data-icon="gem-pile" data-amount="500" data-price="$4.99" data-color="purple" data-tag="BEST"></div>`,
+  examples: [
+    { title: 'Real money and in-game currency', desc: 'data-price alone for real prices; add data-price-icon for coins or gems.',
+      html: `<div class="grid">
+  <div class="sc-shopcard" data-icon="gem-pile" data-amount="80" data-price="$0.99" data-color="blue"></div>
+  <div class="sc-shopcard" data-icon="heart" data-amount="5" data-price="200" data-price-icon="coin" data-color="red"></div>
+  <div class="sc-shopcard" data-icon="gift" data-price="FREE" data-color="green" data-tag="FREE" data-tag-color="green"></div>
+</div>` },
+    { title: 'Colors and sold out', desc: 'Any card color; data-state="sold" greys it and disables the button.',
+      html: `<div class="grid">
+  <div class="sc-shopcard" data-icon="clover" data-amount="3" data-price="$1.99" data-color="green"></div>
+  <div class="sc-shopcard" data-icon="key" data-amount="10" data-price="$2.99" data-color="orange"></div>
+  <div class="sc-shopcard" data-icon="crown" data-price="$9.99" data-color="pink" data-state="sold"></div>
+</div>` },
+    { title: 'Live: buy with coins', desc: 'The "buy" event tells you the price and currency. Not enough coins shows a toast.',
+      html: `<div class="col">
+  <div class="sc-counter" id="shopCoins" data-icon="coin" data-value="450"></div>
+  <div class="grid">
+    <div class="sc-shopcard" data-icon="heart" data-amount="1" data-price="100" data-price-icon="coin" data-color="red"></div>
+    <div class="sc-shopcard" data-icon="gem-pile" data-amount="50" data-price="400" data-price-icon="coin" data-color="purple" data-tag="HOT"></div>
+    <div class="sc-shopcard" data-icon="chest" data-price="1000" data-price-icon="coin" data-color="yellow"></div>
+  </div>
+</div>`,
+      setup(p) {
+        const coins = p.querySelector('#shopCoins');
+        p.addEventListener('buy', e => {
+          const have = Number(coins.dataset.value), cost = Number(e.detail.price);
+          if (have < cost) return SC.toast('Not enough coins!', { kind: 'error', icon: 'coin' });
+          SC.setValue(coins, have - cost);
+          SC.float('+' + (e.target.dataset.amount || 1), e.target.querySelector('.sc-shopcard-art'), { icon: e.target.dataset.icon });
+        });
+      } },
+  ],
+  api: [
+    ['data-icon', 'icon-name', '', 'Required. Pack picture (gem-pile, coin-pile, chest, gift…).'],
+    ['data-amount', 'number', '', 'Shown as x500 on the picture.'],
+    ['data-price', 'text', '', 'Required. "$4.99", "FREE" or a currency amount.'],
+    ['data-price-icon', 'coin gem', '', 'Currency icon on the button (in-game prices).'],
+    ['data-bonus', 'text', '', 'Small yellow line under the picture.'],
+    ['data-color', 'sky blue green yellow orange red purple pink', 'blue', 'Card color.'],
+    ['data-tag', 'text', '', 'Corner sticker (needs tag.css).'],
+    ['data-state', 'sold', '', 'Sold out.'],
+  ],
+  js: `shop.addEventListener('buy', e => {
+  // e.target = the card · e.detail = { price: '$4.99', currency: null }  or  { price: '400', currency: 'coin' }
+  startPurchase(e.target.dataset.icon, e.detail);
+});
+card.dataset.state = 'sold';     // after a one-time offer is bought`,
+  rules: [
+    '<b>2–3 cards per row</b> inside a popup or shop screen; same color for the same currency (yellow coins, purple gems).',
+    'Use <code class="inline">gem-pile</code> / <code class="inline">coin-pile</code> for currency packs, other kit icons for items.',
+    'At most one <b>BEST</b> and one discount tag per row.',
+    'Always handle <code class="inline">buy</code>: check the balance, show a toast if short, then update counters.',
+    'Never write fake real-money flows — the game hooks <code class="inline">buy</code> into the real store.',
+  ],
+});
+</script>
+</body>
+</html>

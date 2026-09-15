@@ -2,6 +2,12 @@
 
 Newest first. Format and version rules: see `AGENTS.md` §8 (A = Claude, B = Codex/GPT).
 
+## v0.27.0-A — Shop Card component
+- Agent: A (Claude) · Date: 2026-09-15
+- Done: Added `.sc-shopcard`: a glossy shop offer card in 8 colors. It has a kit-icon pack picture with a radial glow and an "x500" amount, an optional bonus line, a corner tag (Shop Card is now a Tag host), and a green `.sc-button` price that is real-money text or in-game currency with `data-price-icon`. `data-state="sold"` greys it and disables "SOLD". The `buy` event carries `{price, currency}`. Added the AI manual, registry item, docs page (real/currency prices, colors, sold, live buy-with-coins with toast + float) and `tools/tests/shopcard.html`.
+- Tested: `tools/tests/shopcard.html` 10/10 (parts, real vs currency buttons, aria, buy event detail, sold on/off, attribute updates, no duplicates/churn). Live docs demo spends coins and shows the not-enough toast.
+- Notes for next agent: The price button is a normal `.sc-button` built by the runtime. Changing `data-price-icon` or `data-state` re-syncs its icon.
+
 ## v0.26.0-A — Top Bar component
 - Agent: A (Claude) · Date: 2026-09-15
 - Done: Added `.sc-topbar` for home screens. The player block is a button with a framed avatar kit icon, a Level Badge on its corner and the name, and fires `profile`. Resource Counters placed inside (even added later) move to the right group. The name shrinks and fades first so counters always fit. Long titles in Top Bar and Item Row now fade out (`.sc-long` via `markLong`) instead of an ellipsis, which broke the outlined text copy. Added the AI manual, registry item, docs page (home screen with tab bar, variants, live profile/earn) and `tools/tests/topbar.html`.

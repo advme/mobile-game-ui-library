@@ -2,7 +2,7 @@
   "name": "super-casual",
   "title": "Super Casual UI Kit",
   "description": "Chunky, glossy mobile game UI for hyper-casual and casual 2D/3D web games. Plain HTML + CSS components that float above any game canvas (Three.js, Babylon, Phaser, PixiJS).",
-  "version": "0.26.0",
+  "version": "0.27.0",
   "items": [
     {
       "name": "core",
@@ -2093,6 +2093,93 @@
         {
           "title": "Home top bar",
           "html": "<div class=\"sc-topbar\" data-name=\"Farid\" data-level=\"12\"><div class=\"sc-counter\" data-icon=\"coin\" data-value=\"349810\" data-format=\"short\" data-size=\"sm\"></div></div>"
+        }
+      ]
+    },
+    {
+      "name": "shopcard",
+      "type": "registry:ui",
+      "title": "Shop Card",
+      "description": "Shop offer card with pack picture, amount, optional tag/bonus and a price button; fires buy.",
+      "whenToUse": "Shop screens and offer popups: currency packs, lives, chests, boosters.",
+      "files": [
+        "components/shopcard/shopcard.css"
+      ],
+      "docs": "components/shopcard/shopcard.md",
+      "dependencies": [
+        "core",
+        "button",
+        "tag"
+      ],
+      "html": "<div class=\"sc-shopcard\" data-icon=\"gem-pile\" data-amount=\"500\" data-price=\"$4.99\" data-color=\"purple\" data-tag=\"BEST\"></div>",
+      "props": {
+        "data-icon": {
+          "type": "icon",
+          "required": true
+        },
+        "data-amount": {
+          "type": "number",
+          "optional": true
+        },
+        "data-price": {
+          "type": "string",
+          "required": true
+        },
+        "data-price-icon": {
+          "type": "enum",
+          "values": [
+            "coin",
+            "gem"
+          ],
+          "optional": true
+        },
+        "data-bonus": {
+          "type": "string",
+          "optional": true
+        },
+        "data-color": {
+          "type": "enum",
+          "values": [
+            "sky",
+            "blue",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "pink"
+          ],
+          "default": "blue"
+        },
+        "data-tag": {
+          "type": "string",
+          "optional": true
+        },
+        "data-state": {
+          "type": "enum",
+          "values": [
+            "sold"
+          ],
+          "optional": true
+        }
+      },
+      "events": {
+        "buy": "Price tapped (detail.price, detail.currency)"
+      },
+      "js": {
+        "card.dataset.state = 'sold'": "Mark sold out"
+      },
+      "rules": [
+        "2-3 per row; same color per currency.",
+        "gem-pile/coin-pile for currency packs.",
+        "Max one BEST and one discount tag per row.",
+        "Handle buy: check balance, toast if short, update counters.",
+        "Never fake real-money purchases."
+      ],
+      "examples": [
+        {
+          "title": "Coin price",
+          "html": "<div class=\"sc-shopcard\" data-icon=\"heart\" data-amount=\"5\" data-price=\"200\" data-price-icon=\"coin\" data-color=\"red\"></div>"
         }
       ]
     }

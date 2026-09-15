@@ -1,9 +1,9 @@
 # STATUS
 
-**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.26.0-A**
+**Last updated:** 2026-09-15 · by **A (Claude)** · version **v0.27.0-A**
 
 ## Next task
-**Build Shop Card.** A shop offer card: glossy colored card, pack image (`gem-pile`, `coin-pile` or any kit icon), amount ("x500"), optional tag (BEST/-50%) and bonus line, and a price button (real price text, or a currency counter-style price with `coin`/`gem` icon). Target API: `<div class="sc-shopcard" data-icon="gem-pile" data-amount="500" data-price="$4.99" data-tag="BEST" data-color="purple">`, `buy` event on the price button. 2–3 per row grid. Follow AGENTS.md §4.
+**Build Tutorial Hand.** An animated pointing hand (kit `hand` icon) that taps or swipes on a target to teach the player: `SC.tutorial.point(target, {text, gesture:'tap'|'swipe-up'|'swipe-left'|'swipe-right'|'drag', to})` places the hand (with an optional Hint Bubble), `SC.tutorial.clear()` removes it. Optional dim overlay with a spotlight hole around the target (rounded, no polygons) that only lets the target be tapped. Follow AGENTS.md §4. This is the LAST component; after it, move to Blocks.
 
 ## In progress
 _Nothing._
@@ -37,10 +37,10 @@ _Nothing._
 | 24 | Notification Dot | `data-alert / .sc-alert` | v0.24.0-A |
 | 25 | Level Badge | `.sc-level / data-level` | v0.25.0-A |
 | 26 | Top Bar | `.sc-topbar` | v0.26.0-A |
+| 27 | Shop Card | `.sc-shopcard` | v0.27.0-A |
 
 ## Left — components (in this order)
-1. Shop Card (use `gem-pile`, `coin-pile` icons) ← next
-2. Tutorial Hand (use `hand` icon)
+1. Tutorial Hand (use `hand` icon) ← next
 
 ## Left — blocks (full screens built ONLY from kit components)
 Gameplay HUD · Pause · Success · Fail (old versions exist in `super-casual/old-demos/`; build each block as one `.sc-screen`) · Start · Reward Reveal · Daily Reward · Settings · Shop · Loading
